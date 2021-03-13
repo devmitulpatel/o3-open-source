@@ -13,7 +13,9 @@
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^7.0.1",
         "laravel/framework": "^8.12",
-        "laravel/tinker": "^2.5"
+        "laravel/tinker": "^2.5",
+        "laravel/nova": "*",
+        "msllp/core": "*"
     },
     "require-dev": {
         "facade/ignition": "^2.5",
@@ -58,5 +60,15 @@
         "post-create-project-cmd": [
             "@php artisan key:generate --ansi"
         ]
-    }
+    },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "./repos/nova"
+        },
+        {
+            "type": "path",
+            "url": "./repos/ms"
+        }
+    ]
 }
