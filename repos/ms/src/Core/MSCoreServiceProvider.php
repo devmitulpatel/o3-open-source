@@ -23,7 +23,7 @@ class MSCoreServiceProvider extends ServiceProvider
 //        }
 //
         if (!$this->app->configurationIsCached()) {
-            $this->mergeConfigFrom(__DIR__ . '/../config/ms.php', 'nova');
+            $this->mergeConfigFrom(__DIR__ . '/../../config/ms.php', 'ms');
         }
 //
 //        Route::middlewareGroup('nova', config('nova.middleware', []));
