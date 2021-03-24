@@ -22,7 +22,7 @@ trait HasRoles
             'groups',
             'permission_types',
             'permissions',
-            'permission_role',
+            'permission_roles',
             'group_permission',
             'role_user',
 
@@ -62,18 +62,18 @@ trait HasRoles
             });
             Schema::create($tables[5], function (Blueprint $table) {
                 //     $table->id();
-                $table->unsignedBigInteger('role_id');
+                $table->unsignedBigInteger('group_id');
                 $table->unsignedBigInteger('permission_id');
                 //   $table->timestamps();
             });
 
             Schema::create($tables[6], function (Blueprint $table) {
-                //      $table->id();
+                      $table->id();
                 $table->unsignedBigInteger('role_id');
                 $table->unsignedBigInteger('user_id');
                 //    $table->timestamps();
             });
-            self::SeedForRoles();
+
         } else {
             array_walk($tables, function ($a) {
                 Schema::dropIfExists($a);
@@ -98,11 +98,11 @@ trait HasRoles
             array_walk($roles, function ($a) use ($makeName) {
                 Role::create(['name' => $makeName($a), 'role_id' => $a]);
             });
-            $permission_types = ['list', 'detail', 'view', 'create', 'edit', 'delete'];
+            $permission_types = ['view','list', 'detail', 'create', 'edit', 'delete'];
             array_walk($permission_types, function ($a) use ($makeName) {
                 PermissionType::create(['name' => $makeName($a), 'permission_type_id' => $a]);
             });
-            $group = ['user'];
+            $group = ['user','permission','permission_type','group','roles'];
             array_walk($group, function ($a) use ($makeName) {
                 Group::create(['name' => $makeName($a), 'group_id' => $a]);
             });
@@ -110,7 +110,6 @@ trait HasRoles
 
             array_walk($groups, function ($a, $k) use ($makeName, $permission_types) {
                 array_walk($permission_types, function ($b, $k) use ($makeName, $a) {
-
                     Permission::create([
                         'name' => $makeName(implode('_', [$a['name'], $b])),
                         'permission_id' => implode('.', [$a['group_id'], $b]),
@@ -118,7 +117,8 @@ trait HasRoles
                         'permission_type_id' => $k + 1
                     ]);
                 });
-
+                $group=Group::where('group_id',$a['group_id'])->get()->first();
+                $group->permission()->attach(Permission::where('group_id',$group->id)->pluck('id'));
             });
         } else {
 
