@@ -13,4 +13,8 @@ class Group extends Model
         'name',
         'group_id',
     ];
+
+    public function permission(){
+        return $this->belongsToMany(Permission::class);
+    }
 }
