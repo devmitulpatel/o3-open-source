@@ -62,20 +62,24 @@ trait LedgerSystem
             $table->longText('extra');
             $table->integer('status')->default(0);
             $table->timestamps();
-        });
-        Schema::create('ledger_transaction', function (Blueprint $table) {
-            $table->unsignedBigInteger('ledger_id');
-            $table->unsignedBigInteger('transaction_id');
-        });
-        Schema::create('ledger_user', function (Blueprint $table) {
-            $table->unsignedBigInteger('ledger_id');
-            $table->unsignedBigInteger('user_id');
-        });
-        LedgerType::create(['name'=>'Master']);
-        LedgerType::create(['name'=>'Cash']);
-        LedgerType::create(['name'=>'Bank Account']);
-        TransactionType::create(['name'=>'credit']);
-        TransactionType::create(['name'=>'debit']);
+        }
+        );
+        Schema::create(
+            'ledger_transaction',
+            function (Blueprint $table) {
+                $table->unsignedBigInteger('ledger_id');
+                $table->unsignedBigInteger('transaction_id');
+            }
+        );
+//        Schema::create('ledger_user', function (Blueprint $table) {
+//            $table->unsignedBigInteger('ledger_id');
+//            $table->unsignedBigInteger('user_id');
+//        });
+        LedgerType::create(['name' => 'Master']);
+        LedgerType::create(['name' => 'Cash']);
+        LedgerType::create(['name' => 'Bank Account']);
+        TransactionType::create(['name' => 'credit']);
+        TransactionType::create(['name' => 'debit']);
 //        Ledger::create(['name'=>'master','current_balance'=>0,'user_id'=>1,'type_id'=>1,'status'=>1]);
 //        Ledger::create(['name'=>'cash','curre   nt_balance'=>0,'user_id'=>1,'type_id'=>2,'status'=>1]);
         HasRoles::SeedForRoles();
