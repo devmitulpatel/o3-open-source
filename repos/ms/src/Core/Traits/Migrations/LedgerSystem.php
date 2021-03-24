@@ -69,6 +69,7 @@ trait LedgerSystem
             function (Blueprint $table) {
                 $table->unsignedBigInteger('ledger_id');
                 $table->unsignedBigInteger('transaction_id');
+            //    $table->timestamps();
             }
         );
 //        Schema::create('ledger_user', function (Blueprint $table) {
