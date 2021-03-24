@@ -3,11 +3,13 @@
 namespace App\Nova;
 
 use Illuminate\Http\Request;
+use Laravel\Nova\Fields\BelongsToMany;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Text;
 
 class Group extends Resource
 {
+    public static $group = 'Admin';
     /**
      * The model the resource corresponds to.
      *
@@ -42,6 +44,7 @@ class Group extends Resource
         return [
             ID::make(__('ID'), 'id')->sortable(),
             Text::make('Name'),
+            BelongsToMany::make('Permission')
         ];
     }
 

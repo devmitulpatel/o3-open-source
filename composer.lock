@@ -4,8 +4,54 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9618d24ce2e10a3a399acc264be228bc",
+    "content-hash": "27a0bada4ef8d99d343d3b53773fbbd3",
     "packages": [
+        {
+            "name": "armincms/many-to-many",
+            "version": "0.2.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/armincms/many-to-many.git",
+                "reference": "583fab8e2edc4a1937a726c3ca69550fe4a0a20f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/armincms/many-to-many/zipball/583fab8e2edc4a1937a726c3ca69550fe4a0a20f",
+                "reference": "583fab8e2edc4a1937a726c3ca69550fe4a0a20f",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Armincms\\Fields\\FieldServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Armincms\\Fields\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "A Laravel Nova field.",
+            "keywords": [
+                "armincms",
+                "laravel",
+                "nova"
+            ],
+            "support": {
+                "issues": "https://github.com/armincms/many-to-many/issues",
+                "source": "https://github.com/armincms/many-to-many/tree/master"
+            },
+            "time": "2020-04-04T04:52:46+00:00"
+        },
         {
             "name": "asm89/stack-cors",
             "version": "v2.0.3",
@@ -233,6 +279,61 @@
                 "source": "https://github.com/cakephp/chronos"
             },
             "time": "2021-02-06T03:37:44+00:00"
+        },
+        {
+            "name": "david-griffiths/nova-dark-theme",
+            "version": "v1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/David-Griffiths/Nova-Dark-Theme.git",
+                "reference": "dfd190f4d3454e5ec066b886ad687c135b680f3b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/David-Griffiths/Nova-Dark-Theme/zipball/dfd190f4d3454e5ec066b886ad687c135b680f3b",
+                "reference": "dfd190f4d3454e5ec066b886ad687c135b680f3b",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "DavidGriffiths\\NovaDarkTheme\\ThemeServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "DavidGriffiths\\NovaDarkTheme\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "David Griffiths",
+                    "homepage": "https://github.com/David-Griffiths",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A dark theme for Laravel Nova",
+            "homepage": "https://github.com/David-Griffiths/Nova-Dark-Theme",
+            "keywords": [
+                "dark",
+                "laravel",
+                "nova",
+                "theme"
+            ],
+            "support": {
+                "issues": "https://github.com/David-Griffiths/Nova-Dark-Theme/issues",
+                "source": "https://github.com/David-Griffiths/Nova-Dark-Theme"
+            },
+            "time": "2019-02-16T22:07:27+00:00"
         },
         {
             "name": "dnoegel/php-xdg-base-dir",
@@ -1080,6 +1181,60 @@
                 }
             ],
             "time": "2020-04-13T13:17:36+00:00"
+        },
+        {
+            "name": "gregoriohc/laravel-nova-theme-responsive",
+            "version": "v0.8.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/gregoriohc/laravel-nova-theme-responsive.git",
+                "reference": "a37f8162872ea7483d2dec7091d29e49376df273"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/gregoriohc/laravel-nova-theme-responsive/zipball/a37f8162872ea7483d2dec7091d29e49376df273",
+                "reference": "a37f8162872ea7483d2dec7091d29e49376df273",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Gregoriohc\\LaravelNovaThemeResponsive\\ThemeServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Gregoriohc\\LaravelNovaThemeResponsive\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Gregorio Hernández Caso",
+                    "email": "gregoriohc@gmail.com",
+                    "homepage": "https://github.com/gregoriohc",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A Laravel Nova responsive theme.",
+            "homepage": "https://github.com/gregoriohc/laravel-nova-theme-responsive",
+            "keywords": [
+                "laravel",
+                "nova"
+            ],
+            "support": {
+                "issues": "https://github.com/gregoriohc/laravel-nova-theme-responsive/issues",
+                "source": "https://github.com/gregoriohc/laravel-nova-theme-responsive/tree/master"
+            },
+            "time": "2020-03-08T16:15:03+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",
@@ -8579,7 +8734,7 @@
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "php": "^7.3|^8.0"
+        "php": "^7.4|^8.0"
     },
     "platform-dev": [],
     "plugin-api-version": "2.0.0"

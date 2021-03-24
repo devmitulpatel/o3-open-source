@@ -9,12 +9,15 @@
     "license": "MIT",
     "require": {
         "php": "^7.4|^8.0",
+        "armincms/many-to-many": "^0.2.1",
+        "david-griffiths/nova-dark-theme": "^1.0",
         "fideloper/proxy": "^4.4",
         "fruitcake/laravel-cors": "^2.0",
+        "gregoriohc/laravel-nova-theme-responsive": "^0.8.1",
         "guzzlehttp/guzzle": "^7.0.1",
         "laravel/framework": "^8.12",
-        "laravel/tinker": "^2.5",
         "laravel/nova": "*",
+        "laravel/tinker": "^2.5",
         "msllp/core": "*"
     },
     "require-dev": {
