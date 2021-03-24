@@ -1,14 +1,14 @@
 <template>
   <default-field
-    :errors="errors"
     :field="field"
+    :errors="errors"
     :full-width-content="true"
     :show-help-text="showHelpText"
   >
     <template slot="field">
       <KeyValueTable
-        :can-delete-row="field.canDeleteRow"
         :edit-mode="!field.readonly"
+        :can-delete-row="field.canDeleteRow"
       >
         <KeyValueHeader
           :key-label="field.keyLabel"
@@ -18,28 +18,28 @@
         <div class="bg-white overflow-hidden key-value-items">
           <KeyValueItem
             v-for="(item, index) in theData"
+            :index="index"
+            @remove-row="removeRow"
+            :item.sync="item"
             :key="item.id"
             :ref="item.id"
-            :can-delete-row="field.canDeleteRow"
-            :index="index"
-            :item.sync="item"
             :read-only="field.readonly"
             :read-only-keys="field.readonlyKeys"
-            @remove-row="removeRow"
+            :can-delete-row="field.canDeleteRow"
           />
         </div>
       </KeyValueTable>
 
       <div
-        v-if="!field.readonly && !field.readonlyKeys && field.canAddRow"
         class="mr-11"
+        v-if="!field.readonly && !field.readonlyKeys && field.canAddRow"
       >
         <button
-          class="btn btn-link dim cursor-pointer rounded-lg mx-auto text-primary mt-3 px-3 rounded-b-lg flex items-center"
-          type="button"
           @click="addRowAndSelect"
+          type="button"
+          class="btn btn-link dim cursor-pointer rounded-lg mx-auto text-primary mt-3 px-3 rounded-b-lg flex items-center"
         >
-          <icon height="24" type="add" view-box="0 0 24 24" width="24" />
+          <icon type="add" width="24" height="24" view-box="0 0 24 24" />
           <span class="ml-1">{{ field.actionText }}</span>
         </button>
       </div>

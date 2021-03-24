@@ -1,7 +1,6 @@
 <template>
   <router-link
     v-if="field.value && !isResourceBeingViewed"
-    :class="`text-${field.textAlign}`"
     :to="{
       name: 'detail',
       params: {
@@ -10,6 +9,7 @@
       },
     }"
     class="dim no-underline text-primary font-bold"
+    :class="`text-${field.textAlign}`"
   >
     {{ field.resourceLabel }}: {{ field.value }}
   </router-link>

@@ -17,15 +17,13 @@ class ActionFieldTest extends DuskTestCase
      */
     public function actions_can_be_instantly_dispatched()
     {
-        $this->browse(
-            function (Browser $browser) {
-                $browser->loginAs(User::find(1))
+        $this->browse(function (Browser $browser) {
+            $browser->loginAs(User::find(1))
                     ->visit(new Detail('users', 1))
                     ->visit('/')->assertMissing('Nova');
 
-                $browser->blank();
-            }
-        );
+            $browser->blank();
+        });
     }
 
     /**
@@ -37,29 +35,21 @@ class ActionFieldTest extends DuskTestCase
         $role = RoleFactory::new()->create();
         $user->roles()->attach($role);
 
-        $this->browse(
-            function (Browser $browser) {
-                $browser->loginAs($user = User::find(1))
+        $this->browse(function (Browser $browser) {
+            $browser->loginAs($user = User::find(1))
                     ->visit(new Detail('users', 1))
-                    ->within(
-                        new IndexComponent('roles'),
-                        function ($browser) {
-                            $browser->waitForTable()
-                                ->clickCheckboxForId(1)
-                                ->runAction(
-                                    'update-pivot-notes',
-                                    function ($browser) {
-                                        $browser->type('@notes', 'Custom Notes');
-                                    }
-                                );
-                        }
-                    )->waitForText('The action ran successfully!', 25);
+                    ->within(new IndexComponent('roles'), function ($browser) {
+                        $browser->waitForTable()
+                            ->clickCheckboxForId(1)
+                            ->runAction('update-pivot-notes', function ($browser) {
+                                $browser->type('@notes', 'Custom Notes');
+                            });
+                    })->waitForText('The action ran successfully!', 25);
 
-                $this->assertEquals('Custom Notes', $user->fresh()->roles->first()->pivot->notes);
+            $this->assertEquals('Custom Notes', $user->fresh()->roles->first()->pivot->notes);
 
-                $browser->blank();
-            }
-        );
+            $browser->blank();
+        });
     }
 
     /**
@@ -71,28 +61,20 @@ class ActionFieldTest extends DuskTestCase
         $role = RoleFactory::new()->create();
         $user->roles()->attach($role);
 
-        $this->browse(
-            function (Browser $browser) {
-                $browser->loginAs($user = User::find(1))
+        $this->browse(function (Browser $browser) {
+            $browser->loginAs($user = User::find(1))
                     ->visit(new Detail('users', 1))
-                    ->within(
-                        new IndexComponent('roles'),
-                        function ($browser) {
-                            $browser->waitForTable()
-                                ->clickCheckboxForId(1)
-                                ->runAction('update-required-pivot-notes')
-                                ->elsewhere(
-                                    '.modal',
-                                    function ($browser) {
-                                        $browser->assertSee('The Notes field is required.');
-                                    }
-                                );
-                        }
-                    );
+                    ->within(new IndexComponent('roles'), function ($browser) {
+                        $browser->waitForTable()
+                            ->clickCheckboxForId(1)
+                            ->runAction('update-required-pivot-notes')
+                            ->elsewhere('.modal', function ($browser) {
+                                $browser->assertSee('The Notes field is required.');
+                            });
+                    });
 
-                $browser->blank();
-            }
-        );
+            $browser->blank();
+        });
     }
 
     /**
@@ -102,25 +84,20 @@ class ActionFieldTest extends DuskTestCase
     {
         User::whereIn('id', [1])->update(['active' => true]);
 
-        $this->browse(
-            function (Browser $browser) {
-                $browser->loginAs(User::find(1))
+        $this->browse(function (Browser $browser) {
+            $browser->loginAs(User::find(1))
                     ->visit(new UserIndex)
-                    ->within(
-                        new IndexComponent('users'),
-                        function ($browser) {
-                            $browser->waitForTable()
-                                ->assertSeeIn('@1-row', 'Mark As Inactive')
-                                ->assertDontSeeIn('@2-row', 'Mark As Inactive')
-                                ->assertDontSeeIn('@3-row', 'Mark As Inactive')
-                                ->runInlineAction(1, 'mark-as-inactive');
-                        }
-                    )->waitForText('Sorry! You are not authorized to perform this action.', 25);
+                    ->within(new IndexComponent('users'), function ($browser) {
+                        $browser->waitForTable()
+                            ->assertSeeIn('@1-row', 'Mark As Inactive')
+                            ->assertDontSeeIn('@2-row', 'Mark As Inactive')
+                            ->assertDontSeeIn('@3-row', 'Mark As Inactive')
+                            ->runInlineAction(1, 'mark-as-inactive');
+                    })->waitForText('Sorry! You are not authorized to perform this action.', 25);
 
-                $this->assertEquals(1, User::find(1)->active);
+            $this->assertEquals(1, User::find(1)->active);
 
-                $browser->blank();
-            }
-        );
+            $browser->blank();
+        });
     }
 }

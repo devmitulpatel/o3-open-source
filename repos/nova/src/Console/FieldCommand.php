@@ -91,79 +91,6 @@ class FieldCommand extends Command
     }
 
     /**
-     * Get the path to the tool.
-     *
-     * @return string
-     */
-    protected function fieldPath()
-    {
-        return base_path('nova-components/'.$this->fieldClass());
-    }
-
-    /**
-     * Get the field's class name.
-     *
-     * @return string
-     */
-    protected function fieldClass()
-    {
-        return Str::studly($this->fieldName());
-    }
-
-    /**
-     * Get the field's base name.
-     *
-     * @return string
-     */
-    protected function fieldName()
-    {
-        return explode('/', $this->argument('name'))[1];
-    }
-
-    /**
-     * Replace the given string in the given file.
-     *
-     * @param  string  $search
-     * @param  string  $replace
-     * @param  string  $path
-     * @return void
-     */
-    protected function replace($search, $replace, $path)
-    {
-        file_put_contents($path, str_replace($search, $replace, file_get_contents($path)));
-    }
-
-    /**
-     * Get the field's namespace.
-     *
-     * @return string
-     */
-    protected function fieldNamespace()
-    {
-        return Str::studly($this->fieldVendor()).'\\'.$this->fieldClass();
-    }
-
-    /**
-     * Get the field's vendor.
-     *
-     * @return string
-     */
-    protected function fieldVendor()
-    {
-        return explode('/', $this->argument('name'))[0];
-    }
-
-    /**
-     * Get the field's escaped namespace.
-     *
-     * @return string
-     */
-    protected function escapedFieldNamespace()
-    {
-        return str_replace('\\', '\\\\', $this->fieldNamespace());
-    }
-
-    /**
      * Add a path repository for the field to the application's composer.json file.
      *
      * @return void
@@ -181,16 +108,6 @@ class FieldCommand extends Command
             base_path('composer.json'),
             json_encode($composer, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)
         );
-    }
-
-    /**
-     * Get the relative path to the field.
-     *
-     * @return string
-     */
-    protected function relativeFieldPath()
-    {
-        return 'nova-components/'.$this->fieldClass();
     }
 
     /**
@@ -239,6 +156,26 @@ class FieldCommand extends Command
     }
 
     /**
+     * Compile the field's assets.
+     *
+     * @return void
+     */
+    protected function compile()
+    {
+        $this->executeCommand('npm run dev', $this->fieldPath());
+    }
+
+    /**
+     * Update the project's composer dependencies.
+     *
+     * @return void
+     */
+    protected function composerUpdate()
+    {
+        $this->executeCommand('composer update', getcwd());
+    }
+
+    /**
      * Run the given command as a process.
      *
      * @param  string  $command
@@ -259,22 +196,85 @@ class FieldCommand extends Command
     }
 
     /**
-     * Compile the field's assets.
+     * Replace the given string in the given file.
      *
+     * @param  string  $search
+     * @param  string  $replace
+     * @param  string  $path
      * @return void
      */
-    protected function compile()
+    protected function replace($search, $replace, $path)
     {
-        $this->executeCommand('npm run dev', $this->fieldPath());
+        file_put_contents($path, str_replace($search, $replace, file_get_contents($path)));
     }
 
     /**
-     * Update the project's composer dependencies.
+     * Get the path to the tool.
      *
-     * @return void
+     * @return string
      */
-    protected function composerUpdate()
+    protected function fieldPath()
     {
-        $this->executeCommand('composer update', getcwd());
+        return base_path('nova-components/'.$this->fieldClass());
+    }
+
+    /**
+     * Get the relative path to the field.
+     *
+     * @return string
+     */
+    protected function relativeFieldPath()
+    {
+        return 'nova-components/'.$this->fieldClass();
+    }
+
+    /**
+     * Get the field's namespace.
+     *
+     * @return string
+     */
+    protected function fieldNamespace()
+    {
+        return Str::studly($this->fieldVendor()).'\\'.$this->fieldClass();
+    }
+
+    /**
+     * Get the field's escaped namespace.
+     *
+     * @return string
+     */
+    protected function escapedFieldNamespace()
+    {
+        return str_replace('\\', '\\\\', $this->fieldNamespace());
+    }
+
+    /**
+     * Get the field's class name.
+     *
+     * @return string
+     */
+    protected function fieldClass()
+    {
+        return Str::studly($this->fieldName());
+    }
+
+    /**
+     * Get the field's vendor.
+     *
+     * @return string
+     */
+    protected function fieldVendor()
+    {
+        return explode('/', $this->argument('name'))[0];
+    }
+
+    /**
+     * Get the field's base name.
+     *
+     * @return string
+     */
+    protected function fieldName()
+    {
+        return explode('/', $this->argument('name'))[1];
     }
 }

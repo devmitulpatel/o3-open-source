@@ -1,22 +1,22 @@
 <template>
-  <loading-view :dusk="lens + '-lens-component'" :loading="initialLoading">
-    <custom-lens-header :resource-name="resourceName" class="mb-3" />
+  <loading-view :loading="initialLoading" :dusk="lens + '-lens-component'">
+    <custom-lens-header class="mb-3" :resource-name="resourceName" />
 
     <div v-if="shouldShowCards">
       <cards
         v-if="smallCards.length > 0"
         :cards="smallCards"
-        :lens="lens"
-        :resource-name="resourceName"
         class="mb-3"
+        :resource-name="resourceName"
+        :lens="lens"
       />
 
       <cards
         v-if="largeCards.length > 0"
         :cards="largeCards"
-        :lens="lens"
-        :resource-name="resourceName"
         size="large"
+        :resource-name="resourceName"
+        :lens="lens"
       />
     </div>
 
@@ -38,12 +38,12 @@
 
     <card>
       <div class="py-3 flex items-center border-b border-50">
-        <div v-if="shouldShowCheckBoxes" class="px-3">
+        <div class="px-3" v-if="shouldShowCheckBoxes">
           <!-- Select All -->
           <dropdown
-            class="-mx-2"
             dusk="select-all-dropdown"
             placement="bottom-end"
+            class="-mx-2"
           >
             <dropdown-trigger class="px-2">
               <fake-checkbox :checked="selectAllChecked" />
@@ -61,12 +61,12 @@
                     </checkbox-with-label>
                   </li>
                   <li
-                    v-if="allMatchingResourceCount > 0"
                     class="flex items-center"
+                    v-if="allMatchingResourceCount > 0"
                   >
                     <checkbox-with-label
-                      :checked="selectAllMatchingChecked"
                       dusk="select-all-matching-button"
+                      :checked="selectAllMatchingChecked"
                       @input="toggleSelectAllMatching"
                     >
                       <template>
@@ -88,10 +88,12 @@
           <!-- Action Selector -->
           <action-selector
             v-if="selectedResources.length > 0 || haveStandaloneActions"
+            :resource-name="resourceName"
             :actions="availableActions"
-            :endpoint="lensActionEndpoint"
             :pivot-actions="pivotActions"
             :pivot-name="pivotName"
+            :selected-resources="selectedResourcesForActionSelector"
+            :endpoint="lensActionEndpoint"
             :query-string="{
               currentSearch,
               encodedFilters,
@@ -100,26 +102,24 @@
               viaResourceId,
               viaRelationship,
             }"
-            :resource-name="resourceName"
-            :selected-resources="selectedResourcesForActionSelector"
             @actionExecuted="getResources"
           />
 
           <filter-menu
-            :lens="lens"
+            :resourceName="resourceName"
+            :soft-deletes="softDeletes"
+            :via-resource="viaResource"
+            :via-has-one="viaHasOne"
+            :trashed="trashed"
             :per-page="perPage"
             :per-page-options="
               perPageOptions || resourceInformation.perPageOptions
             "
-            :resourceName="resourceName"
             :show-trashed-option="
               authorizedToForceDeleteAnyResources ||
               authorizedToRestoreAnyResources
             "
-            :soft-deletes="softDeletes"
-            :trashed="trashed"
-            :via-has-one="viaHasOne"
-            :via-resource="viaResource"
+            :lens="lens"
             @clear-selected-filters="clearSelectedFilters(lens)"
             @filter-changed="filterChanged"
             @trashed-changed="trashedChanged"
@@ -128,36 +128,36 @@
 
           <delete-menu
             v-if="shouldShowDeleteMenu"
+            dusk="delete-menu"
+            :soft-deletes="softDeletes"
+            :resources="resources"
+            :selected-resources="selectedResources"
+            :via-many-to-many="viaManyToMany"
             :all-matching-resource-count="allMatchingResourceCount"
             :all-matching-selected="selectAllMatchingChecked"
-            :authorized-to-delete-any-resources="authorizedToDeleteAnyResources"
             :authorized-to-delete-selected-resources="
               authorizedToDeleteSelectedResources
-            "
-            :authorized-to-force-delete-any-resources="
-              authorizedToForceDeleteAnyResources
             "
             :authorized-to-force-delete-selected-resources="
               authorizedToForceDeleteSelectedResources
             "
-            :authorized-to-restore-any-resources="
-              authorizedToRestoreAnyResources
+            :authorized-to-delete-any-resources="authorizedToDeleteAnyResources"
+            :authorized-to-force-delete-any-resources="
+              authorizedToForceDeleteAnyResources
             "
             :authorized-to-restore-selected-resources="
               authorizedToRestoreSelectedResources
             "
-            :resources="resources"
-            :selected-resources="selectedResources"
-            :soft-deletes="softDeletes"
-            :via-many-to-many="viaManyToMany"
-            dusk="delete-menu"
-            @close="deleteModalOpen = false"
-            @deleteAllMatching="deleteAllMatchingResources"
+            :authorized-to-restore-any-resources="
+              authorizedToRestoreAnyResources
+            "
             @deleteSelected="deleteSelectedResources"
-            @forceDeleteAllMatching="forceDeleteAllMatchingResources"
+            @deleteAllMatching="deleteAllMatchingResources"
             @forceDeleteSelected="forceDeleteSelectedResources"
-            @restoreAllMatching="restoreAllMatchingResources"
+            @forceDeleteAllMatching="forceDeleteAllMatchingResources"
             @restoreSelected="restoreSelectedResources"
+            @restoreAllMatching="restoreAllMatchingResources"
+            @close="deleteModalOpen = false"
           />
         </div>
       </div>
@@ -170,14 +170,14 @@
           <div class="text-center">
             <svg
               class="mb-3"
+              xmlns="http://www.w3.org/2000/svg"
+              width="65"
               height="51"
               viewBox="0 0 65 51"
-              width="65"
-              xmlns="http://www.w3.org/2000/svg"
             >
               <path
-                d="M56 40h2c.552285 0 1 .447715 1 1s-.447715 1-1 1h-2v2c0 .552285-.447715 1-1 1s-1-.447715-1-1v-2h-2c-.552285 0-1-.447715-1-1s.447715-1 1-1h2v-2c0-.552285.447715-1 1-1s1 .447715 1 1v2zm-5.364125-8H38v8h7.049375c.350333-3.528515 2.534789-6.517471 5.5865-8zm-5.5865 10H6c-3.313708 0-6-2.686292-6-6V6c0-3.313708 2.686292-6 6-6h44c3.313708 0 6 2.686292 6 6v25.049375C61.053323 31.5511 65 35.814652 65 41c0 5.522847-4.477153 10-10 10-5.185348 0-9.4489-3.946677-9.950625-9zM20 30h16v-8H20v8zm0 2v8h16v-8H20zm34-2v-8H38v8h16zM2 30h16v-8H2v8zm0 2v4c0 2.209139 1.790861 4 4 4h12v-8H2zm18-12h16v-8H20v8zm34 0v-8H38v8h16zM2 20h16v-8H2v8zm52-10V6c0-2.209139-1.790861-4-4-4H6C3.790861 2 2 3.790861 2 6v4h52zm1 39c4.418278 0 8-3.581722 8-8s-3.581722-8-8-8-8 3.581722-8 8 3.581722 8 8 8z"
                 fill="#A8B9C5"
+                d="M56 40h2c.552285 0 1 .447715 1 1s-.447715 1-1 1h-2v2c0 .552285-.447715 1-1 1s-1-.447715-1-1v-2h-2c-.552285 0-1-.447715-1-1s.447715-1 1-1h2v-2c0-.552285.447715-1 1-1s1 .447715 1 1v2zm-5.364125-8H38v8h7.049375c.350333-3.528515 2.534789-6.517471 5.5865-8zm-5.5865 10H6c-3.313708 0-6-2.686292-6-6V6c0-3.313708 2.686292-6 6-6h44c3.313708 0 6 2.686292 6 6v25.049375C61.053323 31.5511 65 35.814652 65 41c0 5.522847-4.477153 10-10 10-5.185348 0-9.4489-3.946677-9.950625-9zM20 30h16v-8H20v8zm0 2v8h16v-8H20zm34-2v-8H38v8h16zM2 30h16v-8H2v8zm0 2v4c0 2.209139 1.790861 4 4 4h12v-8H2zm18-12h16v-8H20v8zm34 0v-8H38v8h16zM2 20h16v-8H2v8zm52-10V6c0-2.209139-1.790861-4-4-4H6C3.790861 2 2 3.790861 2 6v4h52zm1 39c4.418278 0 8-3.581722 8-8s-3.581722-8-8-8-8 3.581722-8 8 3.581722 8 8 8z"
               />
             </svg>
 
@@ -190,15 +190,15 @@
             </h3>
 
             <create-resource-button
-              :authorized-to-create="authorizedToCreate && !resourceIsFull"
-              :authorized-to-relate="authorizedToRelate"
-              :relationship-type="relationshipType"
-              :resource-name="resourceName"
+              classes="btn btn-sm btn-outline"
               :singular-name="singularName"
-              :via-relationship="viaRelationship"
+              :resource-name="resourceName"
               :via-resource="viaResource"
               :via-resource-id="viaResourceId"
-              classes="btn btn-sm btn-outline"
+              :via-relationship="viaRelationship"
+              :relationship-type="relationshipType"
+              :authorized-to-create="authorizedToCreate && !resourceIsFull"
+              :authorized-to-relate="authorizedToRelate"
             />
           </div>
         </div>
@@ -206,26 +206,26 @@
         <!-- Resource Table -->
         <div class="overflow-hidden overflow-x-auto relative">
           <resource-table
-            ref="resourceTable"
-            :actions-are-available="allActions.length > 0"
-            :actions-endpoint="lensActionEndpoint"
             :authorized-to-relate="authorizedToRelate"
-            :relationship-type="relationshipType"
             :resource-name="resourceName"
             :resources="resources"
-            :selected-resource-ids="selectedResourceIds"
-            :selected-resources="selectedResources"
-            :should-show-checkboxes="shouldShowCheckBoxes"
             :singular-name="singularName"
-            :update-selection-status="updateSelectionStatus"
-            :via-relationship="viaRelationship"
+            :selected-resources="selectedResources"
+            :selected-resource-ids="selectedResourceIds"
+            :actions-are-available="allActions.length > 0"
+            :actions-endpoint="lensActionEndpoint"
+            :should-show-checkboxes="shouldShowCheckBoxes"
             :via-resource="viaResource"
             :via-resource-id="viaResourceId"
-            @actionExecuted="getResources"
-            @delete="deleteResources"
+            :via-relationship="viaRelationship"
+            :relationship-type="relationshipType"
+            :update-selection-status="updateSelectionStatus"
             @order="orderByField"
-            @restore="restoreResources"
             @reset-order-by="resetOrderBy"
+            @delete="deleteResources"
+            @restore="restoreResources"
+            @actionExecuted="getResources"
+            ref="resourceTable"
           />
         </div>
 
@@ -233,23 +233,23 @@
         <component
           :is="paginationComponent"
           v-if="resourceResponse && resources.length > 0"
-          :all-matching-resource-count="allMatchingResourceCount"
-          :current-resource-count="resources.length"
           :next="hasNextPage"
-          :page="currentPage"
-          :pages="totalPages"
-          :per-page="perPage"
           :previous="hasPreviousPage"
-          :resource-count-label="resourceCountLabel"
-          @page="selectPage"
           @load-more="loadMore"
+          @page="selectPage"
+          :pages="totalPages"
+          :page="currentPage"
+          :per-page="perPage"
+          :resource-count-label="resourceCountLabel"
+          :current-resource-count="resources.length"
+          :all-matching-resource-count="allMatchingResourceCount"
         >
           <span
             v-if="resourceCountLabel"
+            class="text-sm text-80 px-4"
             :class="{
               'ml-auto': paginationComponent == 'pagination-links',
             }"
-            class="text-sm text-80 px-4"
           >
             {{ resourceCountLabel }}
           </span>

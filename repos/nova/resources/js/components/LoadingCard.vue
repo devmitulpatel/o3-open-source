@@ -2,8 +2,8 @@
   <card class="relative">
     <div
       v-if="loading"
-      :class="modeClass"
       class="rounded-lg flex items-center justify-center absolute pin z-50"
+      :class="modeClass"
     >
       <loader class="text-60" />
     </div>

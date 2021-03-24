@@ -1,5 +1,5 @@
 <template>
-  <div><badge :extra-classes="field.typeClass" :label="field.label" /></div>
+  <div><badge :label="field.label" :extra-classes="field.typeClass" /></div>
 </template>
 
 <script>

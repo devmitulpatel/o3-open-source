@@ -1,31 +1,31 @@
 <template>
   <default-field
-    :errors="errors"
     :field="field"
+    :errors="errors"
     :full-width-content="true"
     :show-help-text="showHelpText"
   >
     <template slot="field">
       <div
+        class="bg-white rounded-lg overflow-hidden"
         :class="{
           'markdown-fullscreen fixed pin z-50': isFullScreen,
           'form-input form-input-bordered px-0': !isFullScreen,
           'form-control-focus': isFocused,
           'border-danger': errors.has('body'),
         }"
-        class="bg-white rounded-lg overflow-hidden"
       >
         <header
-          :class="{ 'bg-30': isReadonly }"
           class="flex items-center content-center justify-between border-b border-60"
+          :class="{ 'bg-30': isReadonly }"
         >
           <ul class="w-full flex items-center content-center list-reset">
             <button
               :class="{
                 'text-primary font-bold': this.mode == 'write',
               }"
-              class="ml-1 text-90 px-3 py-2"
               @click.prevent="write"
+              class="ml-1 text-90 px-3 py-2"
             >
               {{ __('Write') }}
             </button>
@@ -33,8 +33,8 @@
               :class="{
                 'text-primary font-bold': this.mode == 'preview',
               }"
-              class="text-90 px-3 py-2"
               @click.prevent="preview"
+              class="text-90 px-3 py-2"
             >
               {{ __('Preview') }}
             </button>
@@ -42,10 +42,10 @@
 
           <ul v-if="!isReadonly" class="flex items-center list-reset">
             <button
-              v-for="tool in tools"
               :key="tool.action"
-              class="rounded-none ico-button inline-flex items-center justify-center px-2 text-sm text-80 border-l border-60"
               @click.prevent="callAction(tool.action)"
+              v-for="tool in tools"
+              class="rounded-none ico-button inline-flex items-center justify-center px-2 text-sm text-80 border-l border-60"
             >
               <component
                 :is="tool.icon"
@@ -57,8 +57,8 @@
 
         <div
           v-show="mode == 'write'"
-          :class="{ 'readonly bg-30': isReadonly }"
           class="flex markdown-content relative p-4"
+          :class="{ 'readonly bg-30': isReadonly }"
         >
           <textarea ref="theTextarea" :class="{ 'bg-30': isReadonly }" />
         </div>

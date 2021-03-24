@@ -1,27 +1,27 @@
 <template>
   <loading-view
-    :dusk="resourceName + '-index-component'"
     :loading="initialLoading"
+    :dusk="resourceName + '-index-component'"
   >
     <custom-index-header
       v-if="!viaResource"
-      :resource-name="resourceName"
       class="mb-3"
+      :resource-name="resourceName"
     />
 
     <div v-if="shouldShowCards">
       <cards
         v-if="smallCards.length > 0"
         :cards="smallCards"
-        :resource-name="resourceName"
         class="mb-3"
+        :resource-name="resourceName"
       />
 
       <cards
         v-if="largeCards.length > 0"
         :cards="largeCards"
-        :resource-name="resourceName"
         size="large"
+        :resource-name="resourceName"
       />
     </div>
 
@@ -31,27 +31,27 @@
       <!-- Search -->
       <div
         v-if="resourceInformation.searchable && !viaHasOne"
+        class="relative h-9 flex-no-shrink"
         :class="{
           'mb-6': resourceInformation.searchable && !viaHasOne,
         }"
-        class="relative h-9 flex-no-shrink"
       >
-        <icon class="absolute search-icon-center ml-3 text-70" type="search" />
+        <icon type="search" class="absolute search-icon-center ml-3 text-70" />
 
         <input
-          v-model="search"
-          :placeholder="__('Search')"
-          class="appearance-none form-search w-search pl-search shadow"
           data-testid="search-input"
           dusk="search"
-          spellcheck="false"
+          class="appearance-none form-search w-search pl-search shadow"
+          :placeholder="__('Search')"
           type="search"
-          @search="performSearch"
+          v-model="search"
           @keydown.stop="performSearch"
+          @search="performSearch"
+          spellcheck="false"
         />
       </div>
 
-      <div :class="{ 'mb-6': !viaResource }" class="w-full flex items-center">
+      <div class="w-full flex items-center" :class="{ 'mb-6': !viaResource }">
         <custom-index-toolbar
           v-if="!viaResource"
           :resource-name="resourceName"
@@ -59,23 +59,24 @@
 
         <!-- Create / Attach Button -->
         <create-resource-button
-          :authorized-to-create="authorizedToCreate && !resourceIsFull"
-          :authorized-to-relate="authorizedToRelate"
-          :class="{ 'mb-6': viaResource }"
           :label="createButtonLabel"
-          :relationship-type="relationshipType"
-          :resource-name="resourceName"
           :singular-name="singularName"
-          :via-relationship="viaRelationship"
+          :resource-name="resourceName"
           :via-resource="viaResource"
           :via-resource-id="viaResourceId"
+          :via-relationship="viaRelationship"
+          :relationship-type="relationshipType"
+          :authorized-to-create="authorizedToCreate && !resourceIsFull"
+          :authorized-to-relate="authorizedToRelate"
           class="flex-no-shrink ml-auto"
+          :class="{ 'mb-6': viaResource }"
         />
       </div>
     </div>
 
     <card>
       <div
+        class="flex items-center"
         :class="{
           'py-3 border-b border-50':
             shouldShowCheckBoxes ||
@@ -85,15 +86,14 @@
             hasFilters ||
             haveStandaloneActions,
         }"
-        class="flex items-center"
       >
         <div class="flex items-center">
-          <div v-if="shouldShowCheckBoxes" class="px-3">
+          <div class="px-3" v-if="shouldShowCheckBoxes">
             <!-- Select All -->
             <dropdown
-              class="-mx-2"
               dusk="select-all-dropdown"
               placement="bottom-end"
+              class="-mx-2"
             >
               <dropdown-trigger class="px-2">
                 <fake-checkbox :checked="selectAllChecked" />
@@ -105,16 +105,16 @@
                     <li class="flex items-center mb-4">
                       <checkbox-with-label
                         :checked="selectAllChecked"
-                        dusk="select-all-button"
                         @input="toggleSelectAll"
+                        dusk="select-all-button"
                       >
                         {{ __('Select All') }}
                       </checkbox-with-label>
                     </li>
                     <li class="flex items-center">
                       <checkbox-with-label
-                        :checked="selectAllMatchingChecked"
                         dusk="select-all-matching-button"
+                        :checked="selectAllMatchingChecked"
                         @input="toggleSelectAllMatching"
                       >
                         <template>
@@ -137,14 +137,15 @@
           <resource-polling-button
             v-if="shouldShowPollingToggle"
             :currently-polling="currentlyPolling"
-            class="mr-1"
             @start-polling="startPolling"
             @stop-polling="stopPolling"
+            class="mr-1"
           />
 
           <!-- Action Selector -->
           <action-selector
             v-if="selectedResources.length > 0 || haveStandaloneActions"
+            :resource-name="resourceName"
             :actions="availableActions"
             :pivot-actions="pivotActions"
             :pivot-name="pivotName"
@@ -156,15 +157,14 @@
               viaResourceId,
               viaRelationship,
             }"
-            :resource-name="resourceName"
             :selected-resources="selectedResourcesForActionSelector"
             @actionExecuted="getResources"
           />
 
           <!-- Lenses -->
           <dropdown
-            v-if="lenses.length > 0"
             class="bg-30 hover:bg-40 mr-3 rounded"
+            v-if="lenses.length > 0"
           >
             <dropdown-trigger class="px-3">
               <h3
@@ -175,22 +175,22 @@
               </h3>
             </dropdown-trigger>
 
-            <dropdown-menu slot="menu" direction="rtl" width="240">
-              <lens-selector :lenses="lenses" :resource-name="resourceName" />
+            <dropdown-menu slot="menu" width="240" direction="rtl">
+              <lens-selector :resource-name="resourceName" :lenses="lenses" />
             </dropdown-menu>
           </dropdown>
 
           <!-- Filters -->
           <filter-menu
+            :resource-name="resourceName"
+            :soft-deletes="softDeletes"
+            :via-resource="viaResource"
+            :via-has-one="viaHasOne"
+            :trashed="trashed"
             :per-page="perPage"
             :per-page-options="
               perPageOptions || resourceInformation.perPageOptions
             "
-            :resource-name="resourceName"
-            :soft-deletes="softDeletes"
-            :trashed="trashed"
-            :via-has-one="viaHasOne"
-            :via-resource="viaResource"
             @clear-selected-filters="clearSelectedFilters"
             @filter-changed="filterChanged"
             @trashed-changed="trashedChanged"
@@ -199,36 +199,36 @@
 
           <delete-menu
             v-if="shouldShowDeleteMenu"
+            dusk="delete-menu"
+            :soft-deletes="softDeletes"
+            :resources="resources"
+            :selected-resources="selectedResources"
+            :via-many-to-many="viaManyToMany"
             :all-matching-resource-count="allMatchingResourceCount"
             :all-matching-selected="selectAllMatchingChecked"
-            :authorized-to-delete-any-resources="authorizedToDeleteAnyResources"
             :authorized-to-delete-selected-resources="
               authorizedToDeleteSelectedResources
-            "
-            :authorized-to-force-delete-any-resources="
-              authorizedToForceDeleteAnyResources
             "
             :authorized-to-force-delete-selected-resources="
               authorizedToForceDeleteSelectedResources
             "
-            :authorized-to-restore-any-resources="
-              authorizedToRestoreAnyResources
+            :authorized-to-delete-any-resources="authorizedToDeleteAnyResources"
+            :authorized-to-force-delete-any-resources="
+              authorizedToForceDeleteAnyResources
             "
             :authorized-to-restore-selected-resources="
               authorizedToRestoreSelectedResources
             "
-            :resources="resources"
-            :selected-resources="selectedResources"
-            :soft-deletes="softDeletes"
-            :via-many-to-many="viaManyToMany"
-            dusk="delete-menu"
-            @close="deleteModalOpen = false"
-            @deleteAllMatching="deleteAllMatchingResources"
+            :authorized-to-restore-any-resources="
+              authorizedToRestoreAnyResources
+            "
             @deleteSelected="deleteSelectedResources"
-            @forceDeleteAllMatching="forceDeleteAllMatchingResources"
+            @deleteAllMatching="deleteAllMatchingResources"
             @forceDeleteSelected="forceDeleteSelectedResources"
-            @restoreAllMatching="restoreAllMatchingResources"
+            @forceDeleteAllMatching="forceDeleteAllMatchingResources"
             @restoreSelected="restoreSelectedResources"
+            @restoreAllMatching="restoreAllMatchingResources"
+            @close="deleteModalOpen = false"
           />
         </div>
       </div>
@@ -241,20 +241,20 @@
           <div class="text-center">
             <svg
               class="mb-3"
+              xmlns="http://www.w3.org/2000/svg"
+              width="65"
               height="51"
               viewBox="0 0 65 51"
-              width="65"
-              xmlns="http://www.w3.org/2000/svg"
             >
               <path
-                d="M56 40h2c.552285 0 1 .447715 1 1s-.447715 1-1 1h-2v2c0 .552285-.447715 1-1 1s-1-.447715-1-1v-2h-2c-.552285 0-1-.447715-1-1s.447715-1 1-1h2v-2c0-.552285.447715-1 1-1s1 .447715 1 1v2zm-5.364125-8H38v8h7.049375c.350333-3.528515 2.534789-6.517471 5.5865-8zm-5.5865 10H6c-3.313708 0-6-2.686292-6-6V6c0-3.313708 2.686292-6 6-6h44c3.313708 0 6 2.686292 6 6v25.049375C61.053323 31.5511 65 35.814652 65 41c0 5.522847-4.477153 10-10 10-5.185348 0-9.4489-3.946677-9.950625-9zM20 30h16v-8H20v8zm0 2v8h16v-8H20zm34-2v-8H38v8h16zM2 30h16v-8H2v8zm0 2v4c0 2.209139 1.790861 4 4 4h12v-8H2zm18-12h16v-8H20v8zm34 0v-8H38v8h16zM2 20h16v-8H2v8zm52-10V6c0-2.209139-1.790861-4-4-4H6C3.790861 2 2 3.790861 2 6v4h52zm1 39c4.418278 0 8-3.581722 8-8s-3.581722-8-8-8-8 3.581722-8 8 3.581722 8 8 8z"
                 fill="#A8B9C5"
+                d="M56 40h2c.552285 0 1 .447715 1 1s-.447715 1-1 1h-2v2c0 .552285-.447715 1-1 1s-1-.447715-1-1v-2h-2c-.552285 0-1-.447715-1-1s.447715-1 1-1h2v-2c0-.552285.447715-1 1-1s1 .447715 1 1v2zm-5.364125-8H38v8h7.049375c.350333-3.528515 2.534789-6.517471 5.5865-8zm-5.5865 10H6c-3.313708 0-6-2.686292-6-6V6c0-3.313708 2.686292-6 6-6h44c3.313708 0 6 2.686292 6 6v25.049375C61.053323 31.5511 65 35.814652 65 41c0 5.522847-4.477153 10-10 10-5.185348 0-9.4489-3.946677-9.950625-9zM20 30h16v-8H20v8zm0 2v8h16v-8H20zm34-2v-8H38v8h16zM2 30h16v-8H2v8zm0 2v4c0 2.209139 1.790861 4 4 4h12v-8H2zm18-12h16v-8H20v8zm34 0v-8H38v8h16zM2 20h16v-8H2v8zm52-10V6c0-2.209139-1.790861-4-4-4H6C3.790861 2 2 3.790861 2 6v4h52zm1 39c4.418278 0 8-3.581722 8-8s-3.581722-8-8-8-8 3.581722-8 8 3.581722 8 8 8z"
               />
             </svg>
 
             <h3
-              :class="{ 'mb-6': authorizedToCreate && !resourceIsFull }"
               class="text-base text-80 font-normal"
+              :class="{ 'mb-6': authorizedToCreate && !resourceIsFull }"
             >
               {{
                 __('No :resource matched the given criteria.', {
@@ -264,16 +264,16 @@
             </h3>
 
             <create-resource-button
-              :authorized-to-create="authorizedToCreate && !resourceIsFull"
-              :authorized-to-relate="authorizedToRelate"
+              classes="btn btn-sm btn-outline inline-flex items-center focus:outline-none focus:shadow-outline active:outline-none active:shadow-outline"
               :label="createButtonLabel"
-              :relationship-type="relationshipType"
-              :resource-name="resourceName"
               :singular-name="singularName"
-              :via-relationship="viaRelationship"
+              :resource-name="resourceName"
               :via-resource="viaResource"
               :via-resource-id="viaResourceId"
-              classes="btn btn-sm btn-outline inline-flex items-center focus:outline-none focus:shadow-outline active:outline-none active:shadow-outline"
+              :via-relationship="viaRelationship"
+              :relationship-type="relationshipType"
+              :authorized-to-create="authorizedToCreate && !resourceIsFull"
+              :authorized-to-relate="authorizedToRelate"
             >
             </create-resource-button>
           </div>
@@ -282,25 +282,25 @@
         <div class="overflow-hidden overflow-x-auto relative">
           <!-- Resource Table -->
           <resource-table
-            ref="resourceTable"
-            :actions-are-available="allActions.length > 0"
             :authorized-to-relate="authorizedToRelate"
-            :relationship-type="relationshipType"
             :resource-name="resourceName"
             :resources="resources"
-            :selected-resource-ids="selectedResourceIds"
-            :selected-resources="selectedResources"
-            :should-show-checkboxes="shouldShowCheckBoxes"
             :singular-name="singularName"
-            :update-selection-status="updateSelectionStatus"
-            :via-relationship="viaRelationship"
+            :selected-resources="selectedResources"
+            :selected-resource-ids="selectedResourceIds"
+            :actions-are-available="allActions.length > 0"
+            :should-show-checkboxes="shouldShowCheckBoxes"
             :via-resource="viaResource"
             :via-resource-id="viaResourceId"
-            @actionExecuted="getResources"
-            @delete="deleteResources"
+            :via-relationship="viaRelationship"
+            :relationship-type="relationshipType"
+            :update-selection-status="updateSelectionStatus"
             @order="orderByField"
-            @restore="restoreResources"
             @reset-order-by="resetOrderBy"
+            @delete="deleteResources"
+            @restore="restoreResources"
+            @actionExecuted="getResources"
+            ref="resourceTable"
           />
         </div>
 
@@ -308,23 +308,23 @@
         <component
           :is="paginationComponent"
           v-if="shouldShowPagination"
-          :all-matching-resource-count="allMatchingResourceCount"
-          :current-resource-count="resources.length"
           :next="hasNextPage"
-          :page="currentPage"
-          :pages="totalPages"
-          :per-page="perPage"
           :previous="hasPreviousPage"
-          :resource-count-label="resourceCountLabel"
-          @page="selectPage"
           @load-more="loadMore"
+          @page="selectPage"
+          :pages="totalPages"
+          :page="currentPage"
+          :per-page="perPage"
+          :resource-count-label="resourceCountLabel"
+          :current-resource-count="resources.length"
+          :all-matching-resource-count="allMatchingResourceCount"
         >
           <span
             v-if="resourceCountLabel"
+            class="text-sm text-80 px-4"
             :class="{
               'ml-auto': paginationComponent == 'pagination-links',
             }"
-            class="text-sm text-80 px-4"
           >
             {{ resourceCountLabel }}
           </span>

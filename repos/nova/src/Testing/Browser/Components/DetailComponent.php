@@ -24,6 +24,16 @@ class DetailComponent extends BaseComponent
     }
 
     /**
+     * Get the root selector for the component.
+     *
+     * @return string
+     */
+    public function selector()
+    {
+        return '@'.$this->resourceName.'-detail-component';
+    }
+
+    /**
      * Assert that the browser page contains the component.
      *
      * @param  Browser  $browser
@@ -34,16 +44,6 @@ class DetailComponent extends BaseComponent
         $browser->pause(500);
 
         $browser->assertVisible($this->selector());
-    }
-
-    /**
-     * Get the root selector for the component.
-     *
-     * @return string
-     */
-    public function selector()
-    {
-        return '@'.$this->resourceName.'-detail-component';
     }
 
     /**

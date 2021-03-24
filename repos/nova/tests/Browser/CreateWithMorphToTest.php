@@ -17,29 +17,25 @@ class CreateWithMorphToTest extends DuskTestCase
      */
     public function resource_can_be_created()
     {
-        $this->whileSearchable(
-            function () {
-                $post = PostFactory::new()->create();
+        $this->whileSearchable(function () {
+            $post = PostFactory::new()->create();
 
-                $this->browse(
-                    function (Browser $browser) use ($post) {
-                        $browser->loginAs(User::find(1))
-                            ->visit(new Create('comments'))
-                            ->select('@commentable-type', 'posts')
-                            ->pause(500)
-                            ->searchAndSelectFirstRelation('commentable', 1)
-                            ->type('@body', 'Test Comment')
-                            ->create();
+            $this->browse(function (Browser $browser) use ($post) {
+                $browser->loginAs(User::find(1))
+                        ->visit(new Create('comments'))
+                        ->select('@commentable-type', 'posts')
+                        ->pause(500)
+                        ->searchAndSelectFirstRelation('commentable', 1)
+                        ->type('@body', 'Test Comment')
+                        ->create();
 
-                        $browser->assertPathIs('/nova/resources/comments/1');
+                $browser->assertPathIs('/nova/resources/comments/1');
 
-                        $this->assertCount(1, $post->fresh()->comments);
+                $this->assertCount(1, $post->fresh()->comments);
 
-                        $browser->blank();
-                    }
-                );
-            }
-        );
+                $browser->blank();
+            });
+        });
     }
 
     /**
@@ -47,29 +43,25 @@ class CreateWithMorphToTest extends DuskTestCase
      */
     public function searchable_resource_can_be_created()
     {
-        $this->whileSearchable(
-            function () {
-                $post = PostFactory::new()->create();
+        $this->whileSearchable(function () {
+            $post = PostFactory::new()->create();
 
-                $this->browse(
-                    function (Browser $browser) use ($post) {
-                        $browser->loginAs(User::find(1))
-                            ->visit(new Create('comments'))
-                            ->select('@commentable-type', 'posts')
-                            ->pause(500)
-                            ->searchAndSelectFirstRelation('commentable', 1)
-                            ->type('@body', 'Test Comment')
-                            ->create();
+            $this->browse(function (Browser $browser) use ($post) {
+                $browser->loginAs(User::find(1))
+                        ->visit(new Create('comments'))
+                        ->select('@commentable-type', 'posts')
+                        ->pause(500)
+                        ->searchAndSelectFirstRelation('commentable', 1)
+                        ->type('@body', 'Test Comment')
+                        ->create();
 
-                        $browser->assertPathIs('/nova/resources/comments/1');
+                $browser->assertPathIs('/nova/resources/comments/1');
 
-                        $this->assertCount(1, $post->fresh()->comments);
+                $this->assertCount(1, $post->fresh()->comments);
 
-                        $browser->blank();
-                    }
-                );
-            }
-        );
+                $browser->blank();
+            });
+        });
     }
 
     /**
@@ -80,45 +72,38 @@ class CreateWithMorphToTest extends DuskTestCase
         $this->resource_can_be_created_via_parent_resource();
     }
 
+    /**
+     * @test
+     */
+    public function searchable_resource_can_be_created_via_parent_resource()
+    {
+        $this->whileSearchable(function () {
+            $this->resource_can_be_created_via_parent_resource();
+        });
+    }
+
     protected function resource_can_be_created_via_parent_resource()
     {
         $post = PostFactory::new()->create();
 
-        $this->browse(
-            function (Browser $browser) use ($post) {
-                $browser->loginAs(User::find(1))
+        $this->browse(function (Browser $browser) use ($post) {
+            $browser->loginAs(User::find(1))
                     ->visit(new Detail('posts', $post->id))
-                    ->within(
-                        new IndexComponent('comments'),
-                        function ($browser) {
-                            $browser->click('@create-button');
-                        }
-                    )
+                    ->within(new IndexComponent('comments'), function ($browser) {
+                        $browser->click('@create-button');
+                    })
                     ->on(new Create('comments'))
                     ->assertDisabled('@commentable-type')
                     ->assertDisabled('@commentable-select')
                     ->type('@body', 'Test Comment')
                     ->create();
 
-                $browser->assertPathIs('/nova/resources/comments/1');
+            $browser->assertPathIs('/nova/resources/comments/1');
 
-                $this->assertCount(1, $post->fresh()->comments);
+            $this->assertCount(1, $post->fresh()->comments);
 
-                $browser->blank();
-            }
-        );
-    }
-
-    /**
-     * @test
-     */
-    public function searchable_resource_can_be_created_via_parent_resource()
-    {
-        $this->whileSearchable(
-            function () {
-                $this->resource_can_be_created_via_parent_resource();
-            }
-        );
+            $browser->blank();
+        });
     }
 
     /**
@@ -126,16 +111,14 @@ class CreateWithMorphToTest extends DuskTestCase
      */
     public function morph_to_field_should_honor_custom_labels()
     {
-        $this->browse(
-            function (Browser $browser) {
-                $browser->loginAs(User::find(1))
+        $this->browse(function (Browser $browser) {
+            $browser->loginAs(User::find(1))
                     ->visit(new Create('comments'))
                     ->assertSee('User Post')
                     ->assertSee('User Video');
 
-                $browser->blank();
-            }
-        );
+            $browser->blank();
+        });
     }
 
     /**
@@ -145,23 +128,17 @@ class CreateWithMorphToTest extends DuskTestCase
     {
         $post = PostFactory::new()->create();
 
-        $this->browse(
-            function (Browser $browser) use ($post) {
-                $browser->loginAs(User::find(1))
-                    ->visit(
-                        new Create(
-                            'comments', [
-                            'viaResource' => 'posts',
-                            'viaResourceId' => $post->id,
-                            'viaRelationship' => 'comments',
-                        ]
-                        )
-                    )
-                    ->assertValue('@commentable-type', 'posts')
-                    ->assertValue('@commentable-select', $post->id);
+        $this->browse(function (Browser $browser) use ($post) {
+            $browser->loginAs(User::find(1))
+                ->visit(new Create('comments', [
+                    'viaResource' => 'posts',
+                    'viaResourceId' => $post->id,
+                    'viaRelationship' => 'comments',
+                ]))
+                ->assertValue('@commentable-type', 'posts')
+                ->assertValue('@commentable-select', $post->id);
 
-                $browser->blank();
-            }
-        );
+            $browser->blank();
+        });
     }
 }

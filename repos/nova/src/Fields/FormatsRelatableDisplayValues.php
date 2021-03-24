@@ -9,23 +9,6 @@ use Laravel\Nova\Resource;
 trait FormatsRelatableDisplayValues
 {
     /**
-     * Set the column that should be displayed for the field.
-     *
-     * @param Closure|string  $display
-     * @return $this
-     */
-    public function display($display)
-    {
-        $this->display = $display instanceof Closure
-                        ? $display
-                        : function ($resource) use ($display) {
-                            return $resource->{$display};
-                        };
-
-        return $this;
-    }
-
-    /**
      * Format the associatable display value.
      *
      * @param  mixed  $resource
@@ -42,5 +25,22 @@ trait FormatsRelatableDisplayValues
         }
 
         return $resource->title();
+    }
+
+    /**
+     * Set the column that should be displayed for the field.
+     *
+     * @param Closure|string  $display
+     * @return $this
+     */
+    public function display($display)
+    {
+        $this->display = $display instanceof Closure
+                        ? $display
+                        : function ($resource) use ($display) {
+                            return $resource->{$display};
+                        };
+
+        return $this;
     }
 }

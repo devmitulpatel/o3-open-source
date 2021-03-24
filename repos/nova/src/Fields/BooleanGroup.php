@@ -109,21 +109,6 @@ class BooleanGroup extends Field
     }
 
     /**
-     * Prepare the field for JSON serialization.
-     *
-     * @return array
-     */
-    public function jsonSerialize()
-    {
-        return array_merge(parent::jsonSerialize(), [
-            'hideTrueValues' => $this->hideTrueValues,
-            'hideFalseValues' => $this->hideFalseValues,
-            'options' => $this->options,
-            'noValueText' => __($this->noValueText),
-        ]);
-    }
-
-    /**
      * Hydrate the given attribute on the model based on the incoming request.
      *
      * @param NovaRequest $request
@@ -137,5 +122,20 @@ class BooleanGroup extends Field
         if ($request->exists($requestAttribute)) {
             $model->{$attribute} = json_decode($request[$requestAttribute], true);
         }
+    }
+
+    /**
+     * Prepare the field for JSON serialization.
+     *
+     * @return array
+     */
+    public function jsonSerialize()
+    {
+        return array_merge(parent::jsonSerialize(), [
+            'hideTrueValues' => $this->hideTrueValues,
+            'hideFalseValues' => $this->hideFalseValues,
+            'options' => $this->options,
+            'noValueText' => __($this->noValueText),
+        ]);
     }
 }

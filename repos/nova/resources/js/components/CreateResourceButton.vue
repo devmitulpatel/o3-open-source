@@ -1,10 +1,10 @@
 <template>
-    <div v-if="shouldShowButtons">
-        <!-- Attach Related Models -->
-        <router-link
-            v-if="shouldShowAttachButton"
-            :class="classes"
-            :to="{
+  <div v-if="shouldShowButtons">
+    <!-- Attach Related Models -->
+    <router-link
+      v-if="shouldShowAttachButton"
+      :class="classes"
+      :to="{
         name: 'attach',
         params: {
           resourceName: viaResource,
@@ -16,16 +16,16 @@
           polymorphic: relationshipType == 'morphToMany' ? '1' : '0',
         },
       }"
-            dusk="attach-button"
-        >
-            <slot> {{ __('Attach :resource', {resource: singularName}) }}</slot>
-        </router-link>
+      dusk="attach-button"
+    >
+      <slot> {{ __('Attach :resource', { resource: singularName }) }}</slot>
+    </router-link>
 
-        <!-- Create Related Models -->
-        <router-link
-            v-else-if="shouldShowCreateButton"
-            :class="classes"
-            :to="{
+    <!-- Create Related Models -->
+    <router-link
+      v-else-if="shouldShowCreateButton"
+      :class="classes"
+      :to="{
         name: 'create',
         params: {
           resourceName: resourceName,
@@ -36,61 +36,61 @@
           viaRelationship: viaRelationship,
         },
       }"
-            dusk="create-button"
-        >
-            {{ label }}
-        </router-link>
-    </div>
+      dusk="create-button"
+    >
+      {{ label }}
+    </router-link>
+  </div>
 </template>
 
 <script>
 export default {
-    props: {
-        classes: {default: 'btn btn-default btn-primary'},
-        label: {},
-        singularName: {},
-        resourceName: {},
-        viaResource: {},
-        viaResourceId: {},
-        viaRelationship: {},
-        relationshipType: {},
-        authorizedToCreate: {},
-        authorizedToRelate: {},
-        alreadyFilled: {
-            type: Boolean,
-            default: false,
-        },
+  props: {
+    classes: { default: 'btn btn-default btn-primary' },
+    label: {},
+    singularName: {},
+    resourceName: {},
+    viaResource: {},
+    viaResourceId: {},
+    viaRelationship: {},
+    relationshipType: {},
+    authorizedToCreate: {},
+    authorizedToRelate: {},
+    alreadyFilled: {
+      type: Boolean,
+      default: false,
+    },
+  },
+
+  computed: {
+    /**
+     * Determine if any buttons should be displayed.
+     */
+    shouldShowButtons() {
+      return this.shouldShowAttachButton || this.shouldShowCreateButton
     },
 
-    computed: {
-        /**
-         * Determine if any buttons should be displayed.
-         */
-        shouldShowButtons() {
-            return this.shouldShowAttachButton || this.shouldShowCreateButton
-        },
-
-        /**
-         * Determine if the attach button should be displayed.
-         */
-        shouldShowAttachButton() {
-            return (
-                (this.relationshipType == 'belongsToMany' ||
-                    this.relationshipType == 'morphToMany') &&
-                this.authorizedToRelate
-            )
-        },
-
-        /**
-         * Determine if the create button should be displayed.
-         */
-        shouldShowCreateButton() {
-            return (
-                this.authorizedToCreate &&
-                this.authorizedToRelate &&
-                !this.alreadyFilled
-            )
-        },
+    /**
+     * Determine if the attach button should be displayed.
+     */
+    shouldShowAttachButton() {
+      return (
+        (this.relationshipType == 'belongsToMany' ||
+          this.relationshipType == 'morphToMany') &&
+        this.authorizedToRelate
+      )
     },
+
+    /**
+     * Determine if the create button should be displayed.
+     */
+    shouldShowCreateButton() {
+      return (
+        this.authorizedToCreate &&
+        this.authorizedToRelate &&
+        !this.alreadyFilled
+      )
+    },
+  },
 }
 </script>

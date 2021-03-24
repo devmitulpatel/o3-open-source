@@ -23,15 +23,13 @@ class ActionController extends Controller
                 : null) ?? $request->model()
         );
 
-        return response()->json(
-            [
-                'actions' => $resource->availableActions($request),
-                'pivotActions' => [
-                    'name' => $request->pivotName(),
-                    'actions' => $resource->availablePivotActions($request),
-                ],
-            ]
-        );
+        return response()->json([
+            'actions' => $resource->availableActions($request),
+            'pivotActions' => [
+                'name' => $request->pivotName(),
+                'actions' => $resource->availablePivotActions($request),
+            ],
+        ]);
     }
 
     /**

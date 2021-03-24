@@ -1,36 +1,36 @@
 <template>
-  <default-field :errors="errors" :field="field" :show-help-text="showHelpText">
+  <default-field :field="field" :errors="errors" :show-help-text="showHelpText">
     <template slot="field">
       <div class="flex items-center">
         <date-time-picker
+          class="w-full form-control form-input form-input-bordered"
           ref="dateTimePicker"
-          :alt-format="pickerDisplayFormat"
-          :class="errorClasses"
-          :dateFormat="pickerFormat"
-          :disabled="isReadonly"
           :dusk="field.attribute"
-          :first-day-of-week="firstDayOfWeek"
           :name="field.name"
           :placeholder="placeholder"
-          :twelve-hour-time="usesTwelveHourTime"
+          :dateFormat="pickerFormat"
+          :alt-format="pickerDisplayFormat"
           :value="localizedValue"
-          class="w-full form-control form-input form-input-bordered"
+          :twelve-hour-time="usesTwelveHourTime"
+          :first-day-of-week="firstDayOfWeek"
+          :class="errorClasses"
           @change="handleChange"
+          :disabled="isReadonly"
         />
 
         <a
           v-if="field.nullable"
+          @click.prevent="$refs.dateTimePicker.clear()"
+          href="#"
+          :title="__('Clear value')"
+          tabindex="-1"
+          class="p-1 px-2 cursor-pointer leading-none focus:outline-none"
           :class="{
             'text-50': !value.length,
             'text-black hover:text-danger': value.length,
           }"
-          :title="__('Clear value')"
-          class="p-1 px-2 cursor-pointer leading-none focus:outline-none"
-          href="#"
-          tabindex="-1"
-          @click.prevent="$refs.dateTimePicker.clear()"
         >
-          <icon height="22" type="x-circle" viewBox="0 0 22 22" width="22" />
+          <icon type="x-circle" width="22" height="22" viewBox="0 0 22 22" />
         </a>
 
         <span class="text-80 text-sm ml-2">({{ userTimezone }})</span>

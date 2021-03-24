@@ -40,61 +40,77 @@ class ActionEvent extends Model
     protected $dateFormat = 'Y-m-d H:i:s';
 
     /**
+     * Get the user that initiated the action.
+     */
+    public function user()
+    {
+        $provider = config('auth.guards.'.(config('nova.guard') ?? 'web').'.provider');
+
+        return $this->belongsTo(
+            config('auth.providers.'.$provider.'.model'), 'user_id'
+        );
+    }
+
+    /**
+     * Get the target of the action for user interface linking.
+     */
+    public function target()
+    {
+        return $this->morphTo('target', 'target_type', 'target_id')->withTrashed();
+    }
+
+    /**
      * Create a new action event instance for a resource creation.
      *
-     * @param Authenticatable $user
+     * @param  Authenticatable  $user
      * @param Model $model
      * @return Model
      */
     public static function forResourceCreate($user, $model)
     {
-        return new static(
-            [
-                'batch_id' => (string)Str::orderedUuid(),
-                'user_id' => $user->getAuthIdentifier(),
-                'name' => 'Create',
-                'actionable_type' => $model->getMorphClass(),
-                'actionable_id' => $model->getKey(),
-                'target_type' => $model->getMorphClass(),
-                'target_id' => $model->getKey(),
-                'model_type' => $model->getMorphClass(),
-                'model_id' => $model->getKey(),
-                'fields' => '',
-                'original' => null,
-                'changes' => $model->attributesToArray(),
-                'status' => 'finished',
-                'exception' => '',
-            ]
-        );
+        return new static([
+            'batch_id' => (string) Str::orderedUuid(),
+            'user_id' => $user->getAuthIdentifier(),
+            'name' => 'Create',
+            'actionable_type' => $model->getMorphClass(),
+            'actionable_id' => $model->getKey(),
+            'target_type' => $model->getMorphClass(),
+            'target_id' => $model->getKey(),
+            'model_type' => $model->getMorphClass(),
+            'model_id' => $model->getKey(),
+            'fields' => '',
+            'original' => null,
+            'changes' => $model->attributesToArray(),
+            'status' => 'finished',
+            'exception' => '',
+        ]);
     }
 
     /**
      * Create a new action event instance for a resource update.
      *
-     * @param Authenticatable $user
+     * @param  Authenticatable  $user
      * @param Model $model
      * @return Model
      */
     public static function forResourceUpdate($user, $model)
     {
-        return new static(
-            [
-                'batch_id' => (string)Str::orderedUuid(),
-                'user_id' => $user->getAuthIdentifier(),
-                'name' => 'Update',
-                'actionable_type' => $model->getMorphClass(),
-                'actionable_id' => $model->getKey(),
-                'target_type' => $model->getMorphClass(),
-                'target_id' => $model->getKey(),
-                'model_type' => $model->getMorphClass(),
-                'model_id' => $model->getKey(),
-                'fields' => '',
-                'original' => array_intersect_key($model->getOriginal(), $model->getDirty()),
-                'changes' => $model->getDirty(),
-                'status' => 'finished',
-                'exception' => '',
-            ]
-        );
+        return new static([
+            'batch_id' => (string) Str::orderedUuid(),
+            'user_id' => $user->getAuthIdentifier(),
+            'name' => 'Update',
+            'actionable_type' => $model->getMorphClass(),
+            'actionable_id' => $model->getKey(),
+            'target_type' => $model->getMorphClass(),
+            'target_id' => $model->getKey(),
+            'model_type' => $model->getMorphClass(),
+            'model_id' => $model->getKey(),
+            'fields' => '',
+            'original' => array_intersect_key($model->getOriginal(), $model->getDirty()),
+            'changes' => $model->getDirty(),
+            'status' => 'finished',
+            'exception' => '',
+        ]);
     }
 
     /**
@@ -107,24 +123,22 @@ class ActionEvent extends Model
      */
     public static function forAttachedResource(NovaRequest $request, $parent, $pivot)
     {
-        return new static(
-            [
-                'batch_id' => (string)Str::orderedUuid(),
-                'user_id' => $request->user()->getAuthIdentifier(),
-                'name' => 'Attach',
-                'actionable_type' => $parent->getMorphClass(),
-                'actionable_id' => $parent->getKey(),
-                'target_type' => Nova::modelInstanceForKey($request->relatedResource)->getMorphClass(),
-                'target_id' => $request->input($request->relatedResource),
-                'model_type' => $pivot->getMorphClass(),
-                'model_id' => $pivot->getKey(),
-                'fields' => '',
-                'original' => null,
-                'changes' => $pivot->attributesToArray(),
-                'status' => 'finished',
-                'exception' => '',
-            ]
-        );
+        return new static([
+            'batch_id' => (string) Str::orderedUuid(),
+            'user_id' => $request->user()->getAuthIdentifier(),
+            'name' => 'Attach',
+            'actionable_type' => $parent->getMorphClass(),
+            'actionable_id' => $parent->getKey(),
+            'target_type' => Nova::modelInstanceForKey($request->relatedResource)->getMorphClass(),
+            'target_id' => $request->input($request->relatedResource),
+            'model_type' => $pivot->getMorphClass(),
+            'model_id' => $pivot->getKey(),
+            'fields' => '',
+            'original' => null,
+            'changes' => $pivot->attributesToArray(),
+            'status' => 'finished',
+            'exception' => '',
+        ]);
     }
 
     /**
@@ -137,30 +151,28 @@ class ActionEvent extends Model
      */
     public static function forAttachedResourceUpdate(NovaRequest $request, $parent, $pivot)
     {
-        return new static(
-            [
-                'batch_id' => (string)Str::orderedUuid(),
-                'user_id' => $request->user()->getAuthIdentifier(),
-                'name' => 'Update Attached',
-                'actionable_type' => $parent->getMorphClass(),
-                'actionable_id' => $parent->getKey(),
-                'target_type' => Nova::modelInstanceForKey($request->relatedResource)->getMorphClass(),
-                'target_id' => $request->relatedResourceId,
-                'model_type' => $pivot->getMorphClass(),
-                'model_id' => $pivot->getKey(),
-                'fields' => '',
-                'original' => array_intersect_key($pivot->getOriginal(), $pivot->getDirty()),
-                'changes' => $pivot->getDirty(),
-                'status' => 'finished',
-                'exception' => '',
-            ]
-        );
+        return new static([
+            'batch_id' => (string) Str::orderedUuid(),
+            'user_id' => $request->user()->getAuthIdentifier(),
+            'name' => 'Update Attached',
+            'actionable_type' => $parent->getMorphClass(),
+            'actionable_id' => $parent->getKey(),
+            'target_type' => Nova::modelInstanceForKey($request->relatedResource)->getMorphClass(),
+            'target_id' => $request->relatedResourceId,
+            'model_type' => $pivot->getMorphClass(),
+            'model_id' => $pivot->getKey(),
+            'fields' => '',
+            'original' => array_intersect_key($pivot->getOriginal(), $pivot->getDirty()),
+            'changes' => $pivot->getDirty(),
+            'status' => 'finished',
+            'exception' => '',
+        ]);
     }
 
     /**
      * Create new action event instances for resource deletes.
      *
-     * @param Authenticatable $user
+     * @param  Authenticatable  $user
      * @param Collection $models
      * @return Collection
      */
@@ -170,47 +182,9 @@ class ActionEvent extends Model
     }
 
     /**
-     * Create new action event instances for resource soft deletions.
-     *
-     * @param string $action
-     * @param Authenticatable $user
-     * @param Collection $models
-     * @return Collection
-     */
-    public static function forSoftDeleteAction($action, $user, Collection $models)
-    {
-        $batchId = (string)Str::orderedUuid();
-
-        return $models->map(
-            function ($model) use ($action, $user, $batchId) {
-                return new static(
-                    [
-                        'batch_id' => $batchId,
-                        'user_id' => $user->getAuthIdentifier(),
-                        'name' => $action,
-                        'actionable_type' => $model->getMorphClass(),
-                        'actionable_id' => $model->getKey(),
-                        'target_type' => $model->getMorphClass(),
-                        'target_id' => $model->getKey(),
-                        'model_type' => $model->getMorphClass(),
-                        'model_id' => $model->getKey(),
-                        'fields' => '',
-                        'original' => null,
-                        'changes' => null,
-                        'status' => 'finished',
-                        'exception' => '',
-                        'created_at' => new DateTime,
-                        'updated_at' => new DateTime,
-                    ]
-                );
-            }
-        );
-    }
-
-    /**
      * Create new action event instances for resource restorations.
      *
-     * @param Authenticatable $user
+     * @param  Authenticatable  $user
      * @param Collection $models
      * @return Collection
      */
@@ -220,42 +194,72 @@ class ActionEvent extends Model
     }
 
     /**
+     * Create new action event instances for resource soft deletions.
+     *
+     * @param  string  $action
+     * @param  Authenticatable  $user
+     * @param Collection $models
+     * @return Collection
+     */
+    public static function forSoftDeleteAction($action, $user, Collection $models)
+    {
+        $batchId = (string) Str::orderedUuid();
+
+        return $models->map(function ($model) use ($action, $user, $batchId) {
+            return new static([
+                'batch_id' => $batchId,
+                'user_id' => $user->getAuthIdentifier(),
+                'name' => $action,
+                'actionable_type' => $model->getMorphClass(),
+                'actionable_id' => $model->getKey(),
+                'target_type' => $model->getMorphClass(),
+                'target_id' => $model->getKey(),
+                'model_type' => $model->getMorphClass(),
+                'model_id' => $model->getKey(),
+                'fields' => '',
+                'original' => null,
+                'changes' => null,
+                'status' => 'finished',
+                'exception' => '',
+                'created_at' => new DateTime,
+                'updated_at' => new DateTime,
+            ]);
+        });
+    }
+
+    /**
      * Create new action event instances for resource detachments.
      *
-     * @param Authenticatable $user
+     * @param  Authenticatable  $user
      * @param Model $parent
      * @param Collection $models
-     * @param string $pivotClass
+     * @param  string  $pivotClass
      * @return Collection
      */
     public static function forResourceDetach($user, $parent, Collection $models, $pivotClass)
     {
-        $batchId = (string)Str::orderedUuid();
+        $batchId = (string) Str::orderedUuid();
 
-        return $models->map(
-            function ($model) use ($user, $parent, $pivotClass, $batchId) {
-                return new static(
-                    [
-                        'batch_id' => $batchId,
-                        'user_id' => $user->getAuthIdentifier(),
-                        'name' => 'Detach',
-                        'actionable_type' => $parent->getMorphClass(),
-                        'actionable_id' => $parent->getKey(),
-                        'target_type' => $model->getMorphClass(),
-                        'target_id' => $model->getKey(),
-                        'model_type' => $pivotClass,
-                        'model_id' => null,
-                        'fields' => '',
-                        'original' => null,
-                        'changes' => null,
-                        'status' => 'finished',
-                        'exception' => '',
-                        'created_at' => new DateTime,
-                        'updated_at' => new DateTime,
-                    ]
-                );
-            }
-        );
+        return $models->map(function ($model) use ($user, $parent, $pivotClass, $batchId) {
+            return new static([
+                'batch_id' => $batchId,
+                'user_id' => $user->getAuthIdentifier(),
+                'name' => 'Detach',
+                'actionable_type' => $parent->getMorphClass(),
+                'actionable_id' => $parent->getKey(),
+                'target_type' => $model->getMorphClass(),
+                'target_id' => $model->getKey(),
+                'model_type' => $pivotClass,
+                'model_id' => null,
+                'fields' => '',
+                'original' => null,
+                'changes' => null,
+                'status' => 'finished',
+                'exception' => '',
+                'created_at' => new DateTime,
+                'updated_at' => new DateTime,
+            ]);
+        });
     }
 
     /**
@@ -263,36 +267,28 @@ class ActionEvent extends Model
      *
      * @param ActionRequest $request
      * @param Action $action
-     * @param string $batchId
+     * @param  string  $batchId
      * @param Collection $models
-     * @param string $status
+     * @param  string  $status
      * @return void
      */
-    public static function createForModels(
-        ActionRequest $request,
-        Action $action,
-        $batchId,
-        Collection $models,
-        $status = 'running'
-    ) {
-        $models = $models->map(
-            function ($model) use ($request, $action, $batchId, $status) {
-                return array_merge(
-                    static::defaultAttributes($request, $action, $batchId, $status),
-                    [
-                        'actionable_id' => $request->actionableKey($model),
-                        'target_id' => $request->targetKey($model),
-                        'model_id' => $model->getKey(),
-                    ]
-                );
-            }
-        );
+    public static function createForModels(ActionRequest $request, Action $action,
+                                           $batchId, Collection $models, $status = 'running')
+    {
+        $models = $models->map(function ($model) use ($request, $action, $batchId, $status) {
+            return array_merge(
+                static::defaultAttributes($request, $action, $batchId, $status),
+                [
+                    'actionable_id' => $request->actionableKey($model),
+                    'target_id' => $request->targetKey($model),
+                    'model_id' => $model->getKey(),
+                ]
+            );
+        });
 
-        $models->chunk(50)->each(
-            function ($models) {
-                static::insert($models->all());
-            }
-        );
+        $models->chunk(50)->each(function ($models) {
+            static::insert($models->all());
+        });
 
         static::prune($models);
     }
@@ -302,24 +298,19 @@ class ActionEvent extends Model
      *
      * @param ActionRequest $request
      * @param Action $action
-     * @param string $batchId
-     * @param string $status
+     * @param  string  $batchId
+     * @param  string  $status
      * @return array
      */
-    public static function defaultAttributes(
-        ActionRequest $request,
-        Action $action,
-        $batchId,
-        $status = 'running'
-    ) {
+    public static function defaultAttributes(ActionRequest $request, Action $action,
+                                             $batchId, $status = 'running')
+    {
         if ($request->isPivotAction()) {
             $pivotClass = $request->pivotRelation()->getPivotClass();
 
-            $modelType = collect(Relation::$morphMap)->filter(
-                    function ($model, $alias) use ($pivotClass) {
-                        return $model === $pivotClass;
-                    }
-                )->keys()->first() ?? $pivotClass;
+            $modelType = collect(Relation::$morphMap)->filter(function ($model, $alias) use ($pivotClass) {
+                return $model === $pivotClass;
+            })->keys()->first() ?? $pivotClass;
         } else {
             $modelType = $request->actionableModel()->getMorphClass();
         }
@@ -345,66 +336,57 @@ class ActionEvent extends Model
      * Prune the action events for the given types.
      *
      * @param Collection $models
-     * @param int $limit
+     * @param  int  $limit
      */
     public static function prune($models, $limit = 25)
     {
-        $models->each(
-            function ($model) use ($limit) {
-                static::where('actionable_id', $model['actionable_id'])
-                    ->where('actionable_type', $model['actionable_type'])
-                    ->whereNotIn(
-                        'id',
-                        function ($query) use ($model, $limit) {
-                            $query->select('id')->fromSub(
-                                static::select('id')->orderBy('id', 'desc')
-                                    ->where('actionable_id', $model['actionable_id'])
-                                    ->where('actionable_type', $model['actionable_type'])
-                                    ->limit($limit)->toBase(),
-                                'action_events_temp'
-                            );
-                        }
-                    )->delete();
-            }
-        );
+        $models->each(function ($model) use ($limit) {
+            static::where('actionable_id', $model['actionable_id'])
+                ->where('actionable_type', $model['actionable_type'])
+                ->whereNotIn('id', function ($query) use ($model, $limit) {
+                    $query->select('id')->fromSub(
+                        static::select('id')->orderBy('id', 'desc')
+                                ->where('actionable_id', $model['actionable_id'])
+                                ->where('actionable_type', $model['actionable_type'])
+                                ->limit($limit)->toBase(),
+                        'action_events_temp'
+                    );
+                })->delete();
+        });
     }
 
     /**
      * Mark the given batch as running.
      *
-     * @param string $batchId
+     * @param  string  $batchId
      * @return int
      */
     public static function markBatchAsRunning($batchId)
     {
         return static::where('batch_id', $batchId)
-            ->whereNotIn('status', ['finished', 'failed'])->update(
-                [
-                    'status' => 'running',
-                ]
-            );
+                    ->whereNotIn('status', ['finished', 'failed'])->update([
+                        'status' => 'running',
+                    ]);
     }
 
     /**
      * Mark the given batch as finished.
      *
-     * @param string $batchId
+     * @param  string  $batchId
      * @return int
      */
     public static function markBatchAsFinished($batchId)
     {
         return static::where('batch_id', $batchId)
-            ->whereNotIn('status', ['finished', 'failed'])->update(
-                [
-                    'status' => 'finished',
-                ]
-            );
+                    ->whereNotIn('status', ['finished', 'failed'])->update([
+                        'status' => 'finished',
+                    ]);
     }
 
     /**
      * Mark a given action event record as finished.
      *
-     * @param string $batchId
+     * @param  string  $batchId
      * @param Model $model
      * @return int
      */
@@ -414,46 +396,27 @@ class ActionEvent extends Model
     }
 
     /**
-     * Update the status of a given action event.
-     *
-     * @param string $batchId
-     * @param Model $model
-     * @param string $status
-     * @param Throwable|string $e
-     * @return int
-     */
-    public static function updateStatus($batchId, $model, $status, $e = null)
-    {
-        return static::where('batch_id', $batchId)
-            ->where('model_type', $model->getMorphClass())
-            ->where('model_id', $model->getKey())
-            ->update(['status' => $status, 'exception' => (string)$e]);
-    }
-
-    /**
      * Mark the given batch as failed.
      *
-     * @param string $batchId
-     * @param Throwable $e
+     * @param  string  $batchId
+     * @param  Throwable  $e
      * @return int
      */
     public static function markBatchAsFailed($batchId, $e = null)
     {
         return static::where('batch_id', $batchId)
-            ->whereNotIn('status', ['finished', 'failed'])->update(
-                [
-                    'status' => 'failed',
-                    'exception' => $e ? (string)$e : '',
-                ]
-            );
+                    ->whereNotIn('status', ['finished', 'failed'])->update([
+                        'status' => 'failed',
+                        'exception' => $e ? (string) $e : '',
+                    ]);
     }
 
     /**
      * Mark a given action event record as failed.
      *
-     * @param string $batchId
+     * @param  string  $batchId
      * @param Model $model
-     * @param Throwable|string $e
+     * @param  Throwable|string  $e
      * @return int
      */
     public static function markAsFailed($batchId, $model, $e = null)
@@ -462,24 +425,20 @@ class ActionEvent extends Model
     }
 
     /**
-     * Get the user that initiated the action.
+     * Update the status of a given action event.
+     *
+     * @param  string  $batchId
+     * @param Model $model
+     * @param  string  $status
+     * @param  Throwable|string  $e
+     * @return int
      */
-    public function user()
+    public static function updateStatus($batchId, $model, $status, $e = null)
     {
-        $provider = config('auth.guards.' . (config('nova.guard') ?? 'web') . '.provider');
-
-        return $this->belongsTo(
-            config('auth.providers.' . $provider . '.model'),
-            'user_id'
-        );
-    }
-
-    /**
-     * Get the target of the action for user interface linking.
-     */
-    public function target()
-    {
-        return $this->morphTo('target', 'target_type', 'target_id')->withTrashed();
+        return static::where('batch_id', $batchId)
+                        ->where('model_type', $model->getMorphClass())
+                        ->where('model_id', $model->getKey())
+                        ->update(['status' => $status, 'exception' => (string) $e]);
     }
 
     /**

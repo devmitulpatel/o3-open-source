@@ -69,18 +69,6 @@ trait InteractsWithResources
     }
 
     /**
-     * Get a new instance of the underlying model.
-     *
-     * @return Model
-     */
-    public function model()
-    {
-        $resource = $this->resource();
-
-        return $resource::newModel();
-    }
-
-    /**
      * Find the resource model instance for the request.
      *
      * @param  mixed|null  $resourceId
@@ -89,19 +77,6 @@ trait InteractsWithResources
     public function findResourceOrFail($resourceId = null)
     {
         return $this->newResourceWith($this->findModelOrFail($resourceId));
-    }
-
-    /**
-     * Get a new instance of the resource being requested.
-     *
-     * @param  Model  $model
-     * @return Resource
-     */
-    public function newResourceWith($model)
-    {
-        $resource = $this->resource();
-
-        return new $resource($model);
     }
 
     /**
@@ -135,13 +110,16 @@ trait InteractsWithResources
     }
 
     /**
-     * Get a new, scopeless query builder for the underlying model.
+     * Get a new instance of the resource being requested.
      *
-     * @return Builder
+     * @param  Model  $model
+     * @return Resource
      */
-    public function newQueryWithoutScopes()
+    public function newResourceWith($model)
     {
-        return $this->model()->newQueryWithoutScopes();
+        $resource = $this->resource();
+
+        return new $resource($model);
     }
 
     /**
@@ -152,5 +130,27 @@ trait InteractsWithResources
     public function newQuery()
     {
         return $this->model()->newQuery();
+    }
+
+    /**
+     * Get a new, scopeless query builder for the underlying model.
+     *
+     * @return Builder
+     */
+    public function newQueryWithoutScopes()
+    {
+        return $this->model()->newQueryWithoutScopes();
+    }
+
+    /**
+     * Get a new instance of the underlying model.
+     *
+     * @return Model
+     */
+    public function model()
+    {
+        $resource = $this->resource();
+
+        return $resource::newModel();
     }
 }

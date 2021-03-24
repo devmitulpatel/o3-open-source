@@ -27,16 +27,6 @@ class FileResource extends Resource
     ];
 
     /**
-     * Get the URI key for the resource.
-     *
-     * @return string
-     */
-    public static function uriKey()
-    {
-        return 'files';
-    }
-
-    /**
      * Get the fields displayed by the resource.
      *
      * @param Request $request
@@ -65,5 +55,15 @@ class FileResource extends Resource
 
             $additionalField ?? new MissingValue(),
         ];
+    }
+
+    /**
+     * Get the URI key for the resource.
+     *
+     * @return string
+     */
+    public static function uriKey()
+    {
+        return 'files';
     }
 }

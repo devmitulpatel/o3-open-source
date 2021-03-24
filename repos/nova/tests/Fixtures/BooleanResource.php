@@ -26,16 +26,6 @@ class BooleanResource extends Resource
     ];
 
     /**
-     * Get the URI key for the resource.
-     *
-     * @return string
-     */
-    public static function uriKey()
-    {
-        return 'booleans';
-    }
-
-    /**
      * Get the fields displayed by the resource.
      *
      * @param Request $request
@@ -50,5 +40,15 @@ class BooleanResource extends Resource
                         ->trueValue('Yes')
                         ->falseValue('No'),
         ];
+    }
+
+    /**
+     * Get the URI key for the resource.
+     *
+     * @return string
+     */
+    public static function uriKey()
+    {
+        return 'booleans';
     }
 }

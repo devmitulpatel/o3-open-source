@@ -35,15 +35,13 @@ class CreationControllerTest extends IntegrationTest
             ->getJson('/nova-api/comments/creation-fields');
 
         $response->assertJsonCount(3, 'fields');
-        $response->assertJson(
-            [
-                'fields' => [
-                    1 => ['component' => 'morph-to-field'],
-                    2 => ['component' => 'belongs-to-field'],
-                    3 => ['component' => 'text-field'],
-                ],
-            ]
-        );
+        $response->assertJson([
+            'fields' => [
+                1 => ['component' => 'morph-to-field'],
+                2 => ['component' => 'belongs-to-field'],
+                3 => ['component' => 'text-field'],
+            ],
+        ]);
     }
 
     public function test_related_fields_count_via_relation()
@@ -51,9 +49,7 @@ class CreationControllerTest extends IntegrationTest
         $user = factory(User::class)->create();
 
         $response = $this->withExceptionHandling()
-            ->getJson(
-                "/nova-api/posts/creation-fields?viaResource=users&viaResourceId={$user->id}&viaRelationship=user"
-            );
+            ->getJson("/nova-api/posts/creation-fields?viaResource=users&viaResourceId={$user->id}&viaRelationship=user");
 
         $response->assertJsonCount(3, 'fields');
     }
@@ -63,9 +59,7 @@ class CreationControllerTest extends IntegrationTest
         $post = factory(Post::class)->create();
 
         $response = $this->withExceptionHandling()
-            ->getJson(
-                "/nova-api/comments/creation-fields?viaResource=posts&viaResourceId={$post->id}&viaRelationship=comments"
-            );
+            ->getJson("/nova-api/comments/creation-fields?viaResource=posts&viaResourceId={$post->id}&viaRelationship=comments");
 
         $response->assertJsonCount(3, 'fields');
     }
@@ -75,9 +69,7 @@ class CreationControllerTest extends IntegrationTest
         $user = factory(User::class)->create();
 
         $response = $this->withExceptionHandling()
-            ->getJson(
-                "/nova-api/posts/creation-fields?viaResource=users&viaResourceId={$user->id}&viaRelationship=posts"
-            );
+            ->getJson("/nova-api/posts/creation-fields?viaResource=users&viaResourceId={$user->id}&viaRelationship=posts");
 
         $response->assertStatus(200);
 
@@ -89,9 +81,7 @@ class CreationControllerTest extends IntegrationTest
         $post = factory(Post::class)->create();
 
         $response = $this->withExceptionHandling()
-            ->getJson(
-                "/nova-api/comments/creation-fields?viaResource=posts&viaResourceId={$post->id}&viaRelationship=comments"
-            )
+            ->getJson("/nova-api/comments/creation-fields?viaResource=posts&viaResourceId={$post->id}&viaRelationship=comments")
             ->assertOk();
 
         $this->assertTrue($response->decodeResponseJson()['fields'][0]['reverse']);
@@ -103,29 +93,25 @@ class CreationControllerTest extends IntegrationTest
         $parent = factory(Category::class)->create(['title' => 'Parent']);
         $category = factory(Category::class)->create(['parent_id' => $parent->getKey(), 'title' => 'Child']);
 
-        $params = http_build_query(
-            [
-                'editing' => true,
-                'editMode' => 'create',
-                'viaResource' => 'categories',
-                'viaResourceId' => $parent->getKey(),
-                'viaRelationship' => 'children',
-            ]
-        );
+        $params = http_build_query([
+            'editing' => true,
+            'editMode' => 'create',
+            'viaResource' => 'categories',
+            'viaResourceId' => $parent->getKey(),
+            'viaRelationship' => 'children',
+        ]);
 
         $response = $this->withExceptionHandling()
-            ->getJson("/nova-api/categories/creation-fields?{$params}")
-            ->assertOk()
-            ->assertJson(
-                [
-                    'fields' => [
-                        [
-                            'label' => 'Category Resources',
-                            'reverse' => true,
-                        ],
-                    ],
-                ]
-            );
+                        ->getJson("/nova-api/categories/creation-fields?{$params}")
+                        ->assertOk()
+                        ->assertJson([
+                            'fields' => [
+                                [
+                                    'label' => 'Category Resources',
+                                    'reverse' => true,
+                                ],
+                            ],
+                        ]);
     }
 
     public function test_panel_are_returned()
@@ -158,10 +144,7 @@ class CreationControllerTest extends IntegrationTest
         $response = $this->withExceptionHandling()
             ->getJson('/nova-api/users/creation-fields?editing=true&editMode=create');
 
-        $this->assertEquals(
-            'Anonymous User',
-            $response->original['fields']->where('attribute', 'name')->first()->value
-        );
+        $this->assertEquals('Anonymous User', $response->original['fields']->where('attribute', 'name')->first()->value);
     }
 }
 

@@ -62,16 +62,6 @@ class LoginController extends Controller
     }
 
     /**
-     * Get the guard to be used during authentication.
-     *
-     * @return StatefulGuard
-     */
-    protected function guard()
-    {
-        return Auth::guard(config('nova.guard'));
-    }
-
-    /**
      * Get the post register / login redirect path.
      *
      * @return string
@@ -79,5 +69,15 @@ class LoginController extends Controller
     public function redirectPath()
     {
         return Nova::path();
+    }
+
+    /**
+     * Get the guard to be used during authentication.
+     *
+     * @return StatefulGuard
+     */
+    protected function guard()
+    {
+        return Auth::guard(config('nova.guard'));
     }
 }

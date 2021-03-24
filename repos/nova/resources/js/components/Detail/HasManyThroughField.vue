@@ -1,15 +1,15 @@
 <template>
   <resource-index
     :field="field"
-    :initialPerPage="field.perPage || 5"
-    :load-cards="false"
-    :relationship-type="'hasManyThrough'"
     :resource-name="field.resourceName"
-    :should-override-meta="false"
-    :via-relationship="field.hasManyThroughRelationship"
     :via-resource="resourceName"
     :via-resource-id="resourceId"
+    :via-relationship="field.hasManyThroughRelationship"
+    :relationship-type="'hasManyThrough'"
     @actionExecuted="actionExecuted"
+    :load-cards="false"
+    :initialPerPage="field.perPage || 5"
+    :should-override-meta="false"
   />
 </template>
 

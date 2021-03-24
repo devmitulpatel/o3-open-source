@@ -1,7 +1,7 @@
 <template>
   <default-field
-    :errors="errors"
     :field="field"
+    :errors="errors"
     :full-width-content="true"
     :show-help-text="!isReadonly && showHelpText"
   >
@@ -9,9 +9,9 @@
       <div v-if="hasValue" :class="{ 'mb-6': !isReadonly }">
         <template v-if="shouldShowLoader">
           <ImageLoader
+            :src="imageUrl"
             :maxWidth="maxWidth"
             :rounded="field.rounded"
-            :src="imageUrl"
             @missing="value => (missing = value)"
           />
         </template>
@@ -23,9 +23,9 @@
             <span class="truncate mr-3"> {{ field.value }} </span>
 
             <DeleteButton
-              v-if="shouldShowRemoveButton"
               :dusk="field.attribute + '-internal-delete-link'"
               class="ml-auto"
+              v-if="shouldShowRemoveButton"
               @click="confirmRemoval"
             />
           </card>
@@ -36,8 +36,8 @@
           class="mt-3 flex items-center text-sm"
         >
           <DeleteButton
-            v-if="shouldShowRemoveButton"
             :dusk="field.attribute + '-delete-link'"
+            v-if="shouldShowRemoveButton"
             @click="confirmRemoval"
           >
             <span class="class ml-2 mt-1"> {{ __('Delete') }} </span>
@@ -47,8 +47,8 @@
         <portal to="modals">
           <confirm-upload-removal-modal
             v-if="removeModalOpen"
-            @close="closeRemoveModal"
             @confirm="removeFile"
+            @close="closeRemoveModal"
           />
         </portal>
       </div>
@@ -59,19 +59,19 @@
 
       <span
         v-if="shouldShowField"
-        :class="{ 'opacity-75': isReadonly }"
         class="form-file mr-4"
+        :class="{ 'opacity-75': isReadonly }"
       >
         <input
-          :id="idAttr"
           ref="fileField"
-          :accept="field.acceptedTypes"
-          :disabled="isReadonly || uploading"
           :dusk="field.attribute"
           class="form-file-input select-none"
-          name="name"
           type="file"
+          :id="idAttr"
+          name="name"
           @change="fileChange"
+          :disabled="isReadonly || uploading"
+          :accept="field.acceptedTypes"
         />
         <label
           :for="labelFor"

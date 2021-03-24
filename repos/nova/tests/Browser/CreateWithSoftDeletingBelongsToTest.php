@@ -20,26 +20,21 @@ class CreateWithSoftDeletingBelongsToTest extends DuskTestCase
     {
         $dock = DockFactory::new()->create(['deleted_at' => now()]);
 
-        $this->browse(
-            function (Browser $browser) use ($dock) {
-                $browser->loginAs(User::find(1))
+        $this->browse(function (Browser $browser) use ($dock) {
+            $browser->loginAs(User::find(1))
                     ->visit(new Detail('docks', $dock->id))
-                    ->within(
-                        new IndexComponent('ships'),
-                        function ($browser) {
-                            $browser->click('@create-button');
-                        }
-                    )
+                    ->within(new IndexComponent('ships'), function ($browser) {
+                        $browser->click('@create-button');
+                    })
                     ->on(new Create('ships'))
                     ->assertDisabled('@dock')
                     ->type('@name', 'Test Ship')
                     ->create();
 
-                $this->assertCount(1, $dock->fresh()->ships);
+            $this->assertCount(1, $dock->fresh()->ships);
 
-                $browser->blank();
-            }
-        );
+            $browser->blank();
+        });
     }
 
     /**
@@ -50,9 +45,8 @@ class CreateWithSoftDeletingBelongsToTest extends DuskTestCase
         $ship = ShipFactory::new()->create(['deleted_at' => now()]);
         $ship2 = ShipFactory::new()->create();
 
-        $this->browse(
-            function (Browser $browser) use ($ship, $ship2) {
-                $browser->loginAs(User::find(1))
+        $this->browse(function (Browser $browser) use ($ship, $ship2) {
+            $browser->loginAs(User::find(1))
                     ->visit(new Create('sails'))
                     ->assertSelectMissingOption('@ship', $ship->id)
                     ->assertSelectHasOption('@ship', $ship2->id)
@@ -63,11 +57,10 @@ class CreateWithSoftDeletingBelongsToTest extends DuskTestCase
                     ->type('@inches', 25)
                     ->create();
 
-                $this->assertCount(1, $ship->fresh()->sails);
+            $this->assertCount(1, $ship->fresh()->sails);
 
-                $browser->blank();
-            }
-        );
+            $browser->blank();
+        });
     }
 
     /**
@@ -77,9 +70,8 @@ class CreateWithSoftDeletingBelongsToTest extends DuskTestCase
     {
         $ship = ShipFactory::new()->create(['deleted_at' => now()]);
 
-        $this->browse(
-            function (Browser $browser) use ($ship) {
-                $browser->loginAs(User::find(1))
+        $this->browse(function (Browser $browser) use ($ship) {
+            $browser->loginAs(User::find(1))
                     ->visit(new Create('sails'))
                     ->withTrashedRelation('ships')
                     ->select('@ship', $ship->id)
@@ -89,11 +81,10 @@ class CreateWithSoftDeletingBelongsToTest extends DuskTestCase
                     ->type('@inches', 25)
                     ->create();
 
-                $this->assertCount(1, $ship->fresh()->sails);
+            $this->assertCount(1, $ship->fresh()->sails);
 
-                $browser->blank();
-            }
-        );
+            $browser->blank();
+        });
     }
 
     /**
@@ -101,28 +92,24 @@ class CreateWithSoftDeletingBelongsToTest extends DuskTestCase
      */
     public function searchable_belongs_to_respects_with_trashed_checkbox_state()
     {
-        $this->whileSearchable(
-            function () {
-                $dock = DockFactory::new()->create(['deleted_at' => now()]);
+        $this->whileSearchable(function () {
+            $dock = DockFactory::new()->create(['deleted_at' => now()]);
 
-                $this->browse(
-                    function (Browser $browser) use ($dock) {
-                        $browser->loginAs(User::find(1))
-                            ->visit(new Create('ships'))
-                            ->searchRelation('docks', '1')
-                            ->pause(1500)
-                            ->assertNoRelationSearchResults('docks')
-                            ->withTrashedRelation('docks')
-                            ->searchAndSelectFirstRelation('docks', '1')
-                            ->type('@name', 'Test Ship')
-                            ->create();
+            $this->browse(function (Browser $browser) use ($dock) {
+                $browser->loginAs(User::find(1))
+                        ->visit(new Create('ships'))
+                        ->searchRelation('docks', '1')
+                        ->pause(1500)
+                        ->assertNoRelationSearchResults('docks')
+                        ->withTrashedRelation('docks')
+                        ->searchAndSelectFirstRelation('docks', '1')
+                        ->type('@name', 'Test Ship')
+                        ->create();
 
-                        $this->assertCount(1, $dock->fresh()->ships);
+                $this->assertCount(1, $dock->fresh()->ships);
 
-                        $browser->blank();
-                    }
-                );
-            }
-        );
+                $browser->blank();
+            });
+        });
     }
 }

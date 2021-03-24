@@ -13,13 +13,10 @@ class CreateSnippetsTable extends Migration
      */
     public function up()
     {
-        Schema::create(
-            'snippets',
-            function (Blueprint $table) {
-                $table->increments('id');
-                $table->text('code');
-            }
-        );
+        Schema::create('snippets', function (Blueprint $table) {
+            $table->increments('id');
+            $table->text('code');
+        });
     }
 
     /**

@@ -13,15 +13,12 @@ class CreateRecipientsTable extends Migration
      */
     public function up()
     {
-        Schema::create(
-            'recipients',
-            function (Blueprint $table) {
-                $table->increments('id');
-                $table->string('email')->index();
-                $table->string('name')->index();
-                $table->timestamps();
-            }
-        );
+        Schema::create('recipients', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('email')->index();
+            $table->string('name')->index();
+            $table->timestamps();
+        });
     }
 
     /**

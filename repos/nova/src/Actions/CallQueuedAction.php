@@ -23,10 +23,10 @@ class CallQueuedAction
      * Create a new job instance.
      *
      * @param Action $action
-     * @param string $method
+     * @param  string  $method
      * @param ActionFields $fields
      * @param Collection $models
-     * @param string $batchId
+     * @param  string  $batchId
      * @return void
      */
     public function __construct(Action $action, $method, ActionFields $fields, Collection $models, $batchId)
@@ -45,17 +45,15 @@ class CallQueuedAction
      */
     public function handle()
     {
-        return $this->callAction(
-            function ($action) {
-                return $action->withBatchId($this->batchId)->{$this->method}($this->fields, $this->models);
-            }
-        );
+        return $this->callAction(function ($action) {
+            return $action->withBatchId($this->batchId)->{$this->method}($this->fields, $this->models);
+        });
     }
 
     /**
      * Call the failed method on the job instance.
      *
-     * @param Exception $e
+     * @param  Exception  $e
      * @return void
      */
     public function failed($e)
@@ -80,7 +78,7 @@ class CallQueuedAction
         }
 
         return method_exists($this->action, 'failed')
-            ? 'failed' : null;
+                    ? 'failed' : null;
     }
 
     /**
@@ -91,7 +89,7 @@ class CallQueuedAction
     protected function failedMethodForModel()
     {
         if ($this->models->isNotEmpty()) {
-            return 'failedFor' . Str::plural(class_basename($this->models->first()));
+            return 'failedFor'.Str::plural(class_basename($this->models->first()));
         }
     }
 }

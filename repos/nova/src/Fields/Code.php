@@ -42,9 +42,45 @@ class Code extends Field
     public $height = 300;
 
     /**
+     * Resolve the given attribute from the given resource.
+     *
+     * @param  mixed  $resource
+     * @param  string  $attribute
+     * @return mixed
+     */
+    protected function resolveAttribute($resource, $attribute)
+    {
+        $value = parent::resolveAttribute($resource, $attribute);
+
+        if ($this->json) {
+            return json_encode($value, $this->jsonOptions ?? JSON_PRETTY_PRINT);
+        }
+
+        return $value;
+    }
+
+    /**
+     * Hydrate the given attribute on the model based on the incoming request.
+     *
+     * @param NovaRequest $request
+     * @param  string  $requestAttribute
+     * @param  object  $model
+     * @param  string  $attribute
+     * @return void
+     */
+    protected function fillAttributeFromRequest(NovaRequest $request, $requestAttribute, $model, $attribute)
+    {
+        if ($request->exists($requestAttribute)) {
+            $model->{$attribute} = $this->json
+                        ? json_decode($request[$requestAttribute], true)
+                        : $request[$requestAttribute];
+        }
+    }
+
+    /**
      * Indicate that the code field is used to manipulate JSON.
      *
-     * @param int|null $options
+     * @param  int|null  $options
      * @return $this
      */
     public function json($options = null)
@@ -57,26 +93,9 @@ class Code extends Field
     }
 
     /**
-     * Set configuration options for the code editor instance.
-     *
-     * @param array $options
-     * @return $this
-     */
-    public function options($options)
-    {
-        $currentOptions = $this->meta['options'] ?? [];
-
-        return $this->withMeta(
-            [
-                'options' => array_merge($currentOptions, $options),
-            ]
-        );
-    }
-
-    /**
      * Define the language syntax highlighting mode for the field.
      *
-     * @param string $language
+     * @param  string  $language
      * @return $this
      */
     public function language($language)
@@ -122,53 +141,29 @@ class Code extends Field
     }
 
     /**
+     * Set configuration options for the code editor instance.
+     *
+     * @param  array  $options
+     * @return $this
+     */
+    public function options($options)
+    {
+        $currentOptions = $this->meta['options'] ?? [];
+
+        return $this->withMeta([
+            'options' => array_merge($currentOptions, $options),
+        ]);
+    }
+
+    /**
      * Prepare the field for JSON serialization.
      *
      * @return array
      */
     public function jsonSerialize()
     {
-        return array_merge(
-            parent::jsonSerialize(),
-            [
-                'height' => $this->height,
-            ]
-        );
-    }
-
-    /**
-     * Resolve the given attribute from the given resource.
-     *
-     * @param mixed $resource
-     * @param string $attribute
-     * @return mixed
-     */
-    protected function resolveAttribute($resource, $attribute)
-    {
-        $value = parent::resolveAttribute($resource, $attribute);
-
-        if ($this->json) {
-            return json_encode($value, $this->jsonOptions ?? JSON_PRETTY_PRINT);
-        }
-
-        return $value;
-    }
-
-    /**
-     * Hydrate the given attribute on the model based on the incoming request.
-     *
-     * @param NovaRequest $request
-     * @param string $requestAttribute
-     * @param object $model
-     * @param string $attribute
-     * @return void
-     */
-    protected function fillAttributeFromRequest(NovaRequest $request, $requestAttribute, $model, $attribute)
-    {
-        if ($request->exists($requestAttribute)) {
-            $model->{$attribute} = $this->json
-                ? json_decode($request[$requestAttribute], true)
-                : $request[$requestAttribute];
-        }
+        return array_merge(parent::jsonSerialize(), [
+            'height' => $this->height,
+        ]);
     }
 }

@@ -14,9 +14,9 @@
         <div class="bg-white overflow-hidden key-value-items">
           <KeyValueItem
             v-for="item in theData"
-            :key="item.key"
-            :disabled="true"
             :item="item"
+            :disabled="true"
+            :key="item.key"
           />
         </div>
       </KeyValueTable>

@@ -3,11 +3,11 @@
 use Dotenv\Dotenv;
 use Illuminate\Support\Env;
 
-require __DIR__ . '/../vendor/autoload.php';
+require __DIR__.'/../vendor/autoload.php';
 
 Dotenv::create(
     Env::getRepository(),
-    __DIR__ . '/../',
+    __DIR__.'/../',
     '.env.dusk'
 )->safeLoad();
 

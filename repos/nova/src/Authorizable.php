@@ -12,73 +12,6 @@ use Laravel\Nova\Http\Requests\NovaRequest;
 trait Authorizable
 {
     /**
-     * Determine if the current user can create new resources or throw an exception.
-     *
-     * @param Request $request
-     * @return void
-     *
-     * @throws AuthorizationException
-     */
-    public static function authorizeToCreate(Request $request)
-    {
-        throw_unless(static::authorizedToCreate($request), AuthorizationException::class);
-    }
-
-    /**
-     * Determine if the current user can create new resources.
-     *
-     * @param Request $request
-     * @return bool
-     */
-    public static function authorizedToCreate(Request $request)
-    {
-        if (static::authorizable()) {
-            return Gate::check('create', get_class(static::newModel()));
-        }
-
-        return true;
-    }
-
-    /**
-     * Determine if the current user can view the given resource or throw an exception.
-     *
-     * @param Request $request
-     * @return void
-     *
-     * @throws AuthorizationException
-     */
-    public function authorizeToView(Request $request)
-    {
-        return $this->authorizeTo($request, 'view') && $this->authorizeToViewAny($request);
-    }
-
-    /**
-     * Determine if the current user has a given ability.
-     *
-     * @param Request $request
-     * @param  string  $ability
-     * @return void
-     *
-     * @throws AuthorizationException
-     */
-    public function authorizeTo(Request $request, $ability)
-    {
-        throw_unless($this->authorizedTo($request, $ability), AuthorizationException::class);
-    }
-
-    /**
-     * Determine if the current user can view the given resource.
-     *
-     * @param Request $request
-     * @param  string  $ability
-     * @return bool
-     */
-    public function authorizedTo(Request $request, $ability)
-    {
-        return static::authorizable() ? Gate::check($ability, $this->resource) : true;
-    }
-
-    /**
      * Determine if the given resource is authorizable.
      *
      * @return bool
@@ -108,17 +41,6 @@ trait Authorizable
     }
 
     /**
-     * Determine if the current user can view the given resource.
-     *
-     * @param Request $request
-     * @return bool
-     */
-    public function authorizedToView(Request $request)
-    {
-        return $this->authorizedTo($request, 'view') && $this->authorizedToViewAny($request);
-    }
-
-    /**
      * Determine if the resource should be available for the given request.
      *
      * @param Request $request
@@ -135,6 +57,58 @@ trait Authorizable
         return ! is_null($gate) && method_exists($gate, 'viewAny')
                         ? Gate::check('viewAny', get_class(static::newModel()))
                         : true;
+    }
+
+    /**
+     * Determine if the current user can view the given resource or throw an exception.
+     *
+     * @param Request $request
+     * @return void
+     *
+     * @throws AuthorizationException
+     */
+    public function authorizeToView(Request $request)
+    {
+        return $this->authorizeTo($request, 'view') && $this->authorizeToViewAny($request);
+    }
+
+    /**
+     * Determine if the current user can view the given resource.
+     *
+     * @param Request $request
+     * @return bool
+     */
+    public function authorizedToView(Request $request)
+    {
+        return $this->authorizedTo($request, 'view') && $this->authorizedToViewAny($request);
+    }
+
+    /**
+     * Determine if the current user can create new resources or throw an exception.
+     *
+     * @param Request $request
+     * @return void
+     *
+     * @throws AuthorizationException
+     */
+    public static function authorizeToCreate(Request $request)
+    {
+        throw_unless(static::authorizedToCreate($request), AuthorizationException::class);
+    }
+
+    /**
+     * Determine if the current user can create new resources.
+     *
+     * @param Request $request
+     * @return bool
+     */
+    public static function authorizedToCreate(Request $request)
+    {
+        if (static::authorizable()) {
+            return Gate::check('create', get_class(static::newModel()));
+        }
+
+        return true;
     }
 
     /**
@@ -290,5 +264,31 @@ trait Authorizable
         return ! is_null($gate) && method_exists($gate, $method)
                     ? Gate::check($method, [$this->model(), $model])
                     : true;
+    }
+
+    /**
+     * Determine if the current user has a given ability.
+     *
+     * @param Request $request
+     * @param  string  $ability
+     * @return void
+     *
+     * @throws AuthorizationException
+     */
+    public function authorizeTo(Request $request, $ability)
+    {
+        throw_unless($this->authorizedTo($request, $ability), AuthorizationException::class);
+    }
+
+    /**
+     * Determine if the current user can view the given resource.
+     *
+     * @param Request $request
+     * @param  string  $ability
+     * @return bool
+     */
+    public function authorizedTo(Request $request, $ability)
+    {
+        return static::authorizable() ? Gate::check($ability, $this->resource) : true;
     }
 }

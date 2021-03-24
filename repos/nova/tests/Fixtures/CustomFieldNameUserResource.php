@@ -28,20 +28,8 @@ class CustomFieldNameUserResource extends Resource
      * @var array
      */
     public static $search = [
-        'id',
-        'name',
-        'email',
+        'id', 'name', 'email',
     ];
-
-    /**
-     * Get the URI key for the resource.
-     *
-     * @return string
-     */
-    public static function uriKey()
-    {
-        return 'custom-field-name-users';
-    }
 
     /**
      * Get the fields displayed by the resource.
@@ -55,5 +43,15 @@ class CustomFieldNameUserResource extends Resource
             Text::make('Custom Name', 'name')
                 ->rules('required'),
         ];
+    }
+
+    /**
+     * Get the URI key for the resource.
+     *
+     * @return string
+     */
+    public static function uriKey()
+    {
+        return 'custom-field-name-users';
     }
 }

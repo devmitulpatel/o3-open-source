@@ -7,10 +7,10 @@
     <svg
       v-if="showArrow"
       class="ml-2"
+      xmlns="http://www.w3.org/2000/svg"
+      width="10"
       height="6"
       viewBox="0 0 10 6"
-      width="10"
-      xmlns="http://www.w3.org/2000/svg"
     >
       <path
         :fill="activeIconColor"

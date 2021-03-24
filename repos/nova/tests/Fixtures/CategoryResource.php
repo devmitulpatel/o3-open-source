@@ -24,19 +24,8 @@ class CategoryResource extends Resource
      * @var array
      */
     public static $search = [
-        'id',
-        'title',
+        'id', 'title',
     ];
-
-    /**
-     * Get the URI key for the resource.
-     *
-     * @return string
-     */
-    public static function uriKey()
-    {
-        return 'categories';
-    }
 
     /**
      * Get the fields displayed by the resource.
@@ -79,5 +68,15 @@ class CategoryResource extends Resource
         return [
             //
         ];
+    }
+
+    /**
+     * Get the URI key for the resource.
+     *
+     * @return string
+     */
+    public static function uriKey()
+    {
+        return 'categories';
     }
 }

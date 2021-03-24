@@ -2,29 +2,29 @@
   <div>
     <default-field
       :field="field"
-      :field-name="fieldName"
       :show-errors="false"
+      :field-name="fieldName"
       :show-help-text="field.helpText != null"
     >
       <select
         v-if="hasMorphToTypes"
-        slot="field"
-        :data-testid="`${field.attribute}-type`"
         :disabled="isLocked || isReadonly"
+        :data-testid="`${field.attribute}-type`"
         :dusk="`${field.attribute}-type`"
+        slot="field"
         :value="resourceType"
-        class="block w-full form-control form-input form-input-bordered form-select mb-3"
         @change="refreshResourcesForTypeChange"
+        class="block w-full form-control form-input form-input-bordered form-select mb-3"
       >
-        <option :disabled="!field.nullable" selected value="">
+        <option value="" selected :disabled="!field.nullable">
           {{ __('Choose Type') }}
         </option>
 
         <option
           v-for="option in field.morphToTypes"
           :key="option.value"
-          :selected="resourceType == option.value"
           :value="option.value"
+          :selected="resourceType == option.value"
         >
           {{ option.singularLabel }}
         </option>
@@ -36,31 +36,31 @@
     </default-field>
 
     <default-field
-      v-if="hasMorphToTypes"
-      :errors="errors"
       :field="field"
-      :field-name="fieldTypeName"
+      :errors="errors"
       :show-help-text="false"
+      :field-name="fieldTypeName"
+      v-if="hasMorphToTypes"
     >
       <template slot="field">
         <div class="flex items-center mb-3">
           <search-input
-            v-if="isSearchable && !isLocked && !isReadonly"
-            :clearable="field.nullable"
-            :data="availableResources"
-            :data-testid="`${field.attribute}-search-input`"
-            :debounce="field.debounce"
-            :disabled="!resourceType || isLocked || isReadonly"
-            :value="selectedResource"
             class="w-full"
-            trackBy="value"
-            @clear="clearSelection"
+            v-if="isSearchable && !isLocked && !isReadonly"
+            :data-testid="`${field.attribute}-search-input`"
+            :disabled="!resourceType || isLocked || isReadonly"
             @input="performSearch"
+            @clear="clearSelection"
             @selected="selectResource"
+            :debounce="field.debounce"
+            :value="selectedResource"
+            :data="availableResources"
+            :clearable="field.nullable"
+            trackBy="value"
           >
             <div
-              v-if="selectedResource"
               slot="default"
+              v-if="selectedResource"
               class="flex items-center"
             >
               <div v-if="selectedResource.avatar" class="mr-3">
@@ -84,16 +84,16 @@
 
               <div>
                 <div
-                  :class="{ 'text-white': selected }"
                   class="text-sm font-semibold leading-5 text-90"
+                  :class="{ 'text-white': selected }"
                 >
                   {{ option.display }}
                 </div>
 
                 <div
                   v-if="field.withSubtitles"
-                  :class="{ 'text-white': selected }"
                   class="mt-1 text-xs font-semibold leading-5 text-80"
+                  :class="{ 'text-white': selected }"
                 >
                   <span v-if="option.subtitle">{{ option.subtitle }}</span>
                   <span v-else>{{ __('No additional information...') }}</span>
@@ -104,19 +104,19 @@
 
           <select-control
             v-if="!isSearchable || isLocked"
+            class="form-control form-select w-full"
             :class="{ 'border-danger': hasError }"
-            :disabled="!resourceType || isLocked || isReadonly"
             :dusk="`${field.attribute}-select`"
+            @change="selectResourceFromSelectControl"
+            :disabled="!resourceType || isLocked || isReadonly"
             :options="availableResources"
             :selected="selectedResourceId"
-            class="form-control form-select w-full"
             label="display"
-            @change="selectResourceFromSelectControl"
           >
             <option
+              value=""
               :disabled="!field.nullable"
               :selected="selectedResourceId == ''"
-              value=""
             >
               {{ __('Choose') }} {{ fieldTypeName }}
             </option>
@@ -124,30 +124,30 @@
 
           <create-relation-button
             v-if="canShowNewRelationModal"
-            :dusk="`${field.attribute}-inline-create`"
-            class="ml-1"
             @click="openRelationModal"
+            class="ml-1"
+            :dusk="`${field.attribute}-inline-create`"
           />
         </div>
 
         <portal to="modals" transition="fade-transition">
           <create-relation-modal
             v-if="relationModalOpen && !shownViaNewRelationModal"
+            @set-resource="handleSetResource"
+            @cancelled-create="closeRelationModal"
             :resource-name="resourceType"
             :via-relationship="viaRelationship"
             :via-resource="viaResource"
             :via-resource-id="viaResourceId"
             width="800"
-            @set-resource="handleSetResource"
-            @cancelled-create="closeRelationModal"
           />
         </portal>
 
         <!-- Trashed State -->
         <div v-if="shouldShowTrashed">
           <checkbox-with-label
-            :checked="withTrashed"
             :dusk="field.attribute + '-with-trashed-checkbox'"
+            :checked="withTrashed"
             @input="toggleWithTrashed"
           >
             {{ __('With Trashed') }}

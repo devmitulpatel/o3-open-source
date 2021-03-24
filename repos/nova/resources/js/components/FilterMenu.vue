@@ -3,19 +3,19 @@
     <div class="filter-menu-dropdown">
       <dropdown
         v-if="filters.length > 0 || softDeletes || !viaResource"
-        :autoHide="false"
-        :show="showDropDown"
         dusk="filter-selector"
+        :autoHide="false"
         trigger="manual"
+        :show="showDropDown"
       >
         <dropdown-trigger
-          :active="filtersAreApplied"
-          :class="{ 'bg-primary border-primary': filtersAreApplied }"
           class="bg-30 px-3 border-2 border-30 rounded"
+          :class="{ 'bg-primary border-primary': filtersAreApplied }"
+          :active="filtersAreApplied"
         >
           <icon
-            :class="filtersAreApplied ? 'text-white' : 'text-80'"
             type="filter"
+            :class="filtersAreApplied ? 'text-white' : 'text-80'"
           />
 
           <span
@@ -28,16 +28,16 @@
 
         <dropdown-menu
           slot="menu"
-          v-on-clickaway="close"
-          :dark="true"
-          direction="rtl"
           width="290"
+          direction="rtl"
+          :dark="true"
+          v-on-clickaway="close"
         >
           <scroll-wrap :height="350">
             <div v-if="filtersAreApplied" class="bg-30 border-b border-60">
               <button
-                class="py-2 w-full block text-xs uppercase tracking-wide text-center text-80 dim font-bold focus:outline-none"
                 @click="$emit('clear-selected-filters')"
+                class="py-2 w-full block text-xs uppercase tracking-wide text-center text-80 dim font-bold focus:outline-none"
               >
                 {{ __('Reset Filters') }}
               </button>
@@ -45,14 +45,14 @@
 
             <!-- Custom Filters -->
             <component
-              :is="filter.component"
               v-for="filter in filters"
+              :resource-name="resourceName"
               :key="filter.name"
               :filter-key="filter.class"
+              :is="filter.component"
               :lens="lens"
-              :resource-name="resourceName"
-              @change="$emit('filter-changed')"
               @input="$emit('filter-changed')"
+              @change="$emit('filter-changed')"
             />
 
             <!-- Soft Deletes -->
@@ -67,12 +67,12 @@
               <div class="p-2">
                 <select
                   slot="select"
-                  :value="trashed"
                   class="block w-full form-control-sm form-select"
                   dusk="trashed-select"
+                  :value="trashed"
                   @change="trashedChanged"
                 >
-                  <option selected value="">&mdash;</option>
+                  <option value="" selected>&mdash;</option>
                   <option value="with">{{ __('With Trashed') }}</option>
                   <option value="only">{{ __('Only Trashed') }}</option>
                 </select>
@@ -91,9 +91,9 @@
               <div class="p-2">
                 <select
                   slot="select"
-                  :value="perPage"
-                  class="block w-full form-control-sm form-select"
                   dusk="per-page-select"
+                  class="block w-full form-control-sm form-select"
+                  :value="perPage"
                   @change="perPageChanged"
                 >
                   <option v-for="option in perPageOptions" :key="option">

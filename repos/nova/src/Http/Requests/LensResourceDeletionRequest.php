@@ -46,16 +46,6 @@ class LensResourceDeletionRequest extends NovaRequest
     }
 
     /**
-     * Determine if the request is for all matching resources.
-     *
-     * @return bool
-     */
-    public function forAllMatchingResources()
-    {
-        return $this->resources === 'all';
-    }
-
-    /**
      * Transform the request into a query.
      *
      * @return Builder
@@ -67,5 +57,15 @@ class LensResourceDeletionRequest extends NovaRequest
                 throw new LogicException('Lens must return an Eloquent query instance in order to perform this action.');
             }
         });
+    }
+
+    /**
+     * Determine if the request is for all matching resources.
+     *
+     * @return bool
+     */
+    public function forAllMatchingResources()
+    {
+        return $this->resources === 'all';
     }
 }

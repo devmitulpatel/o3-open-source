@@ -163,11 +163,6 @@ class LensMetricControllerTest extends IntegrationTest
         $this->assertEquals(2, $response->original['value']->previous);
     }
 
-    protected function getFirstDayOfPreviousQuarter()
-    {
-        return Carbon::firstDayOfPreviousQuarter();
-    }
-
     public function test_can_retrieve_ytd_count_calculations()
     {
         factory(User::class, 2)->create();
@@ -182,5 +177,10 @@ class LensMetricControllerTest extends IntegrationTest
         $response->assertStatus(200);
         $this->assertEquals(1, $response->original['value']->value);
         $this->assertEquals(1, $response->original['value']->previous);
+    }
+
+    protected function getFirstDayOfPreviousQuarter()
+    {
+        return Carbon::firstDayOfPreviousQuarter();
     }
 }

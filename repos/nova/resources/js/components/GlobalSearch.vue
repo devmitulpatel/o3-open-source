@@ -3,23 +3,23 @@
     <div class="relative">
       <!-- Search -->
       <div class="relative">
-        <icon class="absolute search-icon-center ml-3 text-80" type="search" />
+        <icon type="search" class="absolute search-icon-center ml-3 text-80" />
 
         <input
-          ref="input"
-          v-model="searchTerm"
-          :placeholder="__('Press / to search')"
-          class="pl-search w-full form-global-search"
           dusk="global-search"
-          spellcheck="false"
-          type="search"
-          @focus="openSearch"
+          ref="input"
           @input.stop="search"
           @keydown.stop=""
           @keydown.enter.stop="goToCurrentlySelectedResource"
           @keydown.esc.stop="closeSearch"
+          @focus="openSearch"
           @keydown.down.prevent="move(1)"
           @keydown.up.prevent="move(-1)"
+          v-model="searchTerm"
+          type="search"
+          :placeholder="__('Press / to search')"
+          class="pl-search w-full form-global-search"
+          spellcheck="false"
         />
       </div>
 
@@ -44,8 +44,8 @@
       <!-- Results -->
       <div
         v-if="shouldShowResults"
-        ref="container"
         class="overflow-hidden absolute rounded-lg shadow-lg w-full mt-2 max-h-search overflow-y-auto"
+        ref="container"
       >
         <div v-for="group in formattedResults">
           <h3 class="text-xs uppercase tracking-wide text-80 bg-40 py-2 px-3">
@@ -59,22 +59,22 @@
               :ref="item.index === highlightedResultIndex ? 'selected' : null"
             >
               <a
+                :dusk="item.resourceName + ' ' + item.index"
+                @click.prevent="navigate(item.index)"
+                class="cursor-pointer flex items-center hover:bg-20 block py-2 px-3 no-underline font-normal"
                 :class="{
                   'bg-white': highlightedResultIndex != item.index,
                   'bg-20': highlightedResultIndex == item.index,
                 }"
-                :dusk="item.resourceName + ' ' + item.index"
-                class="cursor-pointer flex items-center hover:bg-20 block py-2 px-3 no-underline font-normal"
-                @click.prevent="navigate(item.index)"
               >
                 <img
                   v-if="item.avatar"
+                  :src="item.avatar"
+                  class="h-8 w-8 mr-3"
                   :class="{
                     'rounded-full': item.rounded,
                     rounded: !item.rounded,
                   }"
-                  :src="item.avatar"
-                  class="h-8 w-8 mr-3"
                 />
 
                 <div>

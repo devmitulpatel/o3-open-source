@@ -25,21 +25,6 @@ trait FillsFields
     }
 
     /**
-     * Fill the given fields for the model.
-     *
-     * @param NovaRequest $request
-     * @param  Model  $model
-     * @param  Collection  $fields
-     * @return array
-     */
-    protected static function fillFields(NovaRequest $request, $model, $fields)
-    {
-        return [$model, $fields->map->fill($request, $model)->filter(function ($callback) {
-            return is_callable($callback);
-        })->values()->all()];
-    }
-
-    /**
      * Fill a new model instance using the given request.
      *
      * @param NovaRequest $request
@@ -88,5 +73,20 @@ trait FillsFields
             $request, $pivot,
             $instance->updatePivotFields($request, $request->relatedResource)
         );
+    }
+
+    /**
+     * Fill the given fields for the model.
+     *
+     * @param NovaRequest $request
+     * @param  Model  $model
+     * @param  Collection  $fields
+     * @return array
+     */
+    protected static function fillFields(NovaRequest $request, $model, $fields)
+    {
+        return [$model, $fields->map->fill($request, $model)->filter(function ($callback) {
+            return is_callable($callback);
+        })->values()->all()];
     }
 }

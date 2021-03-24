@@ -13,6 +13,28 @@ class Line extends Text
     const BASE = 'large';
     const SUBTITLE = 'medium';
     const SMALL = 'small';
+
+    /**
+     * The type for the line field.
+     *
+     * @var string
+     */
+    public $type = self::BASE;
+
+    /**
+     * Extra CSS classes to apply to the line.
+     *
+     * @var mixed
+     */
+    public $extraClasses = '';
+
+    /**
+     * The line's component.
+     *
+     * @var string
+     */
+    public $component = 'line-field';
+
     /**
      * CSS class lookup table for lines.
      *
@@ -24,24 +46,6 @@ class Line extends Text
         self::SUBTITLE => 'text-xs tracking-loose font-bold uppercase text-80',
         self::SMALL => 'text-xs',
     ];
-    /**
-     * The type for the line field.
-     *
-     * @var string
-     */
-    public $type = self::BASE;
-    /**
-     * Extra CSS classes to apply to the line.
-     *
-     * @var mixed
-     */
-    public $extraClasses = '';
-    /**
-     * The line's component.
-     *
-     * @var string
-     */
-    public $component = 'line-field';
 
     /**
      * Create a new field.
@@ -120,18 +124,6 @@ class Line extends Text
     }
 
     /**
-     * Prepare the line for JSON serialization.
-     *
-     * @return array
-     */
-    public function jsonSerialize()
-    {
-        return array_merge(parent::jsonSerialize(), [
-            'classes' => $this->getClasses(),
-        ]);
-    }
-
-    /**
      * Get the display classes for the line.
      *
      * @return array
@@ -142,5 +134,17 @@ class Line extends Text
             Arr::wrap(self::$classes[$this->type]),
             array_filter(Arr::wrap($this->extraClasses))
         );
+    }
+
+    /**
+     * Prepare the line for JSON serialization.
+     *
+     * @return array
+     */
+    public function jsonSerialize()
+    {
+        return array_merge(parent::jsonSerialize(), [
+            'classes' => $this->getClasses(),
+        ]);
     }
 }

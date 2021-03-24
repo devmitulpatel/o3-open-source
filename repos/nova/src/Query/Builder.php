@@ -46,7 +46,7 @@ class Builder
     /**
      * Construct a new query builder for a resource.
      *
-     * @param string $resource
+     * @param  string  $resource
      * @return void
      */
     public function __construct($resource)
@@ -58,38 +58,67 @@ class Builder
      * Build a "whereKey" query for the given resource.
      *
      * @param EloquentBuilder $query
-     * @param string $key
+     * @param  string  $key
      */
     public function whereKey($query, $key)
     {
         $this->setOriginalQueryBuilder($this->queryBuilder = $query);
 
-        $this->tap(
-            function ($query) use ($key) {
-                $query->whereKey($key);
-            }
-        );
+        $this->tap(function ($query) use ($key) {
+            $query->whereKey($key);
+        });
     }
 
     /**
-     * Set original query builder instance.
+     * Build a "search" query for the given resource.
      *
-     * @param EloquentBuilder $queryBuilder
-     * @return void
+     * @param NovaRequest $request
+     * @param EloquentBuilder $query
+     * @param  string|null  $search
+     * @param  array  $filters
+     * @param  array  $orderings
+     * @param  string  $withTrashed
+     * @return $this
      */
-    protected function setOriginalQueryBuilder($queryBuilder)
+    public function search(NovaRequest $request, $query, $search = null,
+                                      array $filters = [], array $orderings = [],
+                                      $withTrashed = TrashedStatus::DEFAULT)
     {
-        if (isset($this->originalQueryBuilder)) {
-            throw new RuntimeException('Unable to override $originalQueryBuilder, please create a new ' . self::class);
+        $this->setOriginalQueryBuilder($query);
+
+        $hasSearchKeyword = ! empty(trim($search));
+        $hasOrderings = collect($orderings)->filter()->isNotEmpty();
+
+        if ($this->resource::usesScout()) {
+            if ($hasSearchKeyword) {
+                $this->queryBuilder = $this->resource::buildIndexQueryUsingScout($request, $search, $withTrashed);
+                $search = '';
+            }
+
+            if (! $hasSearchKeyword && ! $hasOrderings) {
+                $this->tap(function ($query) {
+                    $query->latest($query->getModel()->getQualifiedKeyName());
+                });
+            }
         }
 
-        $this->originalQueryBuilder = $queryBuilder;
+        if (! isset($this->queryBuilder)) {
+            $this->queryBuilder = $query;
+        }
+
+        $this->tap(function ($query) use ($request, $search, $filters, $orderings, $withTrashed) {
+            $this->resource::buildIndexQuery(
+                $request, $query, $search, $filters, $orderings, $withTrashed
+            );
+        });
+
+        return $this;
     }
 
     /**
      * Pass the query to a given callback.
      *
-     * @param Closure $callback
+     * @param  Closure  $callback
      * @return $this
      */
     public function tap($callback)
@@ -100,68 +129,9 @@ class Builder
     }
 
     /**
-     * Build a "search" query for the given resource.
-     *
-     * @param NovaRequest $request
-     * @param EloquentBuilder $query
-     * @param string|null $search
-     * @param array $filters
-     * @param array $orderings
-     * @param string $withTrashed
-     * @return $this
-     */
-    public function search(
-        NovaRequest $request,
-        $query,
-        $search = null,
-        array $filters = [],
-        array $orderings = [],
-        $withTrashed = TrashedStatus::DEFAULT
-    ) {
-        $this->setOriginalQueryBuilder($query);
-
-        $hasSearchKeyword = !empty(trim($search));
-        $hasOrderings = collect($orderings)->filter()->isNotEmpty();
-
-        if ($this->resource::usesScout()) {
-            if ($hasSearchKeyword) {
-                $this->queryBuilder = $this->resource::buildIndexQueryUsingScout($request, $search, $withTrashed);
-                $search = '';
-            }
-
-            if (!$hasSearchKeyword && !$hasOrderings) {
-                $this->tap(
-                    function ($query) {
-                        $query->latest($query->getModel()->getQualifiedKeyName());
-                    }
-                );
-            }
-        }
-
-        if (!isset($this->queryBuilder)) {
-            $this->queryBuilder = $query;
-        }
-
-        $this->tap(
-            function ($query) use ($request, $search, $filters, $orderings, $withTrashed) {
-                $this->resource::buildIndexQuery(
-                    $request,
-                    $query,
-                    $search,
-                    $filters,
-                    $orderings,
-                    $withTrashed
-                );
-            }
-        );
-
-        return $this;
-    }
-
-    /**
      * Set the "take" for the search query.
      *
-     * @param int $limit
+     * @param  int  $limit
      * @return $this
      */
     public function take($limit)
@@ -172,7 +142,7 @@ class Builder
     /**
      * Set the "limit" for the search query.
      *
-     * @param int $limit
+     * @param  int  $limit
      * @return $this
      */
     public function limit($limit)
@@ -197,33 +167,6 @@ class Builder
     }
 
     /**
-     * Apply any query callbacks to the query builder.
-     *
-     * @param ScoutBuilder|EloquentBuilder $queryBuilder
-     * @return ScoutBuilder|EloquentBuilder
-     */
-    protected function applyQueryCallbacks($queryBuilder)
-    {
-        $callback = function ($queryBuilder) {
-            collect($this->queryCallbacks)
-                ->filter()
-                ->each(
-                    function ($callback) use ($queryBuilder) {
-                        call_user_func($callback, $queryBuilder);
-                    }
-                );
-        };
-
-        if ($queryBuilder instanceof ScoutBuilder) {
-            $queryBuilder->query($callback);
-        } else {
-            $queryBuilder->tap($callback);
-        }
-
-        return $queryBuilder;
-    }
-
-    /**
      * Get a lazy collection for the given query.
      *
      * @return LazyCollection
@@ -236,22 +179,18 @@ class Builder
             return $queryBuilder->cursor();
         }
 
-        return LazyCollection::make(
-            function () use ($queryBuilder) {
-                yield from $queryBuilder->get()
-                    ->each(
-                        function ($result) {
-                            yield $result;
-                        }
-                    );
-            }
-        );
+        return LazyCollection::make(function () use ($queryBuilder) {
+            yield from $queryBuilder->get()
+                ->each(function ($result) {
+                    yield $result;
+                });
+        });
     }
 
     /**
      * Get the paginated results of the query.
      *
-     * @param int $perPage
+     * @param  int  $perPage
      * @return array
      */
     public function paginate($perPage)
@@ -272,15 +211,12 @@ class Builder
         $hasMorePages = ($scoutPaginated->perPage() * $scoutPaginated->currentPage()) < $scoutPaginated->total();
 
         return [
-            Container::getInstance()->makeWith(
-                Paginator::class,
-                [
-                    'items' => $items,
-                    'perPage' => $scoutPaginated->perPage(),
-                    'currentPage' => $scoutPaginated->currentPage(),
-                    'options' => $scoutPaginated->getOptions(),
-                ]
-            )->hasMorePagesWhen($hasMorePages),
+            Container::getInstance()->makeWith(Paginator::class, [
+                'items' => $items,
+                'perPage' => $scoutPaginated->perPage(),
+                'currentPage' => $scoutPaginated->currentPage(),
+                'options' => $scoutPaginated->getOptions(),
+            ])->hasMorePagesWhen($hasMorePages),
             $scoutPaginated->total(),
         ];
     }
@@ -293,5 +229,45 @@ class Builder
     public function toBase()
     {
         return $this->applyQueryCallbacks($this->originalQueryBuilder);
+    }
+
+    /**
+     * Set original query builder instance.
+     *
+     * @param EloquentBuilder $queryBuilder
+     * @return void
+     */
+    protected function setOriginalQueryBuilder($queryBuilder)
+    {
+        if (isset($this->originalQueryBuilder)) {
+            throw new RuntimeException('Unable to override $originalQueryBuilder, please create a new '.self::class);
+        }
+
+        $this->originalQueryBuilder = $queryBuilder;
+    }
+
+    /**
+     * Apply any query callbacks to the query builder.
+     *
+     * @param ScoutBuilder|EloquentBuilder $queryBuilder
+     * @return ScoutBuilder|EloquentBuilder
+     */
+    protected function applyQueryCallbacks($queryBuilder)
+    {
+        $callback = function ($queryBuilder) {
+            collect($this->queryCallbacks)
+                ->filter()
+                ->each(function ($callback) use ($queryBuilder) {
+                    call_user_func($callback, $queryBuilder);
+                });
+        };
+
+        if ($queryBuilder instanceof ScoutBuilder) {
+            $queryBuilder->query($callback);
+        } else {
+            $queryBuilder->tap($callback);
+        }
+
+        return $queryBuilder;
     }
 }

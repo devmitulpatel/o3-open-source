@@ -140,6 +140,24 @@ class File extends Field implements StorableContract, DeletableContract, Downloa
     }
 
     /**
+     * Store the file on disk.
+     *
+     * @param  Request  $request
+     * @param  string  $requestAttribute
+     * @return string
+     */
+    protected function storeFile($request, $requestAttribute)
+    {
+        if (! $this->storeAsCallback) {
+            return $request->file($requestAttribute)->store($this->getStorageDir(), $this->getStorageDisk());
+        }
+
+        return $request->file($requestAttribute)->storeAs(
+            $this->getStorageDir(), call_user_func($this->storeAsCallback, $request), $this->getStorageDisk()
+        );
+    }
+
+    /**
      * Merge the specified extra file information columns into the storable attributes.
      *
      * @param  Request  $request
@@ -159,50 +177,6 @@ class File extends Field implements StorableContract, DeletableContract, Downloa
         }
 
         return $attributes;
-    }
-
-    /**
-     * Store the file on disk.
-     *
-     * @param  Request  $request
-     * @param  string  $requestAttribute
-     * @return string
-     */
-    protected function storeFile($request, $requestAttribute)
-    {
-        if (! $this->storeAsCallback) {
-            return $request->file($requestAttribute)->store($this->getStorageDir(), $this->getStorageDisk());
-        }
-
-        return $request->file($requestAttribute)->storeAs(
-            $this->getStorageDir(), call_user_func($this->storeAsCallback, $request), $this->getStorageDisk()
-        );
-    }
-
-    /**
-     * Specify the callback that should be used to retrieve the preview URL.
-     *
-     * @param  callable  $previewUrlCallback
-     * @return $this
-     */
-    public function preview(callable $previewUrlCallback)
-    {
-        $this->previewUrlCallback = $previewUrlCallback;
-
-        return $this;
-    }
-
-    /**
-     * Specify the callback that should be used to retrieve the thumbnail URL.
-     *
-     * @param  callable  $thumbnailUrlCallback
-     * @return $this
-     */
-    public function thumbnail(callable $thumbnailUrlCallback)
-    {
-        $this->thumbnailUrlCallback = $thumbnailUrlCallback;
-
-        return $this;
     }
 
     /**
@@ -252,6 +226,32 @@ class File extends Field implements StorableContract, DeletableContract, Downloa
     }
 
     /**
+     * Specify the callback that should be used to retrieve the thumbnail URL.
+     *
+     * @param  callable  $thumbnailUrlCallback
+     * @return $this
+     */
+    public function thumbnail(callable $thumbnailUrlCallback)
+    {
+        $this->thumbnailUrlCallback = $thumbnailUrlCallback;
+
+        return $this;
+    }
+
+    /**
+     * Specify the callback that should be used to retrieve the preview URL.
+     *
+     * @param  callable  $previewUrlCallback
+     * @return $this
+     */
+    public function preview(callable $previewUrlCallback)
+    {
+        $this->previewUrlCallback = $previewUrlCallback;
+
+        return $this;
+    }
+
+    /**
      * Specify the column where the file's original name should be stored.
      *
      * @param  string  $column
@@ -289,22 +289,6 @@ class File extends Field implements StorableContract, DeletableContract, Downloa
         if (isset($request[$this->attribute])) {
             $model->{$this->attribute} = $request[$this->attribute];
         }
-    }
-
-    /**
-     * Prepare the field for JSON serialization.
-     *
-     * @return array
-     */
-    public function jsonSerialize()
-    {
-        return array_merge(parent::jsonSerialize(), [
-            'thumbnailUrl' => $this->resolveThumbnailUrl(),
-            'previewUrl' => $this->resolvePreviewUrl(),
-            'downloadable' => $this->downloadsAreEnabled && isset($this->downloadResponseCallback) && ! empty($this->value),
-            'deletable' => isset($this->deleteCallback) && $this->deletable,
-            'acceptedTypes' => $this->acceptedTypes,
-        ]);
     }
 
     /**
@@ -369,5 +353,21 @@ class File extends Field implements StorableContract, DeletableContract, Downloa
     public function getStoragePath()
     {
         return $this->value;
+    }
+
+    /**
+     * Prepare the field for JSON serialization.
+     *
+     * @return array
+     */
+    public function jsonSerialize()
+    {
+        return array_merge(parent::jsonSerialize(), [
+            'thumbnailUrl' => $this->resolveThumbnailUrl(),
+            'previewUrl' => $this->resolvePreviewUrl(),
+            'downloadable' => $this->downloadsAreEnabled && isset($this->downloadResponseCallback) && ! empty($this->value),
+            'deletable' => isset($this->deleteCallback) && $this->deletable,
+            'acceptedTypes' => $this->acceptedTypes,
+        ]);
     }
 }

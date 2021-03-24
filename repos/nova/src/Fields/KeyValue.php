@@ -64,6 +64,22 @@ class KeyValue extends Field
     public $canDeleteRow = true;
 
     /**
+     * Hydrate the given attribute on the model based on the incoming request.
+     *
+     * @param NovaRequest $request
+     * @param  string  $requestAttribute
+     * @param  object  $model
+     * @param  string  $attribute
+     * @return void
+     */
+    protected function fillAttributeFromRequest(NovaRequest $request, $requestAttribute, $model, $attribute)
+    {
+        if ($request->exists($requestAttribute)) {
+            $model->{$attribute} = json_decode($request[$requestAttribute], true);
+        }
+    }
+
+    /**
      * The label that should be used for the key table heading.
      *
      * @param  string  $label
@@ -116,6 +132,19 @@ class KeyValue extends Field
     }
 
     /**
+     * Determine if the keys are readonly.
+     *
+     * @param NovaRequest $request
+     * @return bool
+     */
+    public function readonlyKeys(NovaRequest $request)
+    {
+        return with($this->readonlyKeysCallback, function ($callback) use ($request) {
+            return is_callable($callback) ? call_user_func($callback, $request) : ($callback === true);
+        });
+    }
+
+    /**
      * Disable adding new rows.
      *
      * @return $this
@@ -154,34 +183,5 @@ class KeyValue extends Field
             'canAddRow' => $this->canAddRow,
             'canDeleteRow' => $this->canDeleteRow,
         ]);
-    }
-
-    /**
-     * Determine if the keys are readonly.
-     *
-     * @param NovaRequest $request
-     * @return bool
-     */
-    public function readonlyKeys(NovaRequest $request)
-    {
-        return with($this->readonlyKeysCallback, function ($callback) use ($request) {
-            return is_callable($callback) ? call_user_func($callback, $request) : ($callback === true);
-        });
-    }
-
-    /**
-     * Hydrate the given attribute on the model based on the incoming request.
-     *
-     * @param NovaRequest $request
-     * @param  string  $requestAttribute
-     * @param  object  $model
-     * @param  string  $attribute
-     * @return void
-     */
-    protected function fillAttributeFromRequest(NovaRequest $request, $requestAttribute, $model, $attribute)
-    {
-        if ($request->exists($requestAttribute)) {
-            $model->{$attribute} = json_decode($request[$requestAttribute], true);
-        }
     }
 }

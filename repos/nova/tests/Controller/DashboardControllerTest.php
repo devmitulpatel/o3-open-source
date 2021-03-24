@@ -18,12 +18,10 @@ class DashboardControllerTest extends IntegrationTest
         $response = $this->withExceptionHandling()
             ->getJson('/nova-api/dashboards/main')
             ->assertOk()
-            ->assertJson(
-                [
-                    'label' => 'Dashboard',
-                    'cards' => [],
-                ]
-            );
+            ->assertJson([
+                'label' => 'Dashboard',
+                'cards' => [],
+            ]);
     }
 
     public function test_it_cant_browse_invalid_dashboard()

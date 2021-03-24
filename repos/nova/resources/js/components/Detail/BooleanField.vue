@@ -3,20 +3,20 @@
     <icon
       v-if="field.value"
       slot="value"
-      class="text-success"
-      height="24"
-      type="check-circle"
       viewBox="0 0 24 24"
       width="24"
+      height="24"
+      type="check-circle"
+      class="text-success"
     />
     <icon
       v-else
       slot="value"
-      class="text-danger"
-      height="24"
-      type="x-circle"
       viewBox="0 0 24 24"
       width="24"
+      height="24"
+      type="x-circle"
+      class="text-danger"
     />
   </panel-item>
 </template>

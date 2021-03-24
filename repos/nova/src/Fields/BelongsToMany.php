@@ -154,6 +154,21 @@ class BelongsToMany extends Field implements DeletableContract, ListableField, P
     }
 
     /**
+     * Get the creation rules for this field.
+     *
+     * @param NovaRequest $request
+     * @return array
+     */
+    public function getCreationRules(NovaRequest $request)
+    {
+        return array_merge_recursive(parent::getCreationRules($request), [
+            $this->attribute => [
+                new NotAttached($request, $request->findModelOrFail()),
+            ],
+        ]);
+    }
+
+    /**
      * Build an attachable query for the field.
      *
      * @param NovaRequest $request
@@ -206,21 +221,6 @@ class BelongsToMany extends Field implements DeletableContract, ListableField, P
         if (method_exists($request->resource(), $method)) {
             return $method;
         }
-    }
-
-    /**
-     * Get the creation rules for this field.
-     *
-     * @param NovaRequest $request
-     * @return array
-     */
-    public function getCreationRules(NovaRequest $request)
-    {
-        return array_merge_recursive(parent::getCreationRules($request), [
-            $this->attribute => [
-                new NotAttached($request, $request->findModelOrFail()),
-            ],
-        ]);
     }
 
     /**
@@ -292,6 +292,18 @@ class BelongsToMany extends Field implements DeletableContract, ListableField, P
     }
 
     /**
+     * Return the validation key for the field.
+     *
+     * @return string
+     */
+    public function validationKey()
+    {
+        return $this->attribute != $this->resourceName
+            ? $this->resourceName
+            : $this->attribute;
+    }
+
+    /**
      * Prepare the field for JSON serialization.
      *
      * @return array
@@ -309,17 +321,5 @@ class BelongsToMany extends Field implements DeletableContract, ListableField, P
             'withSubtitles' => $this->withSubtitles,
             'singularLabel' => $this->singularLabel ?? $this->resourceClass::singularLabel(),
         ], parent::jsonSerialize());
-    }
-
-    /**
-     * Return the validation key for the field.
-     *
-     * @return string
-     */
-    public function validationKey()
-    {
-        return $this->attribute != $this->resourceName
-            ? $this->resourceName
-            : $this->attribute;
     }
 }

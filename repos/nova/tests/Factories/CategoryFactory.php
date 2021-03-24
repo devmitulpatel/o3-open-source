@@ -13,12 +13,9 @@ use Faker\Generator as Faker;
 |
 */
 
-$factory->define(
-    Laravel\Nova\Tests\Fixtures\Category::class,
-    function (Faker $faker) {
-        return [
-            'parent_id' => null,
-            'title' => $faker->word,
-        ];
-    }
-);
+$factory->define(Laravel\Nova\Tests\Fixtures\Category::class, function (Faker $faker) {
+    return [
+        'parent_id' => null,
+        'title' => $faker->word,
+    ];
+});

@@ -204,6 +204,54 @@ class BelongsTo extends Field implements RelatableField
     }
 
     /**
+     * Hydrate the given attribute on the model based on the incoming request.
+     *
+     * @param NovaRequest $request
+     * @param  object  $model
+     * @return void
+     */
+    public function fill(NovaRequest $request, $model)
+    {
+        $foreignKey = $this->getRelationForeignKeyName($model->{$this->attribute}());
+
+        parent::fillInto($request, $model, $foreignKey);
+
+        if ($model->isDirty($foreignKey)) {
+            $model->unsetRelation($this->attribute);
+        }
+
+        if ($this->filledCallback) {
+            call_user_func($this->filledCallback, $request, $model);
+        }
+    }
+
+    /**
+     * Hydrate the given attribute on the model based on the incoming request.
+     *
+     * @param NovaRequest $request
+     * @param  string  $requestAttribute
+     * @param  object  $model
+     * @param  string  $attribute
+     * @return mixed
+     */
+    protected function fillAttributeFromRequest(NovaRequest $request, $requestAttribute, $model, $attribute)
+    {
+        if ($request->exists($requestAttribute)) {
+            $value = $request[$requestAttribute];
+
+            $relation = Relation::noConstraints(function () use ($model) {
+                return $model->{$this->attribute}();
+            });
+
+            if ($this->isNullValue($value)) {
+                $relation->dissociate();
+            } else {
+                $relation->associate($relation->getQuery()->withoutGlobalScopes()->find($value));
+            }
+        }
+    }
+
+    /**
      * Build an associatable query for the field.
      *
      * @param NovaRequest $request
@@ -257,28 +305,6 @@ class BelongsTo extends Field implements RelatableField
 
         if (method_exists($request->resource(), $method)) {
             return $method;
-        }
-    }
-
-    /**
-     * Hydrate the given attribute on the model based on the incoming request.
-     *
-     * @param NovaRequest $request
-     * @param  object  $model
-     * @return void
-     */
-    public function fill(NovaRequest $request, $model)
-    {
-        $foreignKey = $this->getRelationForeignKeyName($model->{$this->attribute}());
-
-        parent::fillInto($request, $model, $foreignKey);
-
-        if ($model->isDirty($foreignKey)) {
-            $model->unsetRelation($this->attribute);
-        }
-
-        if ($this->filledCallback) {
-            call_user_func($this->filledCallback, $request, $model);
         }
     }
 
@@ -383,31 +409,5 @@ class BelongsTo extends Field implements RelatableField
             'singularLabel' => $this->singularLabel,
             'viewable' => $this->viewable,
         ], parent::jsonSerialize());
-    }
-
-    /**
-     * Hydrate the given attribute on the model based on the incoming request.
-     *
-     * @param NovaRequest $request
-     * @param  string  $requestAttribute
-     * @param  object  $model
-     * @param  string  $attribute
-     * @return mixed
-     */
-    protected function fillAttributeFromRequest(NovaRequest $request, $requestAttribute, $model, $attribute)
-    {
-        if ($request->exists($requestAttribute)) {
-            $value = $request[$requestAttribute];
-
-            $relation = Relation::noConstraints(function () use ($model) {
-                return $model->{$this->attribute}();
-            });
-
-            if ($this->isNullValue($value)) {
-                $relation->dissociate();
-            } else {
-                $relation->associate($relation->getQuery()->withoutGlobalScopes()->find($value));
-            }
-        }
     }
 }

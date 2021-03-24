@@ -77,19 +77,6 @@ class LensRequest extends NovaRequest
     }
 
     /**
-     * Get foreign key name for relation.
-     *
-     * @param Relation $relation
-     * @return string
-     */
-    protected function getRelationForeignKeyName(Relation $relation)
-    {
-        return method_exists($relation, 'getForeignKeyName')
-            ? $relation->getForeignKeyName()
-            : $relation->getForeignKey();
-    }
-
-    /**
      * Disable prepending of the table order.
      *
      * @return $this
@@ -99,6 +86,16 @@ class LensRequest extends NovaRequest
         $this->tableOrderPrefix = false;
 
         return $this;
+    }
+
+    /**
+     * Get all of the possibly available filters for the request.
+     *
+     * @return Collection
+     */
+    protected function availableFilters()
+    {
+        return $this->lens()->availableFilters($this);
     }
 
     /**
@@ -128,12 +125,15 @@ class LensRequest extends NovaRequest
     }
 
     /**
-     * Get all of the possibly available filters for the request.
+     * Get foreign key name for relation.
      *
-     * @return Collection
+     * @param Relation $relation
+     * @return string
      */
-    protected function availableFilters()
+    protected function getRelationForeignKeyName(Relation $relation)
     {
-        return $this->lens()->availableFilters($this);
+        return method_exists($relation, 'getForeignKeyName')
+            ? $relation->getForeignKeyName()
+            : $relation->getForeignKey();
     }
 }

@@ -73,26 +73,6 @@ class NovaApplicationServiceProvider extends ServiceProvider
     }
 
     /**
-     * Register Nova's custom exception handler.
-     *
-     * @return void
-     */
-    protected function registerExceptionHandler()
-    {
-        $this->app->bind(ExceptionHandler::class, NovaExceptionHandler::class);
-    }
-
-    /**
-     * Register the application's Nova resources.
-     *
-     * @return void
-     */
-    protected function resources()
-    {
-        Nova::resourcesIn(app_path('Nova'));
-    }
-
-    /**
      * Get the cards that should be displayed on the Nova dashboard.
      *
      * @return array
@@ -120,6 +100,26 @@ class NovaApplicationServiceProvider extends ServiceProvider
     public function tools()
     {
         return [];
+    }
+
+    /**
+     * Register Nova's custom exception handler.
+     *
+     * @return void
+     */
+    protected function registerExceptionHandler()
+    {
+        $this->app->bind(ExceptionHandler::class, NovaExceptionHandler::class);
+    }
+
+    /**
+     * Register the application's Nova resources.
+     *
+     * @return void
+     */
+    protected function resources()
+    {
+        Nova::resourcesIn(app_path('Nova'));
     }
 
     /**

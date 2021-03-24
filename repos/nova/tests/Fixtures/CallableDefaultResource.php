@@ -26,16 +26,6 @@ class CallableDefaultResource extends Resource
     ];
 
     /**
-     * Get the URI key for the resource.
-     *
-     * @return string
-     */
-    public static function uriKey()
-    {
-        return 'callable-defaults';
-    }
-
-    /**
      * Get the fields displayed by the resource.
      *
      * @param Request $request
@@ -48,12 +38,20 @@ class CallableDefaultResource extends Resource
 
             Select::make('Align')
                 ->default('end') // This value is_callable because `end` is a valid function
-                ->options(
-                    [
-                        'start' => 'Start',
-                        'end' => 'End',
-                    ]
-                ),
+                ->options([
+                    'start' => 'Start',
+                    'end' => 'End',
+                ]),
         ];
+    }
+
+    /**
+     * Get the URI key for the resource.
+     *
+     * @return string
+     */
+    public static function uriKey()
+    {
+        return 'callable-defaults';
     }
 }

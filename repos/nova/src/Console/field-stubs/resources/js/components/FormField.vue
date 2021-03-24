@@ -1,13 +1,13 @@
 <template>
-  <default-field :errors="errors" :field="field" :show-help-text="showHelpText">
+  <default-field :field="field" :errors="errors" :show-help-text="showHelpText">
     <template slot="field">
       <input
         :id="field.name"
-        v-model="value"
+        type="text"
+        class="w-full form-control form-input form-input-bordered"
         :class="errorClasses"
         :placeholder="field.name"
-        class="w-full form-control form-input form-input-bordered"
-        type="text"
+        v-model="value"
       />
     </template>
   </default-field>

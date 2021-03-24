@@ -13,13 +13,10 @@ class CreatePostsAuthorsTable extends Migration
      */
     public function up()
     {
-        Schema::create(
-            'posts_authors',
-            function (Blueprint $table) {
-                $table->integer('post_id')->index();
-                $table->integer('user_id')->index();
-            }
-        );
+        Schema::create('posts_authors', function (Blueprint $table) {
+            $table->integer('post_id')->index();
+            $table->integer('user_id')->index();
+        });
     }
 
     /**

@@ -59,16 +59,6 @@ abstract class Metric extends Card
     }
 
     /**
-     * Determine for how many minutes the metric should be cached.
-     *
-     * @return  DateTimeInterface|DateInterval|float|int
-     */
-    public function cacheFor()
-    {
-        //
-    }
-
-    /**
      * Get the appropriate cache key for the metric.
      *
      * @param NovaRequest $request
@@ -87,16 +77,6 @@ abstract class Metric extends Card
     }
 
     /**
-     * Get the URI key for the metric.
-     *
-     * @return string
-     */
-    public function uriKey()
-    {
-        return Str::slug($this->name(), '-', null);
-    }
-
-    /**
      * Get the displayable name of the metric.
      *
      * @return string
@@ -104,6 +84,26 @@ abstract class Metric extends Card
     public function name()
     {
         return $this->name ?: Nova::humanize($this);
+    }
+
+    /**
+     * Determine for how many minutes the metric should be cached.
+     *
+     * @return  DateTimeInterface|DateInterval|float|int
+     */
+    public function cacheFor()
+    {
+        //
+    }
+
+    /**
+     * Get the URI key for the metric.
+     *
+     * @return string
+     */
+    public function uriKey()
+    {
+        return Str::slug($this->name(), '-', null);
     }
 
     /**

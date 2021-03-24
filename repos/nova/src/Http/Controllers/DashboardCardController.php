@@ -12,7 +12,7 @@ class DashboardCardController extends Controller
      * List the cards for the dashboard.
      *
      * @param DashboardCardRequest $request
-     * @param string $dashboard
+     * @param  string  $dashboard
      * @return Response
      */
     public function index(DashboardCardRequest $request, $dashboard = 'main')

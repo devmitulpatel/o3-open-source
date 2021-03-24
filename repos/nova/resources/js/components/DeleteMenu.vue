@@ -2,17 +2,17 @@
   <div>
     <dropdown class="ml-3 bg-30 hover:bg-40 rounded">
       <dropdown-trigger class="px-3">
-        <icon class="text-80" type="delete" />
+        <icon type="delete" class="text-80" />
       </dropdown-trigger>
 
       <dropdown-menu slot="menu" direction="rtl" width="250">
         <div class="px-3">
           <!-- Delete Menu -->
           <button
-            v-if="authorizedToDeleteSelectedResources || allMatchingSelected"
-            class="text-left w-full leading-normal dim my-2"
             dusk="delete-selected-button"
+            class="text-left w-full leading-normal dim my-2"
             @click="confirmDeleteSelectedResources"
+            v-if="authorizedToDeleteSelectedResources || allMatchingSelected"
           >
             {{ __(viaManyToMany ? 'Detach Selected' : 'Delete Selected') }}
             ({{ selectedResourcesCount }})
@@ -20,29 +20,29 @@
 
           <!-- Restore Resources -->
           <button
+            dusk="restore-selected-button"
+            class="text-left w-full leading-normal dim text-90 my-2"
+            @click="confirmRestore"
             v-if="
               softDeletes &&
               !viaManyToMany &&
               (softDeletedResourcesSelected || allMatchingSelected) &&
               (authorizedToRestoreSelectedResources || allMatchingSelected)
             "
-            class="text-left w-full leading-normal dim text-90 my-2"
-            dusk="restore-selected-button"
-            @click="confirmRestore"
           >
             {{ __('Restore Selected') }} ({{ selectedResourcesCount }})
           </button>
 
           <!-- Force Delete Resources -->
           <button
+            dusk="force-delete-selected-button"
+            class="text-left w-full leading-normal dim text-90 my-2"
+            @click="confirmForceDeleteSelectedResources"
             v-if="
               softDeletes &&
               !viaManyToMany &&
               (authorizedToForceDeleteSelectedResources || allMatchingSelected)
             "
-            class="text-left w-full leading-normal dim text-90 my-2"
-            dusk="force-delete-selected-button"
-            @click="confirmForceDeleteSelectedResources"
           >
             {{ __('Force Delete Selected') }} ({{ selectedResourcesCount }})
           </button>
@@ -51,25 +51,25 @@
     </dropdown>
 
     <portal
+      to="modals"
       v-if="
         deleteSelectedModalOpen ||
         forceDeleteSelectedModalOpen ||
         restoreModalOpen
       "
-      to="modals"
     >
       <delete-resource-modal
         v-if="deleteSelectedModalOpen"
-        :mode="viaManyToMany ? 'detach' : 'delete'"
-        @close="closeDeleteSelectedModal"
         @confirm="deleteSelectedResources"
+        @close="closeDeleteSelectedModal"
+        :mode="viaManyToMany ? 'detach' : 'delete'"
       />
 
       <delete-resource-modal
         v-if="forceDeleteSelectedModalOpen"
-        mode="delete"
-        @close="closeForceDeleteSelectedModal"
         @confirm="forceDeleteSelectedResources"
+        @close="closeForceDeleteSelectedModal"
+        mode="delete"
       >
         <div slot-scope="{ uppercaseMode, mode }" class="p-8">
           <heading :level="2" class="mb-6">{{
@@ -87,8 +87,8 @@
 
       <restore-resource-modal
         v-if="restoreModalOpen"
-        @close="closeRestoreModal"
         @confirm="restoreSelectedResources"
+        @close="closeRestoreModal"
       />
     </portal>
   </div>

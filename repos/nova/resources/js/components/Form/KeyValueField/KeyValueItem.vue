@@ -2,38 +2,38 @@
   <div v-if="isNotObject" class="flex items-center key-value-item">
     <div class="flex flex-grow border-b border-50 key-value-fields">
       <div
-        :class="{ 'bg-30': readOnlyKeys || !isEditable }"
         class="w-48 cursor-text"
+        :class="{ 'bg-30': readOnlyKeys || !isEditable }"
       >
         <textarea
-          ref="keyField"
+          :dusk="`key-value-key-${index}`"
           v-model="item.key"
+          @focus="handleKeyFieldFocus"
+          ref="keyField"
+          type="text"
+          class="font-mono text-sm resize-none block min-h-input w-full form-control form-input form-input-row py-4 text-90"
+          :disabled="!isEditable || readOnlyKeys"
+          style="background-clip: border-box"
           :class="{
             'bg-white': !isEditable || readOnlyKeys,
             'hover:bg-20 focus:bg-white': isEditable && !readOnlyKeys,
           }"
-          :disabled="!isEditable || readOnlyKeys"
-          :dusk="`key-value-key-${index}`"
-          class="font-mono text-sm resize-none block min-h-input w-full form-control form-input form-input-row py-4 text-90"
-          style="background-clip: border-box"
-          type="text"
-          @focus="handleKeyFieldFocus"
         />
       </div>
 
-      <div class="flex-grow border-l border-50" @click="handleValueFieldFocus">
+      <div @click="handleValueFieldFocus" class="flex-grow border-l border-50">
         <textarea
-          ref="valueField"
+          :dusk="`key-value-value-${index}`"
           v-model="item.value"
+          @focus="handleValueFieldFocus"
+          ref="valueField"
+          type="text"
+          class="font-mono text-sm block min-h-input w-full form-control form-input form-input-row py-4 text-90"
+          :disabled="!isEditable"
           :class="{
             'bg-white': !isEditable,
             'hover:bg-20 focus:bg-white': isEditable,
           }"
-          :disabled="!isEditable"
-          :dusk="`key-value-value-${index}`"
-          class="font-mono text-sm block min-h-input w-full form-control form-input form-input-row py-4 text-90"
-          type="text"
-          @focus="handleValueFieldFocus"
         />
       </div>
     </div>
@@ -44,11 +44,11 @@
       style="right: -50px"
     >
       <button
-        class="flex appearance-none cursor-pointer text-70 hover:text-primary active:outline-none active:shadow-outline focus:outline-none focus:shadow-outline"
-        tabindex="-1"
-        title="Delete"
-        type="button"
         @click="$emit('remove-row', item.id)"
+        type="button"
+        tabindex="-1"
+        class="flex appearance-none cursor-pointer text-70 hover:text-primary active:outline-none active:shadow-outline focus:outline-none focus:shadow-outline"
+        title="Delete"
       >
         <icon />
       </button>

@@ -18,131 +18,151 @@ abstract class Field extends FieldElement implements JsonSerializable, Resolvabl
     use Macroable, HasHelpText;
 
     /**
-     * The custom components registered for fields.
-     *
-     * @var array
-     */
-    public static $customComponents = [];
-    /**
      * The displayable name of the field.
      *
      * @var string
      */
     public $name;
+
     /**
      * The attribute / column name of the field.
      *
      * @var string
      */
     public $attribute;
+
     /**
      * The field's resolved value.
      *
      * @var mixed
      */
     public $value;
+
     /**
      * The callback to be used to resolve the field's display value.
      *
      * @var Closure
      */
     public $displayCallback;
+
     /**
      * The callback to be used to resolve the field's value.
      *
      * @var Closure
      */
     public $resolveCallback;
+
     /**
      * The callback to be used to hydrate the model attribute.
      *
      * @var callable
      */
     public $fillCallback;
-    /**
-     * The validation rules for creation and updates.
-     *
-     * @var array
-     */
-    public $rules = [];
-    /**
-     * The validation rules for creation.
-     *
-     * @var array
-     */
-    public $creationRules = [];
-    /**
-     * The validation rules for updates.
-     *
-     * @var array
-     */
-    public $updateRules = [];
-    /**
-     * Indicates if the field should be sortable.
-     *
-     * @var bool
-     */
-    public $sortable = false;
-    /**
-     * Indicates if the field is nullable.
-     *
-     * @var bool
-     */
-    public $nullable = false;
-    /**
-     * Values which will be replaced to null.
-     *
-     * @var array
-     */
-    public $nullValues = [''];
-    /**
-     * Indicates if the field was resolved as a pivot field.
-     *
-     * @var bool
-     */
-    public $pivot = false;
-    /**
-     * The text alignment for the field's text in tables.
-     *
-     * @var string
-     */
-    public $textAlign = 'left';
-    /**
-     * Indicates if the field label and form element should sit on top of each other.
-     *
-     * @var bool
-     */
-    public $stacked = false;
-    /**
-     * The callback used to determine if the field is readonly.
-     *
-     * @var Closure
-     */
-    public $readonlyCallback;
-    /**
-     * The callback used to determine if the field is required.
-     *
-     * @var Closure
-     */
-    public $requiredCallback;
-    /**
-     * The resource associated with the field.
-     *
-     * @var Resource
-     */
-    public $resource;
+
     /**
      * The callback to be used for computed field.
      *
      * @var callable
      */
     protected $computedCallback;
+
     /**
      * The callback to be used for the field's default value.
      *
      * @var callable
      */
     protected $defaultCallback;
+
+    /**
+     * The validation rules for creation and updates.
+     *
+     * @var array
+     */
+    public $rules = [];
+
+    /**
+     * The validation rules for creation.
+     *
+     * @var array
+     */
+    public $creationRules = [];
+
+    /**
+     * The validation rules for updates.
+     *
+     * @var array
+     */
+    public $updateRules = [];
+
+    /**
+     * Indicates if the field should be sortable.
+     *
+     * @var bool
+     */
+    public $sortable = false;
+
+    /**
+     * Indicates if the field is nullable.
+     *
+     * @var bool
+     */
+    public $nullable = false;
+
+    /**
+     * Values which will be replaced to null.
+     *
+     * @var array
+     */
+    public $nullValues = [''];
+
+    /**
+     * Indicates if the field was resolved as a pivot field.
+     *
+     * @var bool
+     */
+    public $pivot = false;
+
+    /**
+     * The text alignment for the field's text in tables.
+     *
+     * @var string
+     */
+    public $textAlign = 'left';
+
+    /**
+     * Indicates if the field label and form element should sit on top of each other.
+     *
+     * @var bool
+     */
+    public $stacked = false;
+
+    /**
+     * The custom components registered for fields.
+     *
+     * @var array
+     */
+    public static $customComponents = [];
+
+    /**
+     * The callback used to determine if the field is readonly.
+     *
+     * @var Closure
+     */
+    public $readonlyCallback;
+
+    /**
+     * The callback used to determine if the field is required.
+     *
+     * @var Closure
+     */
+    public $requiredCallback;
+
+    /**
+     * The resource associated with the field.
+     *
+     * @var Resource
+     */
+    public $resource;
 
     /**
      * Create a new field.
@@ -166,30 +186,6 @@ abstract class Field extends FieldElement implements JsonSerializable, Resolvabl
         } else {
             $this->attribute = $attribute ?? str_replace(' ', '_', Str::lower($name));
         }
-    }
-
-    /**
-     * Set the callback to be used for determining the field's default value.
-     *
-     * @param $callback
-     * @return $this
-     */
-    public function default($callback)
-    {
-        $this->defaultCallback = $callback;
-
-        return $this;
-    }
-
-    /**
-     * Set the component that should be used by the field.
-     *
-     * @param  string  $component
-     * @return void
-     */
-    public static function useComponent($component)
-    {
-        static::$customComponents[get_called_class()] = $component;
     }
 
     /**
@@ -261,18 +257,6 @@ abstract class Field extends FieldElement implements JsonSerializable, Resolvabl
     }
 
     /**
-     * Resolve the given attribute from the given resource.
-     *
-     * @param  mixed  $resource
-     * @param  string  $attribute
-     * @return mixed
-     */
-    protected function resolveAttribute($resource, $attribute)
-    {
-        return data_get($resource, str_replace('->', '.', $attribute));
-    }
-
-    /**
      * Resolve the default value for an Action field.
      *
      * @param NovaRequest $request
@@ -284,20 +268,15 @@ abstract class Field extends FieldElement implements JsonSerializable, Resolvabl
     }
 
     /**
-     * Resolve the default value for the field.
+     * Resolve the given attribute from the given resource.
      *
-     * @param NovaRequest $request
-     * @return string
+     * @param  mixed  $resource
+     * @param  string  $attribute
+     * @return mixed
      */
-    protected function resolveDefaultValue(NovaRequest $request)
+    protected function resolveAttribute($resource, $attribute)
     {
-        if ($request->isCreateOrAttachRequest() || $request->isResourceIndexRequest() || $request->isActionRequest()) {
-            if (is_null($this->value) && $this->defaultCallback instanceof Closure) {
-                return call_user_func($this->defaultCallback, $request);
-            }
-
-            return $this->defaultCallback;
-        }
+        return data_get($resource, str_replace('->', '.', $attribute));
     }
 
     /**
@@ -333,9 +312,9 @@ abstract class Field extends FieldElement implements JsonSerializable, Resolvabl
      * @param  object  $model
      * @return mixed
      */
-    public function fillForAction(NovaRequest $request, $model)
+    public function fill(NovaRequest $request, $model)
     {
-        return $this->fill($request, $model);
+        return $this->fillInto($request, $model, $this->attribute);
     }
 
     /**
@@ -345,9 +324,9 @@ abstract class Field extends FieldElement implements JsonSerializable, Resolvabl
      * @param  object  $model
      * @return mixed
      */
-    public function fill(NovaRequest $request, $model)
+    public function fillForAction(NovaRequest $request, $model)
     {
-        return $this->fillInto($request, $model, $this->attribute);
+        return $this->fill($request, $model);
     }
 
     /**
@@ -448,6 +427,36 @@ abstract class Field extends FieldElement implements JsonSerializable, Resolvabl
     }
 
     /**
+     * Get the validation rules for this field.
+     *
+     * @param NovaRequest $request
+     * @return array
+     */
+    public function getRules(NovaRequest $request)
+    {
+        return [$this->attribute => is_callable($this->rules)
+                            ? call_user_func($this->rules, $request)
+                            : $this->rules, ];
+    }
+
+    /**
+     * Get the creation rules for this field.
+     *
+     * @param NovaRequest $request
+     * @return array|string
+     */
+    public function getCreationRules(NovaRequest $request)
+    {
+        $rules = [$this->attribute => is_callable($this->creationRules)
+                            ? call_user_func($this->creationRules, $request)
+                            : $this->creationRules, ];
+
+        return array_merge_recursive(
+            $this->getRules($request), $rules
+        );
+    }
+
+    /**
      * Set the creation validation rules for the field.
      *
      * @param  callable|array|string  $rules
@@ -458,6 +467,23 @@ abstract class Field extends FieldElement implements JsonSerializable, Resolvabl
         $this->creationRules = ($rules instanceof Rule || is_string($rules)) ? func_get_args() : $rules;
 
         return $this;
+    }
+
+    /**
+     * Get the update rules for this field.
+     *
+     * @param NovaRequest $request
+     * @return array
+     */
+    public function getUpdateRules(NovaRequest $request)
+    {
+        $rules = [$this->attribute => is_callable($this->updateRules)
+                            ? call_user_func($this->updateRules, $request)
+                            : $this->updateRules, ];
+
+        return array_merge_recursive(
+            $this->getRules($request), $rules
+        );
     }
 
     /**
@@ -500,14 +526,20 @@ abstract class Field extends FieldElement implements JsonSerializable, Resolvabl
     }
 
     /**
-     * Determine if the field is computed.
+     * Return the sortable uri key for the field.
      *
-     * @return bool
+     * @return string
      */
-    public function computed()
+    public function sortableUriKey()
     {
-        return (is_callable($this->attribute) && ! is_string($this->attribute)) ||
-               $this->attribute == 'ComputedField';
+        $request = app(NovaRequest::class);
+
+        switch (get_class($this)) {
+            case BelongsTo::class:
+                return $this->getRelationForeignKeyName($request->newResource()->resource->{$this->attribute}());
+            default:
+                return $this->attribute;
+        }
     }
 
     /**
@@ -542,6 +574,42 @@ abstract class Field extends FieldElement implements JsonSerializable, Resolvabl
     }
 
     /**
+     * Determine if the field is computed.
+     *
+     * @return bool
+     */
+    public function computed()
+    {
+        return (is_callable($this->attribute) && ! is_string($this->attribute)) ||
+               $this->attribute == 'ComputedField';
+    }
+
+    /**
+     * Get the component name for the field.
+     *
+     * @return string
+     */
+    public function component()
+    {
+        if (isset(static::$customComponents[get_class($this)])) {
+            return static::$customComponents[get_class($this)];
+        }
+
+        return $this->component;
+    }
+
+    /**
+     * Set the component that should be used by the field.
+     *
+     * @param  string  $component
+     * @return void
+     */
+    public static function useComponent($component)
+    {
+        static::$customComponents[get_called_class()] = $component;
+    }
+
+    /**
      * Set the callback used to determine if the field is readonly.
      *
      * @param  Closure|bool  $callback
@@ -550,6 +618,37 @@ abstract class Field extends FieldElement implements JsonSerializable, Resolvabl
     public function readonly($callback = true)
     {
         $this->readonlyCallback = $callback;
+
+        return $this;
+    }
+
+    /**
+     * Determine if the field is readonly.
+     *
+     * @param NovaRequest $request
+     * @return bool
+     */
+    public function isReadonly(NovaRequest $request)
+    {
+        return with($this->readonlyCallback, function ($callback) use ($request) {
+            if ($callback === true || (is_callable($callback) && call_user_func($callback, $request))) {
+                $this->setReadonlyAttribute();
+
+                return true;
+            }
+
+            return false;
+        });
+    }
+
+    /**
+     * Set the field to a readonly field.
+     *
+     * @return $this
+     */
+    protected function setReadonlyAttribute()
+    {
+        $this->withMeta(['extraAttributes' => ['readonly' => true]]);
 
         return $this;
     }
@@ -581,6 +680,47 @@ abstract class Field extends FieldElement implements JsonSerializable, Resolvabl
     }
 
     /**
+     * Determine if the field is required.
+     *
+     * @param NovaRequest $request
+     * @return bool
+     */
+    public function isRequired(NovaRequest $request)
+    {
+        return with($this->requiredCallback, function ($callback) use ($request) {
+            if ($callback === true || (is_callable($callback) && call_user_func($callback, $request))) {
+                return true;
+            }
+
+            if (! empty($this->attribute) && is_null($callback)) {
+                if ($request->isResourceIndexRequest() || $request->isActionRequest()) {
+                    return in_array('required', $this->getCreationRules($request)[$this->attribute]);
+                }
+
+                if ($request->isCreateOrAttachRequest()) {
+                    return in_array('required', $this->getCreationRules($request)[$this->attribute]);
+                }
+
+                if ($request->isUpdateOrUpdateAttachedRequest()) {
+                    return in_array('required', $this->getUpdateRules($request)[$this->attribute]);
+                }
+            }
+
+            return false;
+        });
+    }
+
+    /**
+     * Return the validation key for the field.
+     *
+     * @return string
+     */
+    public function validationKey()
+    {
+        return $this->attribute;
+    }
+
+    /**
      * Set the width for the help text tooltip.
      *
      * @param  string
@@ -601,6 +741,36 @@ abstract class Field extends FieldElement implements JsonSerializable, Resolvabl
     public function getHelpWidth()
     {
         throw new Exception('Help width is not supported on fields.');
+    }
+
+    /**
+     * Set the callback to be used for determining the field's default value.
+     *
+     * @param $callback
+     * @return $this
+     */
+    public function default($callback)
+    {
+        $this->defaultCallback = $callback;
+
+        return $this;
+    }
+
+    /**
+     * Resolve the default value for the field.
+     *
+     * @param NovaRequest $request
+     * @return string
+     */
+    protected function resolveDefaultValue(NovaRequest $request)
+    {
+        if ($request->isCreateOrAttachRequest() || $request->isResourceIndexRequest() || $request->isActionRequest()) {
+            if (is_null($this->value) && $this->defaultCallback instanceof Closure) {
+                return call_user_func($this->defaultCallback, $request);
+            }
+
+            return $this->defaultCallback;
+        }
     }
 
     /**
@@ -644,155 +814,5 @@ abstract class Field extends FieldElement implements JsonSerializable, Resolvabl
                 'value' => $this->value ?? $this->resolveDefaultValue($request),
             ], $this->meta());
         });
-    }
-
-    /**
-     * Get the component name for the field.
-     *
-     * @return string
-     */
-    public function component()
-    {
-        if (isset(static::$customComponents[get_class($this)])) {
-            return static::$customComponents[get_class($this)];
-        }
-
-        return $this->component;
-    }
-
-    /**
-     * Determine if the field is readonly.
-     *
-     * @param NovaRequest $request
-     * @return bool
-     */
-    public function isReadonly(NovaRequest $request)
-    {
-        return with($this->readonlyCallback, function ($callback) use ($request) {
-            if ($callback === true || (is_callable($callback) && call_user_func($callback, $request))) {
-                $this->setReadonlyAttribute();
-
-                return true;
-            }
-
-            return false;
-        });
-    }
-
-    /**
-     * Set the field to a readonly field.
-     *
-     * @return $this
-     */
-    protected function setReadonlyAttribute()
-    {
-        $this->withMeta(['extraAttributes' => ['readonly' => true]]);
-
-        return $this;
-    }
-
-    /**
-     * Determine if the field is required.
-     *
-     * @param NovaRequest $request
-     * @return bool
-     */
-    public function isRequired(NovaRequest $request)
-    {
-        return with($this->requiredCallback, function ($callback) use ($request) {
-            if ($callback === true || (is_callable($callback) && call_user_func($callback, $request))) {
-                return true;
-            }
-
-            if (! empty($this->attribute) && is_null($callback)) {
-                if ($request->isResourceIndexRequest() || $request->isActionRequest()) {
-                    return in_array('required', $this->getCreationRules($request)[$this->attribute]);
-                }
-
-                if ($request->isCreateOrAttachRequest()) {
-                    return in_array('required', $this->getCreationRules($request)[$this->attribute]);
-                }
-
-                if ($request->isUpdateOrUpdateAttachedRequest()) {
-                    return in_array('required', $this->getUpdateRules($request)[$this->attribute]);
-                }
-            }
-
-            return false;
-        });
-    }
-
-    /**
-     * Get the creation rules for this field.
-     *
-     * @param NovaRequest $request
-     * @return array|string
-     */
-    public function getCreationRules(NovaRequest $request)
-    {
-        $rules = [$this->attribute => is_callable($this->creationRules)
-                            ? call_user_func($this->creationRules, $request)
-                            : $this->creationRules, ];
-
-        return array_merge_recursive(
-            $this->getRules($request), $rules
-        );
-    }
-
-    /**
-     * Get the validation rules for this field.
-     *
-     * @param NovaRequest $request
-     * @return array
-     */
-    public function getRules(NovaRequest $request)
-    {
-        return [$this->attribute => is_callable($this->rules)
-                            ? call_user_func($this->rules, $request)
-                            : $this->rules, ];
-    }
-
-    /**
-     * Get the update rules for this field.
-     *
-     * @param NovaRequest $request
-     * @return array
-     */
-    public function getUpdateRules(NovaRequest $request)
-    {
-        $rules = [$this->attribute => is_callable($this->updateRules)
-                            ? call_user_func($this->updateRules, $request)
-                            : $this->updateRules, ];
-
-        return array_merge_recursive(
-            $this->getRules($request), $rules
-        );
-    }
-
-    /**
-     * Return the sortable uri key for the field.
-     *
-     * @return string
-     */
-    public function sortableUriKey()
-    {
-        $request = app(NovaRequest::class);
-
-        switch (get_class($this)) {
-            case BelongsTo::class:
-                return $this->getRelationForeignKeyName($request->newResource()->resource->{$this->attribute}());
-            default:
-                return $this->attribute;
-        }
-    }
-
-    /**
-     * Return the validation key for the field.
-     *
-     * @return string
-     */
-    public function validationKey()
-    {
-        return $this->attribute;
     }
 }

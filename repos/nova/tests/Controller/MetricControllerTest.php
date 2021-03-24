@@ -242,11 +242,6 @@ class MetricControllerTest extends IntegrationTest
         $this->assertEquals(2, $response->original['value']->previous);
     }
 
-    protected function getFirstDayOfPreviousQuarter()
-    {
-        return Carbon::firstDayOfPreviousQuarter();
-    }
-
     public function test_can_retrieve_ytd_count_calculations()
     {
         factory(User::class, 2)->create();
@@ -392,5 +387,10 @@ class MetricControllerTest extends IntegrationTest
                          ->assertStatus(200);
 
         $this->assertEquals(4, $response->json('value.value'));
+    }
+
+    protected function getFirstDayOfPreviousQuarter()
+    {
+        return Carbon::firstDayOfPreviousQuarter();
     }
 }

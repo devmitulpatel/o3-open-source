@@ -1,37 +1,37 @@
 <template>
-  <default-field :errors="errors" :field="field" :show-help-text="showHelpText">
+  <default-field :field="field" :errors="errors" :show-help-text="showHelpText">
     <template slot="field">
       <div class="flex items-center">
         <date-time-picker
-          ref="dateTimePicker"
-          :alt-format="pickerDisplayFormat"
-          :class="errorClasses"
-          :dateFormat="pickerFormat"
-          :disabled="isReadonly"
-          :dusk="field.attribute"
-          :enable-seconds="false"
-          :enable-time="false"
-          :first-day-of-week="firstDayOfWeek"
-          :name="field.name"
-          :placeholder="placeholder"
-          :value="value"
           class="w-full form-control form-input form-input-bordered"
+          ref="dateTimePicker"
+          :dusk="field.attribute"
+          :name="field.name"
+          :value="value"
+          :dateFormat="pickerFormat"
+          :alt-format="pickerDisplayFormat"
+          :placeholder="placeholder"
+          :enable-time="false"
+          :enable-seconds="false"
+          :first-day-of-week="firstDayOfWeek"
+          :class="errorClasses"
           @change="handleChange"
+          :disabled="isReadonly"
         />
 
         <a
           v-if="field.nullable"
+          @click.prevent="$refs.dateTimePicker.clear()"
+          href="#"
+          :title="__('Clear value')"
+          tabindex="-1"
+          class="p-1 px-2 cursor-pointer leading-none focus:outline-none"
           :class="{
             'text-50': !value.length,
             'text-black hover:text-danger': value.length,
           }"
-          :title="__('Clear value')"
-          class="p-1 px-2 cursor-pointer leading-none focus:outline-none"
-          href="#"
-          tabindex="-1"
-          @click.prevent="$refs.dateTimePicker.clear()"
         >
-          <icon height="22" type="x-circle" viewBox="0 0 22 22" width="22" />
+          <icon type="x-circle" width="22" height="22" viewBox="0 0 22 22" />
         </a>
       </div>
     </template>

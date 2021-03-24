@@ -33,37 +33,37 @@ class CardCommand extends Command
      */
     public function handle()
     {
-        if (!$this->hasValidNameArgument()) {
+        if (! $this->hasValidNameArgument()) {
             return;
         }
 
         (new Filesystem)->copyDirectory(
-            __DIR__ . '/card-stubs',
+            __DIR__.'/card-stubs',
             $this->cardPath()
         );
 
         // Card.js replacements...
-        $this->replace('{{ title }}', $this->cardTitle(), $this->cardPath() . '/resources/js/components/Card.vue');
-        $this->replace('{{ component }}', $this->cardName(), $this->cardPath() . '/resources/js/card.js');
+        $this->replace('{{ title }}', $this->cardTitle(), $this->cardPath().'/resources/js/components/Card.vue');
+        $this->replace('{{ component }}', $this->cardName(), $this->cardPath().'/resources/js/card.js');
 
         // Card.php replacements...
-        $this->replace('{{ namespace }}', $this->cardNamespace(), $this->cardPath() . '/src/Card.stub');
-        $this->replace('{{ class }}', $this->cardClass(), $this->cardPath() . '/src/Card.stub');
-        $this->replace('{{ component }}', $this->cardName(), $this->cardPath() . '/src/Card.stub');
+        $this->replace('{{ namespace }}', $this->cardNamespace(), $this->cardPath().'/src/Card.stub');
+        $this->replace('{{ class }}', $this->cardClass(), $this->cardPath().'/src/Card.stub');
+        $this->replace('{{ component }}', $this->cardName(), $this->cardPath().'/src/Card.stub');
 
         (new Filesystem)->move(
-            $this->cardPath() . '/src/Card.stub',
-            $this->cardPath() . '/src/' . $this->cardClass() . '.php'
+            $this->cardPath().'/src/Card.stub',
+            $this->cardPath().'/src/'.$this->cardClass().'.php'
         );
 
         // CardServiceProvider.php replacements...
-        $this->replace('{{ namespace }}', $this->cardNamespace(), $this->cardPath() . '/src/CardServiceProvider.stub');
-        $this->replace('{{ component }}', $this->cardName(), $this->cardPath() . '/src/CardServiceProvider.stub');
-        $this->replace('{{ name }}', $this->cardName(), $this->cardPath() . '/src/CardServiceProvider.stub');
+        $this->replace('{{ namespace }}', $this->cardNamespace(), $this->cardPath().'/src/CardServiceProvider.stub');
+        $this->replace('{{ component }}', $this->cardName(), $this->cardPath().'/src/CardServiceProvider.stub');
+        $this->replace('{{ name }}', $this->cardName(), $this->cardPath().'/src/CardServiceProvider.stub');
 
         // Card composer.json replacements...
-        $this->replace('{{ name }}', $this->argument('name'), $this->cardPath() . '/composer.json');
-        $this->replace('{{ escapedNamespace }}', $this->escapedCardNamespace(), $this->cardPath() . '/composer.json');
+        $this->replace('{{ name }}', $this->argument('name'), $this->cardPath().'/composer.json');
+        $this->replace('{{ escapedNamespace }}', $this->escapedCardNamespace(), $this->cardPath().'/composer.json');
 
         // Rename the stubs with the proper file extensions...
         $this->renameStubs();
@@ -91,86 +91,16 @@ class CardCommand extends Command
     }
 
     /**
-     * Get the path to the card.
+     * Get the array of stubs that need PHP file extensions.
      *
-     * @return string
+     * @return array
      */
-    protected function cardPath()
+    protected function stubsToRename()
     {
-        return base_path('nova-components/' . $this->cardClass());
-    }
-
-    /**
-     * Get the card's class name.
-     *
-     * @return string
-     */
-    protected function cardClass()
-    {
-        return Str::studly($this->cardName());
-    }
-
-    /**
-     * Get the card's base name.
-     *
-     * @return string
-     */
-    protected function cardName()
-    {
-        return explode('/', $this->argument('name'))[1];
-    }
-
-    /**
-     * Replace the given string in the given file.
-     *
-     * @param string $search
-     * @param string $replace
-     * @param string $path
-     * @return void
-     */
-    protected function replace($search, $replace, $path)
-    {
-        file_put_contents($path, str_replace($search, $replace, file_get_contents($path)));
-    }
-
-    /**
-     * Get the "title" name of the card.
-     *
-     * @return string
-     */
-    protected function cardTitle()
-    {
-        return Str::title(str_replace('-', ' ', $this->cardName()));
-    }
-
-    /**
-     * Get the card's namespace.
-     *
-     * @return string
-     */
-    protected function cardNamespace()
-    {
-        return Str::studly($this->cardVendor()) . '\\' . $this->cardClass();
-    }
-
-    /**
-     * Get the card's vendor.
-     *
-     * @return string
-     */
-    protected function cardVendor()
-    {
-        return explode('/', $this->argument('name'))[0];
-    }
-
-    /**
-     * Get the card's escaped namespace.
-     *
-     * @return string
-     */
-    protected function escapedCardNamespace()
-    {
-        return str_replace('\\', '\\\\', $this->cardNamespace());
+        return [
+            $this->cardPath().'/src/CardServiceProvider.stub',
+            $this->cardPath().'/routes/api.stub',
+        ];
     }
 
     /**
@@ -184,23 +114,13 @@ class CardCommand extends Command
 
         $composer['repositories'][] = [
             'type' => 'path',
-            'url' => './' . $this->relativeCardPath(),
+            'url' => './'.$this->relativeCardPath(),
         ];
 
         file_put_contents(
             base_path('composer.json'),
             json_encode($composer, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)
         );
-    }
-
-    /**
-     * Get the relative path to the card.
-     *
-     * @return string
-     */
-    protected function relativeCardPath()
-    {
-        return 'nova-components/' . $this->cardClass();
     }
 
     /**
@@ -229,9 +149,8 @@ class CardCommand extends Command
     {
         $package = json_decode(file_get_contents(base_path('package.json')), true);
 
-        $package['scripts']['build-' . $this->cardName()] = 'cd ' . $this->relativeCardPath() . ' && npm run dev';
-        $package['scripts']['build-' . $this->cardName() . '-prod'] = 'cd ' . $this->relativeCardPath(
-            ) . ' && npm run prod';
+        $package['scripts']['build-'.$this->cardName()] = 'cd '.$this->relativeCardPath().' && npm run dev';
+        $package['scripts']['build-'.$this->cardName().'-prod'] = 'cd '.$this->relativeCardPath().' && npm run prod';
 
         file_put_contents(
             base_path('package.json'),
@@ -247,28 +166,6 @@ class CardCommand extends Command
     protected function installNpmDependencies()
     {
         $this->executeCommand('npm set progress=false && npm install', $this->cardPath());
-    }
-
-    /**
-     * Run the given command as a process.
-     *
-     * @param string $command
-     * @param string $path
-     * @return void
-     */
-    protected function executeCommand($command, $path)
-    {
-        $process = (Process::fromShellCommandline($command, $path))->setTimeout(null);
-
-        if ('\\' !== DIRECTORY_SEPARATOR && file_exists('/dev/tty') && is_readable('/dev/tty')) {
-            $process->setTty(true);
-        }
-
-        $process->run(
-            function ($type, $line) {
-                $this->output->write($line);
-            }
-        );
     }
 
     /**
@@ -292,15 +189,115 @@ class CardCommand extends Command
     }
 
     /**
-     * Get the array of stubs that need PHP file extensions.
+     * Run the given command as a process.
      *
-     * @return array
+     * @param  string  $command
+     * @param  string  $path
+     * @return void
      */
-    protected function stubsToRename()
+    protected function executeCommand($command, $path)
     {
-        return [
-            $this->cardPath() . '/src/CardServiceProvider.stub',
-            $this->cardPath() . '/routes/api.stub',
-        ];
+        $process = (Process::fromShellCommandline($command, $path))->setTimeout(null);
+
+        if ('\\' !== DIRECTORY_SEPARATOR && file_exists('/dev/tty') && is_readable('/dev/tty')) {
+            $process->setTty(true);
+        }
+
+        $process->run(function ($type, $line) {
+            $this->output->write($line);
+        });
+    }
+
+    /**
+     * Replace the given string in the given file.
+     *
+     * @param  string  $search
+     * @param  string  $replace
+     * @param  string  $path
+     * @return void
+     */
+    protected function replace($search, $replace, $path)
+    {
+        file_put_contents($path, str_replace($search, $replace, file_get_contents($path)));
+    }
+
+    /**
+     * Get the path to the card.
+     *
+     * @return string
+     */
+    protected function cardPath()
+    {
+        return base_path('nova-components/'.$this->cardClass());
+    }
+
+    /**
+     * Get the relative path to the card.
+     *
+     * @return string
+     */
+    protected function relativeCardPath()
+    {
+        return 'nova-components/'.$this->cardClass();
+    }
+
+    /**
+     * Get the card's namespace.
+     *
+     * @return string
+     */
+    protected function cardNamespace()
+    {
+        return Str::studly($this->cardVendor()).'\\'.$this->cardClass();
+    }
+
+    /**
+     * Get the card's escaped namespace.
+     *
+     * @return string
+     */
+    protected function escapedCardNamespace()
+    {
+        return str_replace('\\', '\\\\', $this->cardNamespace());
+    }
+
+    /**
+     * Get the card's class name.
+     *
+     * @return string
+     */
+    protected function cardClass()
+    {
+        return Str::studly($this->cardName());
+    }
+
+    /**
+     * Get the card's vendor.
+     *
+     * @return string
+     */
+    protected function cardVendor()
+    {
+        return explode('/', $this->argument('name'))[0];
+    }
+
+    /**
+     * Get the "title" name of the card.
+     *
+     * @return string
+     */
+    protected function cardTitle()
+    {
+        return Str::title(str_replace('-', ' ', $this->cardName()));
+    }
+
+    /**
+     * Get the card's base name.
+     *
+     * @return string
+     */
+    protected function cardName()
+    {
+        return explode('/', $this->argument('name'))[1];
     }
 }

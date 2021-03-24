@@ -41,6 +41,16 @@ abstract class DuskTestCase extends TestCase
     }
 
     /**
+     * Get base path.
+     *
+     * @return string
+     */
+    protected function getBasePath()
+    {
+        return realpath(__DIR__.'/../vendor/laravel/nova-dusk-suite');
+    }
+
+    /**
      * Get package providers.
      *
      * @param Application $app
@@ -92,16 +102,6 @@ abstract class DuskTestCase extends TestCase
                 return 'testing';
             });
         });
-    }
-
-    /**
-     * Get base path.
-     *
-     * @return string
-     */
-    protected function getBasePath()
-    {
-        return realpath(__DIR__.'/../vendor/laravel/nova-dusk-suite');
     }
 
     /**

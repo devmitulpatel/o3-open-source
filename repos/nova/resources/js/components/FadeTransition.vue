@@ -1,3 +1,3 @@
 <template functional>
-  <transition mode="out-in" name="fade"> <slot /> </transition>
+  <transition name="fade" mode="out-in"> <slot /> </transition>
 </template>

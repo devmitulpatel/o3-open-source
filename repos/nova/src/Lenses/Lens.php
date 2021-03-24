@@ -52,6 +52,23 @@ abstract class Lens implements ArrayAccess, JsonSerializable, UrlRoutable
     public $resource;
 
     /**
+     * Execute the query for the lens.
+     *
+     * @param LensRequest $request
+     * @param  Builder  $query
+     * @return mixed
+     */
+    abstract public static function query(LensRequest $request, $query);
+
+    /**
+     * Get the fields displayed by the lens.
+     *
+     * @param Request $request
+     * @return array
+     */
+    abstract public function fields(Request $request);
+
+    /**
      * Create a new lens instance.
      *
      * @param  Model|null  $resource
@@ -63,13 +80,24 @@ abstract class Lens implements ArrayAccess, JsonSerializable, UrlRoutable
     }
 
     /**
-     * Execute the query for the lens.
+     * Get the displayable name of the lens.
      *
-     * @param LensRequest $request
-     * @param  Builder  $query
-     * @return mixed
+     * @return string
      */
-    abstract public static function query(LensRequest $request, $query);
+    public function name()
+    {
+        return $this->name ?: Nova::humanize($this);
+    }
+
+    /**
+     * Get the URI key for the lens.
+     *
+     * @return string
+     */
+    public function uriKey()
+    {
+        return Str::slug($this->name(), '-', null);
+    }
 
     /**
      * Get the actions available on the lens.
@@ -94,20 +122,6 @@ abstract class Lens implements ArrayAccess, JsonSerializable, UrlRoutable
                 ->reject(function ($field) {
                     return $field instanceof ListableField || ! $field->showOnIndex;
                 }));
-    }
-
-    /**
-     * Prepare the lens for JSON serialization using the given fields.
-     *
-     * @param FieldCollection $fields
-     * @return array
-     */
-    protected function serializeWithId(FieldCollection $fields)
-    {
-        return [
-            'id' => $fields->whereInstanceOf(ID::class)->first() ?: ID::forModel($this->resource),
-            'fields' => $fields->all(),
-        ];
     }
 
     /**
@@ -136,12 +150,18 @@ abstract class Lens implements ArrayAccess, JsonSerializable, UrlRoutable
     }
 
     /**
-     * Get the fields displayed by the lens.
+     * Prepare the lens for JSON serialization using the given fields.
      *
-     * @param Request $request
+     * @param FieldCollection $fields
      * @return array
      */
-    abstract public function fields(Request $request);
+    protected function serializeWithId(FieldCollection $fields)
+    {
+        return [
+            'id' => $fields->whereInstanceOf(ID::class)->first() ?: ID::forModel($this->resource),
+            'fields' => $fields->all(),
+        ];
+    }
 
     /**
      * Prepare the lens for JSON serialization.
@@ -154,25 +174,5 @@ abstract class Lens implements ArrayAccess, JsonSerializable, UrlRoutable
             'name' => $this->name(),
             'uriKey' => $this->uriKey(),
         ];
-    }
-
-    /**
-     * Get the displayable name of the lens.
-     *
-     * @return string
-     */
-    public function name()
-    {
-        return $this->name ?: Nova::humanize($this);
-    }
-
-    /**
-     * Get the URI key for the lens.
-     *
-     * @return string
-     */
-    public function uriKey()
-    {
-        return Str::slug($this->name(), '-', null);
     }
 }

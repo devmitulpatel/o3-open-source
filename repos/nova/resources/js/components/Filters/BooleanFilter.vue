@@ -5,11 +5,11 @@
     </h3>
 
     <BooleanOption
-      v-for="option in options"
+      :resource-name="resourceName"
       :key="option.value"
+      v-for="option in options"
       :filter="filter"
       :option="option"
-      :resource-name="resourceName"
       @change="handleChange"
     />
   </div>

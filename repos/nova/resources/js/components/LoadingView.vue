@@ -1,5 +1,5 @@
 <template>
-  <div :class="{ 'overflow-hidden': loading }" class="relative">
+  <div class="relative" :class="{ 'overflow-hidden': loading }">
     <div
       v-if="loading"
       class="flex items-center justify-center z-50 p-6"

@@ -1,6 +1,6 @@
 <template>
   <field-wrapper>
-    <div v-if="shouldDisplayAsHtml" :class="classes" v-html="field.value" />
+    <div v-if="shouldDisplayAsHtml" v-html="field.value" :class="classes" />
     <div v-else :class="classes">
       <p>{{ field.value }}</p>
     </div>

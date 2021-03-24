@@ -86,19 +86,6 @@ class HasOneThrough extends Field implements ListableField, RelatableField
     }
 
     /**
-     * Set the Closure used to determine if the HasOne field has already been filled.
-     *
-     * @param  Closure  $callback
-     * @return $this
-     */
-    public function alreadyFilledWhen($callback)
-    {
-        $this->filledCallback = $callback;
-
-        return $this;
-    }
-
-    /**
      * Determine if the field should be displayed for the given request.
      *
      * @param Request $request
@@ -151,6 +138,19 @@ class HasOneThrough extends Field implements ListableField, RelatableField
             'singularLabel' => $this->singularLabel,
             'alreadyFilled' => $this->alreadyFilled($request),
         ], parent::jsonSerialize());
+    }
+
+    /**
+     * Set the Closure used to determine if the HasOne field has already been filled.
+     *
+     * @param  Closure  $callback
+     * @return $this
+     */
+    public function alreadyFilledWhen($callback)
+    {
+        $this->filledCallback = $callback;
+
+        return $this;
     }
 
     /**

@@ -15,27 +15,25 @@ class CreateTest extends DuskTestCase
      */
     public function resource_can_be_created()
     {
-        $this->browse(
-            function (Browser $browser) {
-                $browser->loginAs(User::find(1))
+        $this->browse(function (Browser $browser) {
+            $browser->loginAs(User::find(1))
                     ->visit(new Create('users'))
                     ->type('@name', 'Adam Wathan')
                     ->type('@email', 'adam@laravel.com')
                     ->type('@password', 'secret')
                     ->create();
 
-                $user = User::orderBy('id', 'desc')->first();
+            $user = User::orderBy('id', 'desc')->first();
 
-                $browser->assertPathIs('/nova/resources/users/' . $user->id);
+            $browser->assertPathIs('/nova/resources/users/'.$user->id);
 
-                $this->assertEquals('Adam Wathan', $user->name);
-                $this->assertEquals('adam@laravel.com', $user->email);
-                $this->assertTrue(Hash::check('secret', $user->password));
-                $this->assertTrue($user->active);
+            $this->assertEquals('Adam Wathan', $user->name);
+            $this->assertEquals('adam@laravel.com', $user->email);
+            $this->assertTrue(Hash::check('secret', $user->password));
+            $this->assertTrue($user->active);
 
-                $browser->blank();
-            }
-        );
+            $browser->blank();
+        });
     }
 
     /**
@@ -43,9 +41,8 @@ class CreateTest extends DuskTestCase
      */
     public function validation_errors_are_displayed()
     {
-        $this->browse(
-            function (Browser $browser) {
-                $browser->loginAs(User::find(1))
+        $this->browse(function (Browser $browser) {
+            $browser->loginAs(User::find(1))
                     ->visit(new Create('users'))
                     ->create()
                     ->waitForText('There was a problem submitting the form.', 15)
@@ -53,9 +50,8 @@ class CreateTest extends DuskTestCase
                     ->assertSee('The Email field is required.')
                     ->assertSee('The Password field is required.');
 
-                $browser->blank();
-            }
-        );
+            $browser->blank();
+        });
     }
 
     /**
@@ -63,25 +59,23 @@ class CreateTest extends DuskTestCase
      */
     public function resource_can_be_created_and_another_resource_can_be_added()
     {
-        $this->browse(
-            function (Browser $browser) {
-                $browser->loginAs(User::find(1))
+        $this->browse(function (Browser $browser) {
+            $browser->loginAs(User::find(1))
                     ->visit(new Create('users'))
                     ->type('@name', 'Adam Wathan')
                     ->type('@email', 'adam@laravel.com')
                     ->type('@password', 'secret')
                     ->createAndAddAnother();
 
-                $user = User::orderBy('id', 'desc')->first();
+            $user = User::orderBy('id', 'desc')->first();
 
-                $browser->assertPathIs('/nova/resources/users/new');
+            $browser->assertPathIs('/nova/resources/users/new');
 
-                $this->assertEquals('Adam Wathan', $user->name);
-                $this->assertEquals('adam@laravel.com', $user->email);
-                $this->assertTrue(Hash::check('secret', $user->password));
+            $this->assertEquals('Adam Wathan', $user->name);
+            $this->assertEquals('adam@laravel.com', $user->email);
+            $this->assertTrue(Hash::check('secret', $user->password));
 
-                $browser->blank();
-            }
-        );
+            $browser->blank();
+        });
     }
 }

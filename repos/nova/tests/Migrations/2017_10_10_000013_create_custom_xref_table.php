@@ -13,13 +13,10 @@ class CreateCustomXrefTable extends Migration
      */
     public function up()
     {
-        Schema::create(
-            'user_emails_xref',
-            function (Blueprint $table) {
-                $table->string('email_from')->index();
-                $table->string('email_to')->index();
-            }
-        );
+        Schema::create('user_emails_xref', function (Blueprint $table) {
+            $table->string('email_from')->index();
+            $table->string('email_to')->index();
+        });
     }
 
     /**

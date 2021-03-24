@@ -2,9 +2,9 @@
   <panel-item :field="field">
     <template slot="value">
       <badge
-        :extra-classes="field.typeClass"
-        :label="field.label"
         class="mt-1"
+        :label="field.label"
+        :extra-classes="field.typeClass"
       />
     </template>
   </panel-item>

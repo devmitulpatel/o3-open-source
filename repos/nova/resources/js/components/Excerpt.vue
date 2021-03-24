@@ -1,25 +1,25 @@
 <template>
   <div v-if="shouldShow && hasContent">
     <div
-      :class="{ 'whitespace-pre-wrap': plainText }"
       class="markdown leading-normal"
+      :class="{ 'whitespace-pre-wrap': plainText }"
       v-html="content"
     />
   </div>
   <div v-else-if="hasContent">
     <div
       v-if="expanded"
-      :class="{ 'whitespace-pre-wrap': plainText }"
       class="markdown leading-normal"
+      :class="{ 'whitespace-pre-wrap': plainText }"
       v-html="content"
     />
 
     <a
       v-if="!shouldShow"
+      @click="toggle"
+      class="cursor-pointer dim inline-block text-primary font-bold"
       :class="{ 'mt-6': expanded }"
       aria-role="button"
-      class="cursor-pointer dim inline-block text-primary font-bold"
-      @click="toggle"
     >
       {{ showHideLabel }}
     </a>

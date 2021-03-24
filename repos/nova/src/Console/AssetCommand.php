@@ -77,76 +77,15 @@ class AssetCommand extends Command
     }
 
     /**
-     * Get the path to the asset.
+     * Get the array of stubs that need PHP file extensions.
      *
-     * @return string
+     * @return array
      */
-    protected function assetPath()
+    protected function stubsToRename()
     {
-        return base_path('nova-components/'.$this->assetClass());
-    }
-
-    /**
-     * Get the asset's class name.
-     *
-     * @return string
-     */
-    protected function assetClass()
-    {
-        return Str::studly($this->assetName());
-    }
-
-    /**
-     * Get the asset's base name.
-     *
-     * @return string
-     */
-    protected function assetName()
-    {
-        return explode('/', $this->argument('name'))[1];
-    }
-
-    /**
-     * Replace the given string in the given file.
-     *
-     * @param  string  $search
-     * @param  string  $replace
-     * @param  string  $path
-     * @return void
-     */
-    protected function replace($search, $replace, $path)
-    {
-        file_put_contents($path, str_replace($search, $replace, file_get_contents($path)));
-    }
-
-    /**
-     * Get the asset's namespace.
-     *
-     * @return string
-     */
-    protected function assetNamespace()
-    {
-        return Str::studly($this->assetVendor()).'\\'.$this->assetClass();
-    }
-
-    /**
-     * Get the asset's vendor.
-     *
-     * @return string
-     */
-    protected function assetVendor()
-    {
-        return explode('/', $this->argument('name'))[0];
-    }
-
-    /**
-     * Get the asset's escaped namespace.
-     *
-     * @return string
-     */
-    protected function escapedAssetNamespace()
-    {
-        return str_replace('\\', '\\\\', $this->assetNamespace());
+        return [
+            $this->assetPath().'/src/AssetServiceProvider.stub',
+        ];
     }
 
     /**
@@ -167,16 +106,6 @@ class AssetCommand extends Command
             base_path('composer.json'),
             json_encode($composer, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)
         );
-    }
-
-    /**
-     * Get the relative path to the asset.
-     *
-     * @return string
-     */
-    protected function relativeAssetPath()
-    {
-        return 'nova-components/'.$this->assetClass();
     }
 
     /**
@@ -225,26 +154,6 @@ class AssetCommand extends Command
     }
 
     /**
-     * Run the given command as a process.
-     *
-     * @param  string  $command
-     * @param  string  $path
-     * @return void
-     */
-    protected function executeCommand($command, $path)
-    {
-        $process = (Process::fromShellCommandline($command, $path))->setTimeout(null);
-
-        if ('\\' !== DIRECTORY_SEPARATOR && file_exists('/dev/tty') && is_readable('/dev/tty')) {
-            $process->setTty(true);
-        }
-
-        $process->run(function ($type, $line) {
-            $this->output->write($line);
-        });
-    }
-
-    /**
      * Compile the asset's assets.
      *
      * @return void
@@ -265,14 +174,105 @@ class AssetCommand extends Command
     }
 
     /**
-     * Get the array of stubs that need PHP file extensions.
+     * Run the given command as a process.
      *
-     * @return array
+     * @param  string  $command
+     * @param  string  $path
+     * @return void
      */
-    protected function stubsToRename()
+    protected function executeCommand($command, $path)
     {
-        return [
-            $this->assetPath().'/src/AssetServiceProvider.stub',
-        ];
+        $process = (Process::fromShellCommandline($command, $path))->setTimeout(null);
+
+        if ('\\' !== DIRECTORY_SEPARATOR && file_exists('/dev/tty') && is_readable('/dev/tty')) {
+            $process->setTty(true);
+        }
+
+        $process->run(function ($type, $line) {
+            $this->output->write($line);
+        });
+    }
+
+    /**
+     * Replace the given string in the given file.
+     *
+     * @param  string  $search
+     * @param  string  $replace
+     * @param  string  $path
+     * @return void
+     */
+    protected function replace($search, $replace, $path)
+    {
+        file_put_contents($path, str_replace($search, $replace, file_get_contents($path)));
+    }
+
+    /**
+     * Get the path to the asset.
+     *
+     * @return string
+     */
+    protected function assetPath()
+    {
+        return base_path('nova-components/'.$this->assetClass());
+    }
+
+    /**
+     * Get the relative path to the asset.
+     *
+     * @return string
+     */
+    protected function relativeAssetPath()
+    {
+        return 'nova-components/'.$this->assetClass();
+    }
+
+    /**
+     * Get the asset's namespace.
+     *
+     * @return string
+     */
+    protected function assetNamespace()
+    {
+        return Str::studly($this->assetVendor()).'\\'.$this->assetClass();
+    }
+
+    /**
+     * Get the asset's escaped namespace.
+     *
+     * @return string
+     */
+    protected function escapedAssetNamespace()
+    {
+        return str_replace('\\', '\\\\', $this->assetNamespace());
+    }
+
+    /**
+     * Get the asset's class name.
+     *
+     * @return string
+     */
+    protected function assetClass()
+    {
+        return Str::studly($this->assetName());
+    }
+
+    /**
+     * Get the asset's vendor.
+     *
+     * @return string
+     */
+    protected function assetVendor()
+    {
+        return explode('/', $this->argument('name'))[0];
+    }
+
+    /**
+     * Get the asset's base name.
+     *
+     * @return string
+     */
+    protected function assetName()
+    {
+        return explode('/', $this->argument('name'))[1];
     }
 }

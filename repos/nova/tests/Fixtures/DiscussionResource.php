@@ -34,16 +34,6 @@ class DiscussionResource extends Resource
     ];
 
     /**
-     * Get the URI key for the resource.
-     *
-     * @return string
-     */
-    public static function uriKey()
-    {
-        return 'discussions';
-    }
-
-    /**
      * Get the fields displayed by the resource.
      *
      * @param Request $request
@@ -69,5 +59,15 @@ class DiscussionResource extends Resource
         return [
             //
         ];
+    }
+
+    /**
+     * Get the URI key for the resource.
+     *
+     * @return string
+     */
+    public static function uriKey()
+    {
+        return 'discussions';
     }
 }

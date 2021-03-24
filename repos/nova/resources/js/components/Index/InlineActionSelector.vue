@@ -1,12 +1,12 @@
 <template>
   <span>
     <select
-      v-if="actions.length > 1"
       ref="selectBox"
+      v-if="actions.length > 1"
       class="rounded-sm select-box-sm mr-2 h-6 text-xs appearance-none bg-40 pl-2 pr-6 active:outline-none active:shadow-outline focus:outline-none focus:shadow-outline"
-      dusk="inline-action-select"
       style="max-width: 90px"
       @change="handleSelectionChange"
+      dusk="inline-action-select"
     >
       <option disabled selected>{{ __('Actions') }}</option>
       <option
@@ -19,14 +19,14 @@
     </select>
 
     <button
-      v-for="action in actions"
       v-else
+      v-for="action in actions"
       :key="action.uriKey"
-      :class="action.class"
-      :data-testid="action.uriKey"
-      class="btn btn-xs mr-1"
-      dusk="run-inline-action-button"
       @click="executeSingleAction(action)"
+      class="btn btn-xs mr-1"
+      :class="action.class"
+      dusk="run-inline-action-button"
+      :data-testid="action.uriKey"
     >
       {{ action.name }}
     </button>
@@ -34,17 +34,17 @@
     <!-- Action Confirmation Modal -->
     <portal to="modals">
       <component
-        :is="selectedAction.component"
         v-if="confirmActionModalOpened"
+        class="text-left"
+        :is="selectedAction.component"
+        :working="working"
+        :selected-resources="selectedResources"
+        :resource-name="resourceName"
         :action="selectedAction"
         :endpoint="actionsEndpoint"
         :errors="errors"
-        :resource-name="resourceName"
-        :selected-resources="selectedResources"
-        :working="working"
-        class="text-left"
-        @close="closeConfirmationModal"
         @confirm="executeAction"
+        @close="closeConfirmationModal"
       />
     </portal>
   </span>

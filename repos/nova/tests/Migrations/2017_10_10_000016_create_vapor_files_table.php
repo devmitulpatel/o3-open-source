@@ -13,15 +13,12 @@ class CreateVaporFilesTable extends Migration
      */
     public function up()
     {
-        Schema::create(
-            'vapor_files',
-            function (Blueprint $table) {
-                $table->increments('id');
-                $table->string('avatar')->nullable();
-                $table->string('original_name')->nullable();
-                $table->timestamps();
-            }
-        );
+        Schema::create('vapor_files', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('avatar')->nullable();
+            $table->string('original_name')->nullable();
+            $table->timestamps();
+        });
     }
 
     /**

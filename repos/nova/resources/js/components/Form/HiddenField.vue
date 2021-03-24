@@ -1,6 +1,6 @@
 <template>
-  <div :errors="errors" class="hidden">
-    <input :value="value" type="hidden" />
+  <div class="hidden" :errors="errors">
+    <input type="hidden" :value="value" />
   </div>
 </template>
 

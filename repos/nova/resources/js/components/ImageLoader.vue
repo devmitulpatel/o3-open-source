@@ -1,12 +1,12 @@
 <template>
   <loading-card
     ref="card"
-    :class="cardClasses"
     :loading="loading"
-    :style="cardStyles"
     class="card relative border border-lg border-50 overflow-hidden px-0 py-0"
+    :class="cardClasses"
+    :style="cardStyles"
   >
-    <div v-if="missing" class="missing p-8">
+    <div class="missing p-8" v-if="missing">
       <p class="text-center leading-normal">
         <a :href="src" class="text-primary dim" target="_blank">{{
           __('This image')

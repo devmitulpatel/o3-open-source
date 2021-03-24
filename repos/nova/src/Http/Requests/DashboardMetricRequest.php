@@ -15,11 +15,9 @@ class DashboardMetricRequest extends NovaRequest
      */
     public function metric()
     {
-        return $this->availableMetrics()->first(
-            function ($metric) {
-                return $this->metric === $metric->uriKey();
-            }
-        ) ?: abort(404);
+        return $this->availableMetrics()->first(function ($metric) {
+            return $this->metric === $metric->uriKey();
+        }) ?: abort(404);
     }
 
     /**

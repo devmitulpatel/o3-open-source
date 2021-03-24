@@ -1,7 +1,7 @@
 <template>
   <span
-    :class="extraClasses"
     class="whitespace-no-wrap px-2 py-1 rounded-full uppercase text-xs font-bold"
+    :class="extraClasses"
   >
     {{ label }}
   </span>

@@ -14,15 +14,13 @@ class DashboardTest extends DuskTestCase
      */
     public function show_default_dashboard()
     {
-        $this->browse(
-            function (Browser $browser) {
-                $browser->loginAs(User::find(1))
+        $this->browse(function (Browser $browser) {
+            $browser->loginAs(User::find(1))
                     ->visit(new Dashboard())
                     ->assertSee('Get Started');
 
-                $browser->blank();
-            }
-        );
+            $browser->blank();
+        });
     }
 
     /**
@@ -30,15 +28,13 @@ class DashboardTest extends DuskTestCase
      */
     public function invalid_dashboard_shows_404()
     {
-        $this->browse(
-            function (Browser $browser) {
-                $browser->loginAs(User::find(1))
+        $this->browse(function (Browser $browser) {
+            $browser->loginAs(User::find(1))
                     ->visit(new Dashboard('foobar'))
                     ->waitForText('404', 15)
                     ->assertPathIs('/nova/404');
 
-                $browser->blank();
-            }
-        );
+            $browser->blank();
+        });
     }
 }

@@ -12,11 +12,16 @@ use Laravel\Nova\Tests\IntegrationTest;
 
 class FileFieldTest extends IntegrationTest
 {
-    public function test_field_can_accept_a_thumbail_callback()
+    protected function makeField($name = 'Avatar', $attribute = 'avatar')
     {
-        $this->assertFixture(function ($field) {
-            $this->assertEquals('http://mycdn.com/wew.jpg', $field->jsonSerialize()['thumbnailUrl']);
-        });
+        return File::make($name, $attribute);
+    }
+
+    protected function createModel()
+    {
+        return Model::create([
+            'avatar' => 'wew.jpg',
+        ]);
     }
 
     protected function assertFixture($callback)
@@ -41,16 +46,11 @@ class FileFieldTest extends IntegrationTest
         call_user_func($callback, $field, $model);
     }
 
-    protected function createModel()
+    public function test_field_can_accept_a_thumbail_callback()
     {
-        return Model::create([
-            'avatar' => 'wew.jpg',
-        ]);
-    }
-
-    protected function makeField($name = 'Avatar', $attribute = 'avatar')
-    {
-        return File::make($name, $attribute);
+        $this->assertFixture(function ($field) {
+            $this->assertEquals('http://mycdn.com/wew.jpg', $field->jsonSerialize()['thumbnailUrl']);
+        });
     }
 
     public function test_field_can_accept_a_preview_callback()

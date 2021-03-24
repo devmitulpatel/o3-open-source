@@ -21,6 +21,16 @@ class IndexComponent extends BaseComponent
     }
 
     /**
+     * Get the root selector for the component.
+     *
+     * @return string
+     */
+    public function selector()
+    {
+        return '@'.$this->resourceName.'-index-component';
+    }
+
+    /**
      * Wait for table to be ready.
      */
     public function waitForTable(Browser $browser)
@@ -291,16 +301,6 @@ class IndexComponent extends BaseComponent
             $browser->waitFor($selector, 25)
                     ->assertVisible($selector);
         });
-    }
-
-    /**
-     * Get the root selector for the component.
-     *
-     * @return string
-     */
-    public function selector()
-    {
-        return '@'.$this->resourceName.'-index-component';
     }
 
     /**

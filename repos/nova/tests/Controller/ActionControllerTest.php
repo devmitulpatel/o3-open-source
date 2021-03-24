@@ -63,7 +63,7 @@ class ActionControllerTest extends IntegrationTest
     public function test_can_retrieve_actions_for_a_resource()
     {
         $response = $this->withExceptionHandling()
-            ->get('/nova-api/users/actions');
+                        ->get('/nova-api/users/actions');
 
         $response->assertStatus(200);
         $this->assertInstanceOf(Action::class, $response->original['actions'][0]);
@@ -72,7 +72,7 @@ class ActionControllerTest extends IntegrationTest
     public function test_can_retrieve_actions_for_a_resource_with_field()
     {
         $response = $this->withExceptionHandling()
-            ->get('/nova-api/comments/actions');
+                        ->get('/nova-api/comments/actions');
 
         $response->assertStatus(200);
         $this->assertInstanceOf(Action::class, $response->original['actions'][0]);
@@ -92,14 +92,11 @@ class ActionControllerTest extends IntegrationTest
         $user2 = factory(User::class)->create();
 
         $response = $this->withExceptionHandling()
-            ->post(
-                '/nova-api/users/action?action=' . (new NoopAction)->uriKey(),
-                [
-                    'resources' => implode(',', [$user->id, $user2->id]),
-                    'test' => 'Taylor Otwell',
-                    'callback' => '',
-                ]
-            );
+                        ->post('/nova-api/users/action?action='.(new NoopAction)->uriKey(), [
+                            'resources' => implode(',', [$user->id, $user2->id]),
+                            'test' => 'Taylor Otwell',
+                            'callback' => '',
+                        ]);
 
         $response->assertStatus(200);
         $this->assertEquals(['message' => 'Hello World'], $response->original);
@@ -119,14 +116,11 @@ class ActionControllerTest extends IntegrationTest
     public function test_standalone_actions_can_be_applied()
     {
         $response = $this->withoutExceptionHandling()
-            ->post(
-                '/nova-api/users/action?action=' . (new StandaloneAction)->uriKey(),
-                [
-                    'resources' => '',
-                    'name' => 'Taylor Otwell',
-                    'email' => 'taylor@laravel.com',
-                ]
-            );
+                        ->post('/nova-api/users/action?action='.(new StandaloneAction)->uriKey(), [
+                            'resources' => '',
+                            'name' => 'Taylor Otwell',
+                            'email' => 'taylor@laravel.com',
+                        ]);
 
         $response->assertStatus(200);
 
@@ -140,12 +134,9 @@ class ActionControllerTest extends IntegrationTest
         $user = factory(User::class)->create();
 
         $response = $this->withExceptionHandling()
-            ->post(
-                '/nova-api/users/action?action=' . (new RedirectAction)->uriKey(),
-                [
-                    'resources' => implode(',', [$user->id]),
-                ]
-            );
+                        ->post('/nova-api/users/action?action='.(new RedirectAction)->uriKey(), [
+                            'resources' => implode(',', [$user->id]),
+                        ]);
 
         $this->assertEquals(['redirect' => 'http://yahoo.com'], $response->original);
     }
@@ -155,12 +146,9 @@ class ActionControllerTest extends IntegrationTest
         $user = factory(User::class)->create();
 
         $response = $this->withExceptionHandling()
-            ->post(
-                '/nova-api/users/action?action=' . (new OpensInNewTabAction)->uriKey(),
-                [
-                    'resources' => implode(',', [$user->id]),
-                ]
-            );
+                        ->post('/nova-api/users/action?action='.(new OpensInNewTabAction)->uriKey(), [
+                            'resources' => implode(',', [$user->id]),
+                        ]);
 
         $this->assertEquals(['openInNewTab' => 'http://google.com'], $response->original);
     }
@@ -171,21 +159,16 @@ class ActionControllerTest extends IntegrationTest
         $user2 = factory(User::class)->create();
 
         $response = $this->withExceptionHandling()
-            ->postJson(
-                '/nova-api/users/action?action=' . (new RequiredFieldAction)->uriKey(),
-                [
-                    'resources' => implode(',', [$user->id, $user2->id]),
-                    'test' => '',
-                    'callback' => '',
-                ]
-            );
+                        ->postJson('/nova-api/users/action?action='.(new RequiredFieldAction)->uriKey(), [
+                            'resources' => implode(',', [$user->id, $user2->id]),
+                            'test' => '',
+                            'callback' => '',
+                        ]);
 
         $response->assertStatus(422)
-            ->assertJsonValidationErrors(
-                [
-                    'test' => 'The Test field is required.',
-                ]
-            );
+            ->assertJsonValidationErrors([
+                'test' => 'The Test field is required.',
+            ]);
     }
 
     public function test_action_cant_be_applied_if_not_authorized_to_update_resource()
@@ -199,14 +182,11 @@ class ActionControllerTest extends IntegrationTest
         $user2 = factory(User::class)->create();
 
         $response = $this->withExceptionHandling()
-            ->post(
-                '/nova-api/users/action?action=' . (new NoopAction)->uriKey(),
-                [
-                    'resources' => implode(',', [$user->id, $user2->id]),
-                    'test' => 'Taylor Otwell',
-                    'callback' => '',
-                ]
-            );
+                        ->post('/nova-api/users/action?action='.(new NoopAction)->uriKey(), [
+                            'resources' => implode(',', [$user->id, $user2->id]),
+                            'test' => 'Taylor Otwell',
+                            'callback' => '',
+                        ]);
 
         unset($_SERVER['nova.user.authorizable']);
         unset($_SERVER['nova.user.updatable']);
@@ -227,14 +207,11 @@ class ActionControllerTest extends IntegrationTest
         $user = factory(User::class)->create();
 
         $response = $this->withExceptionHandling()
-            ->post(
-                '/nova-api/users/action?action=' . (new DestructiveAction)->uriKey(),
-                [
-                    'resources' => $user->id,
-                    'test' => 'Taylor Otwell',
-                    'callback' => '',
-                ]
-            );
+                        ->post('/nova-api/users/action?action='.(new DestructiveAction)->uriKey(), [
+                            'resources' => $user->id,
+                            'test' => 'Taylor Otwell',
+                            'callback' => '',
+                        ]);
 
         unset($_SERVER['nova.user.authorizable']);
         unset($_SERVER['nova.user.updatable']);
@@ -250,14 +227,11 @@ class ActionControllerTest extends IntegrationTest
         $user = factory(User::class)->create();
 
         $response = $this->withExceptionHandling()
-            ->post(
-                '/nova-api/users/action?action=' . (new UnrunnableAction)->uriKey(),
-                [
-                    'resources' => $user->id,
-                    'test' => 'Taylor Otwell',
-                    'callback' => '',
-                ]
-            );
+                        ->post('/nova-api/users/action?action='.(new UnrunnableAction)->uriKey(), [
+                            'resources' => $user->id,
+                            'test' => 'Taylor Otwell',
+                            'callback' => '',
+                        ]);
 
         $response->assertStatus(200);
         $this->assertEmpty(UnrunnableAction::$applied);
@@ -269,14 +243,11 @@ class ActionControllerTest extends IntegrationTest
         $user = factory(User::class)->create();
 
         $response = $this->withExceptionHandling()
-            ->post(
-                '/nova-api/users/action?action=' . (new UnrunnableDestructiveAction)->uriKey(),
-                [
-                    'resources' => $user->id,
-                    'test' => 'Taylor Otwell',
-                    'callback' => '',
-                ]
-            );
+                        ->post('/nova-api/users/action?action='.(new UnrunnableDestructiveAction)->uriKey(), [
+                            'resources' => $user->id,
+                            'test' => 'Taylor Otwell',
+                            'callback' => '',
+                        ]);
 
         $response->assertStatus(200);
         $this->assertEmpty(UnrunnableDestructiveAction::$applied);
@@ -293,14 +264,11 @@ class ActionControllerTest extends IntegrationTest
         $user4 = factory(User::class)->create();
 
         $response = $this->withExceptionHandling()
-            ->post(
-                '/nova-api/users/action?action=' . (new NoopAction)->uriKey(),
-                [
-                    'resources' => implode(',', [$user->id, $user2->id, $user3->id, $user4->id]),
-                    'test' => 'Taylor Otwell',
-                    'callback' => '',
-                ]
-            );
+                        ->post('/nova-api/users/action?action='.(new NoopAction)->uriKey(), [
+                            'resources' => implode(',', [$user->id, $user2->id, $user3->id, $user4->id]),
+                            'test' => 'Taylor Otwell',
+                            'callback' => '',
+                        ]);
 
         $response->assertStatus(200);
 
@@ -315,23 +283,16 @@ class ActionControllerTest extends IntegrationTest
 
         $resource = new UserResource($user);
 
-        $this->assertNotNull(
-            collect($resource->actions(NovaRequest::create('/')))->first(
-                function ($action) {
-                    return $action instanceof UnauthorizedAction;
-                }
-            )
-        );
+        $this->assertNotNull(collect($resource->actions(NovaRequest::create('/')))->first(function ($action) {
+            return $action instanceof UnauthorizedAction;
+        }));
 
         $response = $this->withExceptionHandling()
-            ->post(
-                '/nova-api/users/action?action=' . (new UnauthorizedAction)->uriKey(),
-                [
-                    'resources' => implode(',', [$user->id]),
-                    'test' => 'Taylor Otwell',
-                    'callback' => '',
-                ]
-            );
+                        ->post('/nova-api/users/action?action='.(new UnauthorizedAction)->uriKey(), [
+                            'resources' => implode(',', [$user->id]),
+                            'test' => 'Taylor Otwell',
+                            'callback' => '',
+                        ]);
 
         $response->assertStatus(403);
 
@@ -343,13 +304,10 @@ class ActionControllerTest extends IntegrationTest
         $comment = factory(Comment::class)->create();
 
         $response = $this->withExceptionHandling()
-            ->post(
-                '/nova-api/comments/action?action=' . (new NoopAction)->uriKey(),
-                [
-                    'resources' => 'all',
-                    'test' => 'Taylor Otwell',
-                ]
-            );
+                        ->post('/nova-api/comments/action?action='.(new NoopAction)->uriKey(), [
+                            'resources' => 'all',
+                            'test' => 'Taylor Otwell',
+                        ]);
 
         $response->assertStatus(200);
         $this->assertEquals('Taylor Otwell', NoopAction::$appliedFields[0]->test);
@@ -367,14 +325,10 @@ class ActionControllerTest extends IntegrationTest
         $post2->comments()->save($comment2);
 
         $response = $this->withExceptionHandling()
-            ->post(
-                '/nova-api/comments/action?action=' . (new NoopAction)->uriKey(
-                ) . '&viaResource=posts&viaResourceId=' . $post->id . '&viaRelationship=comments',
-                [
-                    'resources' => 'all',
-                    'test' => 'Taylor Otwell',
-                ]
-            );
+                        ->post('/nova-api/comments/action?action='.(new NoopAction)->uriKey().'&viaResource=posts&viaResourceId='.$post->id.'&viaRelationship=comments', [
+                            'resources' => 'all',
+                            'test' => 'Taylor Otwell',
+                        ]);
 
         $response->assertStatus(200);
         $this->assertEquals('Taylor Otwell', NoopAction::$appliedFields[0]->test);
@@ -388,13 +342,10 @@ class ActionControllerTest extends IntegrationTest
         $comment2 = factory(Comment::class)->create(['body' => 'Comment 2']);
 
         $response = $this->withExceptionHandling()
-            ->post(
-                '/nova-api/comments/action?action=' . (new NoopAction)->uriKey() . '&search=Comment 1',
-                [
-                    'resources' => 'all',
-                    'test' => 'Taylor Otwell',
-                ]
-            );
+                        ->post('/nova-api/comments/action?action='.(new NoopAction)->uriKey().'&search=Comment 1', [
+                            'resources' => 'all',
+                            'test' => 'Taylor Otwell',
+                        ]);
 
         $response->assertStatus(200);
         $this->assertEquals('Taylor Otwell', NoopAction::$appliedFields[0]->test);
@@ -407,25 +358,18 @@ class ActionControllerTest extends IntegrationTest
         $comment = factory(Comment::class)->create();
         $comment2 = factory(Comment::class)->create();
 
-        $filters = base64_encode(
-            json_encode(
-                [
-                    [
-                        'class' => IdFilter::class,
-                        'value' => 1,
-                    ],
-                ]
-            )
-        );
+        $filters = base64_encode(json_encode([
+            [
+                'class' => IdFilter::class,
+                'value' => 1,
+            ],
+        ]));
 
         $response = $this->withExceptionHandling()
-            ->post(
-                '/nova-api/comments/action?action=' . (new NoopAction)->uriKey() . '&filters=' . $filters,
-                [
-                    'resources' => 'all',
-                    'test' => 'Taylor Otwell',
-                ]
-            );
+                        ->post('/nova-api/comments/action?action='.(new NoopAction)->uriKey().'&filters='.$filters, [
+                            'resources' => 'all',
+                            'test' => 'Taylor Otwell',
+                        ]);
 
         $response->assertStatus(200);
         $this->assertEquals('Taylor Otwell', NoopAction::$appliedFields[0]->test);
@@ -438,26 +382,18 @@ class ActionControllerTest extends IntegrationTest
         $comment = factory(Comment::class)->create();
         $comment2 = factory(Comment::class)->create();
 
-        $filters = base64_encode(
-            json_encode(
-                [
-                    [
-                        'class' => IdFilter::class,
-                        'value' => 1,
-                    ],
-                ]
-            )
-        );
+        $filters = base64_encode(json_encode([
+            [
+                'class' => IdFilter::class,
+                'value' => 1,
+            ],
+        ]));
 
         $response = $this->withExceptionHandling()
-            ->post(
-                '/nova-api/comments/action?action=' . (new NoopAction)->uriKey(
-                ) . '&search=Comment 2&filters=' . $filters,
-                [
-                    'resources' => 'all',
-                    'test' => 'Taylor Otwell',
-                ]
-            );
+                        ->post('/nova-api/comments/action?action='.(new NoopAction)->uriKey().'&search=Comment 2&filters='.$filters, [
+                            'resources' => 'all',
+                            'test' => 'Taylor Otwell',
+                        ]);
 
         $response->assertStatus(200);
         $this->assertCount(0, ActionEvent::all());
@@ -472,14 +408,11 @@ class ActionControllerTest extends IntegrationTest
         $user2->delete();
 
         $response = $this->withExceptionHandling()
-            ->post(
-                '/nova-api/users/action?action=' . (new NoopAction)->uriKey() . '&trashed=with',
-                [
-                    'resources' => implode(',', [$user->id, $user2->id]),
-                    'test' => 'Taylor Otwell',
-                    'callback' => '',
-                ]
-            );
+                        ->post('/nova-api/users/action?action='.(new NoopAction)->uriKey().'&trashed=with', [
+                            'resources' => implode(',', [$user->id, $user2->id]),
+                            'test' => 'Taylor Otwell',
+                            'callback' => '',
+                        ]);
 
         $response->assertStatus(200);
         $this->assertEquals($user2->id, NoopAction::$applied[0][0]->id);
@@ -492,12 +425,9 @@ class ActionControllerTest extends IntegrationTest
         $user = factory(User::class)->create();
 
         $response = $this->withExceptionHandling()
-            ->post(
-                '/nova-api/users/action?action=' . (new ExceptionAction)->uriKey(),
-                [
-                    'resources' => $user->id,
-                ]
-            );
+                        ->post('/nova-api/users/action?action='.(new ExceptionAction)->uriKey(), [
+                            'resources' => $user->id,
+                        ]);
 
         $response->assertStatus(500);
         $this->assertCount(0, ActionEvent::all());
@@ -509,12 +439,9 @@ class ActionControllerTest extends IntegrationTest
         $user2 = factory(User::class)->create();
 
         $response = $this->withExceptionHandling()
-            ->post(
-                '/nova-api/users/action?action=' . (new UpdateStatusAction)->uriKey(),
-                [
-                    'resources' => implode(',', [$user->id, $user2->id]),
-                ]
-            );
+                        ->post('/nova-api/users/action?action='.(new UpdateStatusAction)->uriKey(), [
+                            'resources' => implode(',', [$user->id, $user2->id]),
+                        ]);
 
         $response->assertStatus(200);
         $this->assertCount(2, ActionEvent::all());
@@ -530,14 +457,11 @@ class ActionControllerTest extends IntegrationTest
         $user2 = factory(User::class)->create();
 
         $response = $this->withExceptionHandling()
-            ->post(
-                '/nova-api/users/action?action=' . (new QueuedAction)->uriKey(),
-                [
-                    'resources' => implode(',', [$user->id, $user2->id]),
-                    'test' => 'Taylor Otwell',
-                    'callback' => '',
-                ]
-            );
+                        ->post('/nova-api/users/action?action='.(new QueuedAction)->uriKey(), [
+                            'resources' => implode(',', [$user->id, $user2->id]),
+                            'test' => 'Taylor Otwell',
+                            'callback' => '',
+                        ]);
 
         $response->assertStatus(200);
 
@@ -559,14 +483,11 @@ class ActionControllerTest extends IntegrationTest
         $_SERVER['nova.user.actionCallbacks'] = true;
 
         $response = $this->withExceptionHandling()
-            ->post(
-                '/nova-api/users/action?action=' . (new QueuedAction)->uriKey(),
-                [
-                    'resources' => implode(',', [$user->id, $user2->id]),
-                    'test' => 'Taylor Otwell',
-                    'callback' => '',
-                ]
-            );
+                         ->post('/nova-api/users/action?action='.(new QueuedAction)->uriKey(), [
+                             'resources' => implode(',', [$user->id, $user2->id]),
+                             'test' => 'Taylor Otwell',
+                             'callback' => '',
+                         ]);
 
         unset($_SERVER['nova.user.actionCallbacks']);
 
@@ -587,13 +508,10 @@ class ActionControllerTest extends IntegrationTest
         $user = factory(User::class)->create();
 
         $response = $this->withExceptionHandling()
-            ->post(
-                '/nova-api/users/action?action=' . (new QueuedResourceAction)->uriKey(),
-                [
-                    'resources' => 'all',
-                    'test' => 'Taylor Otwell',
-                ]
-            );
+                        ->post('/nova-api/users/action?action='.(new QueuedResourceAction)->uriKey(), [
+                            'resources' => 'all',
+                            'test' => 'Taylor Otwell',
+                        ]);
 
         $response->assertStatus(200);
         $this->assertEquals($user->id, $_SERVER['queuedResourceAction.applied'][0][0]->id);
@@ -611,14 +529,11 @@ class ActionControllerTest extends IntegrationTest
         $user2->delete();
 
         $response = $this->withExceptionHandling()
-            ->post(
-                '/nova-api/users/action?action=' . (new QueuedAction)->uriKey() . '&trashed=with',
-                [
-                    'resources' => implode(',', [$user->id, $user2->id]),
-                    'test' => 'Taylor Otwell',
-                    'callback' => '',
-                ]
-            );
+                        ->post('/nova-api/users/action?action='.(new QueuedAction)->uriKey().'&trashed=with', [
+                            'resources' => implode(',', [$user->id, $user2->id]),
+                            'test' => 'Taylor Otwell',
+                            'callback' => '',
+                        ]);
 
         $response->assertStatus(200);
         $this->assertEquals($user2->id, $_SERVER['queuedAction.applied'][0][0]->id);
@@ -634,14 +549,11 @@ class ActionControllerTest extends IntegrationTest
         $user2 = factory(User::class)->create();
 
         $response = $this->withExceptionHandling()
-            ->post(
-                '/nova-api/users/action?action=' . (new QueuedAction)->uriKey(),
-                [
-                    'resources' => implode(',', [$user->id, $user2->id]),
-                    'test' => 'Taylor Otwell',
-                    'callback' => '',
-                ]
-            );
+                        ->post('/nova-api/users/action?action='.(new QueuedAction)->uriKey(), [
+                            'resources' => implode(',', [$user->id, $user2->id]),
+                            'test' => 'Taylor Otwell',
+                            'callback' => '',
+                        ]);
 
         $response->assertStatus(200);
 
@@ -656,12 +568,9 @@ class ActionControllerTest extends IntegrationTest
         $user = factory(User::class)->create();
 
         $response = $this->withExceptionHandling()
-            ->post(
-                '/nova-api/users/action?action=' . (new FailingAction)->uriKey(),
-                [
-                    'resources' => $user->id,
-                ]
-            );
+                        ->post('/nova-api/users/action?action='.(new FailingAction)->uriKey(), [
+                            'resources' => $user->id,
+                        ]);
 
         $response->assertStatus(200);
         $this->assertCount(1, ActionEvent::all());
@@ -680,12 +589,9 @@ class ActionControllerTest extends IntegrationTest
         $user = factory(User::class)->create();
 
         $response = $this->withExceptionHandling()
-            ->post(
-                '/nova-api/users/action?action=' . (new FailingAction)->uriKey(),
-                [
-                    'resources' => 'all',
-                ]
-            );
+                        ->post('/nova-api/users/action?action='.(new FailingAction)->uriKey(), [
+                            'resources' => 'all',
+                        ]);
 
         $response->assertStatus(200);
         $this->assertCount(1, ActionEvent::all());
@@ -705,12 +611,9 @@ class ActionControllerTest extends IntegrationTest
         $user2 = factory(User::class)->create();
 
         $response = $this->withExceptionHandling()
-            ->post(
-                '/nova-api/users/action?action=' . (new QueuedUpdateStatusAction)->uriKey(),
-                [
-                    'resources' => implode(',', [$user->id, $user2->id]),
-                ]
-            );
+                        ->post('/nova-api/users/action?action='.(new QueuedUpdateStatusAction)->uriKey(), [
+                            'resources' => implode(',', [$user->id, $user2->id]),
+                        ]);
 
         $response->assertStatus(200);
         $this->assertCount(2, ActionEvent::all());
@@ -728,12 +631,9 @@ class ActionControllerTest extends IntegrationTest
         $comment = factory(Comment::class)->create();
 
         $response = $this->withExceptionHandling()
-            ->post(
-                '/nova-api/comments/action?action=' . (new NoopAction)->uriKey(),
-                [
-                    'resources' => $comment->id,
-                ]
-            );
+                        ->post('/nova-api/comments/action?action='.(new NoopAction)->uriKey(), [
+                            'resources' => $comment->id,
+                        ]);
 
         $response->assertStatus(200);
         $this->assertEquals($comment->id, NoopAction::$appliedToComments[0][0]->id);
@@ -744,12 +644,9 @@ class ActionControllerTest extends IntegrationTest
     {
         $this->expectException(MissingActionHandlerException::class);
         $response = $this->withoutExceptionHandling()
-            ->post(
-                '/nova-api/users/action?action=' . (new EmptyAction)->uriKey(),
-                [
-                    'resources' => '1',
-                ]
-            );
+                        ->post('/nova-api/users/action?action='.(new EmptyAction)->uriKey(), [
+                            'resources' => '1',
+                        ]);
     }
 
     public function test_exception_is_thrown_if_handle_method_is_missing_for_entire_resource()
@@ -757,12 +654,9 @@ class ActionControllerTest extends IntegrationTest
         $this->expectException(MissingActionHandlerException::class);
 
         $response = $this->withoutExceptionHandling()
-            ->post(
-                '/nova-api/users/action?action=' . (new EmptyAction)->uriKey(),
-                [
-                    'resources' => 'all',
-                ]
-            );
+                        ->post('/nova-api/users/action?action='.(new EmptyAction)->uriKey(), [
+                            'resources' => 'all',
+                        ]);
     }
 
     public function test_action_event_should_honor_custom_polymorphic_type_when_updating_status()
@@ -773,12 +667,9 @@ class ActionControllerTest extends IntegrationTest
         $user2 = factory(User::class)->create();
 
         $response = $this->withExceptionHandling()
-            ->post(
-                '/nova-api/users/action?action=' . (new UpdateStatusAction)->uriKey(),
-                [
-                    'resources' => implode(',', [$user->id, $user2->id]),
-                ]
-            );
+                        ->post('/nova-api/users/action?action='.(new UpdateStatusAction)->uriKey(), [
+                            'resources' => implode(',', [$user->id, $user2->id]),
+                        ]);
 
         $actionEvent = ActionEvent::where('model_id', $user->id)->first();
 
@@ -819,12 +710,9 @@ class ActionControllerTest extends IntegrationTest
         $user2 = factory(User::class)->create();
 
         $response = $this->withExceptionHandling()
-            ->post(
-                '/nova-api/users/action?action=' . (new NoopActionWithoutActionable())->uriKey(),
-                [
-                    'resources' => implode(',', [$user->id, $user2->id]),
-                ]
-            );
+            ->post('/nova-api/users/action?action='.(new NoopActionWithoutActionable())->uriKey(), [
+                'resources' => implode(',', [$user->id, $user2->id]),
+            ]);
 
         $response->assertStatus(200);
 
@@ -836,12 +724,9 @@ class ActionControllerTest extends IntegrationTest
         factory(User::class)->times(201)->create();
 
         $response = $this->withExceptionHandling()
-            ->post(
-                '/nova-api/users/action?action=' . (new HandleResultAction())->uriKey(),
-                [
-                    'resources' => 'all',
-                ]
-            );
+            ->post('/nova-api/users/action?action='.(new HandleResultAction())->uriKey(), [
+                'resources' => 'all',
+            ]);
 
         $response->assertStatus(200);
         $this->assertEquals(['message' => 'Processed 201 records'], $response->original);
@@ -856,14 +741,11 @@ class ActionControllerTest extends IntegrationTest
         DB::flushQueryLog();
 
         $response = $this->withExceptionHandling()
-            ->post(
-                '/nova-api/users/action?action=' . (new NoopAction)->uriKey(),
-                [
-                    'resources' => implode(',', [$user->id, $user2->id]),
-                    'test' => 'Taylor Otwell',
-                    'callback' => '',
-                ]
-            );
+                        ->post('/nova-api/users/action?action='.(new NoopAction)->uriKey(), [
+                            'resources' => implode(',', [$user->id, $user2->id]),
+                            'test' => 'Taylor Otwell',
+                            'callback' => '',
+                        ]);
 
         $queryLog = DB::getQueryLog()[0];
 
@@ -881,14 +763,11 @@ class ActionControllerTest extends IntegrationTest
         DB::enableQueryLog();
 
         $response = $this->withExceptionHandling()
-            ->post(
-                '/nova-api/users/action?action=' . (new NoopAction)->uriKey(),
-                [
-                    'resources' => 'all',
-                    'test' => 'Taylor Otwell',
-                    'callback' => '',
-                ]
-            );
+                        ->post('/nova-api/users/action?action='.(new NoopAction)->uriKey(), [
+                            'resources' => 'all',
+                            'test' => 'Taylor Otwell',
+                            'callback' => '',
+                        ]);
 
         $queryLog = DB::getQueryLog()[0];
 

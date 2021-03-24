@@ -23,26 +23,6 @@ trait InteractsWithRelatedResources
     }
 
     /**
-     * Get the class name of the "via" resource being requested.
-     *
-     * @return string
-     */
-    public function viaResource()
-    {
-        return Nova::resourceForKey($this->viaResource);
-    }
-
-    /**
-     * Find the parent resource model instance for the request or abort.
-     *
-     * @return Model|null
-     */
-    public function findParentModelOrFail()
-    {
-        return $this->findParentModel() ?: abort(404);
-    }
-
-    /**
      * Find the parent resource model instance for the request.
      *
      * @return Model|null
@@ -61,23 +41,13 @@ trait InteractsWithRelatedResources
     }
 
     /**
-     * Determine if the request is via a relationship.
-     *
-     * @return bool
-     */
-    public function viaRelationship()
-    {
-        return $this->viaResource && $this->viaResourceId && $this->viaRelationship;
-    }
-
-    /**
      * Find the parent resource model instance for the request or abort.
      *
      * @return Model|null
      */
-    public function findRelatedModelOrFail()
+    public function findParentModelOrFail()
     {
-        return $this->findRelatedModel() ?: abort(404);
+        return $this->findParentModel() ?: abort(404);
     }
 
     /**
@@ -92,6 +62,16 @@ trait InteractsWithRelatedResources
                 ->newQueryWithoutScopes()
                 ->find($this->input($this->relatedResource));
         });
+    }
+
+    /**
+     * Find the parent resource model instance for the request or abort.
+     *
+     * @return Model|null
+     */
+    public function findRelatedModelOrFail()
+    {
+        return $this->findRelatedModel() ?: abort(404);
     }
 
     /**
@@ -129,6 +109,16 @@ trait InteractsWithRelatedResources
     }
 
     /**
+     * Get the class name of the "related" resource being requested.
+     *
+     * @return string
+     */
+    public function relatedResource()
+    {
+        return Nova::resourceForKey($this->relatedResource);
+    }
+
+    /**
      * Get a new instance of the "related" resource being requested.
      *
      * @return Resource
@@ -141,12 +131,22 @@ trait InteractsWithRelatedResources
     }
 
     /**
-     * Get the class name of the "related" resource being requested.
+     * Get the class name of the "via" resource being requested.
      *
      * @return string
      */
-    public function relatedResource()
+    public function viaResource()
     {
-        return Nova::resourceForKey($this->relatedResource);
+        return Nova::resourceForKey($this->viaResource);
+    }
+
+    /**
+     * Determine if the request is via a relationship.
+     *
+     * @return bool
+     */
+    public function viaRelationship()
+    {
+        return $this->viaResource && $this->viaResourceId && $this->viaRelationship;
     }
 }

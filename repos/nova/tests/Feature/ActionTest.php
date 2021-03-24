@@ -33,21 +33,6 @@ class ActionTest extends IntegrationTest
         $this->assertHiddenFromTableRow($action);
     }
 
-    protected function assertShownOnIndex(Action $action)
-    {
-        $this->assertTrue($action->shownOnIndex());
-    }
-
-    protected function assertHiddenFromDetail(Action $action)
-    {
-        $this->assertFalse($action->shownOnDetail());
-    }
-
-    protected function assertHiddenFromTableRow(Action $action)
-    {
-        $this->assertFalse($action->shownOnTableRow());
-    }
-
     public function test_actions_respect_old_only_on_detail_value()
     {
         $action = (new class extends Action {
@@ -57,16 +42,6 @@ class ActionTest extends IntegrationTest
         $this->assertHiddenFromIndex($action);
         $this->assertShownOnDetail($action);
         $this->assertHiddenFromTableRow($action);
-    }
-
-    protected function assertHiddenFromIndex(Action $action)
-    {
-        $this->assertFalse($action->shownOnIndex());
-    }
-
-    protected function assertShownOnDetail(Action $action)
-    {
-        $this->assertTrue($action->shownOnDetail());
     }
 
     public function test_actions_should_be_hidden_from_the_table_row_by_default_and_shown_everywhere_else()
@@ -103,11 +78,6 @@ class ActionTest extends IntegrationTest
         $this->assertHiddenFromIndex($action);
         $this->assertShownOnDetail($action);
         $this->assertShownOnTableRow($action);
-    }
-
-    protected function assertShownOnTableRow(Action $action)
-    {
-        return $this->assertTrue($action->shownOnTableRow());
     }
 
     public function test_actions_can_be_hidden_from_index()
@@ -234,5 +204,35 @@ class ActionTest extends IntegrationTest
         };
 
         $this->assertSubset(['class' => 'bg-warning text-warning-dark'], $action->jsonSerialize());
+    }
+
+    protected function assertShownOnIndex(Action $action)
+    {
+        $this->assertTrue($action->shownOnIndex());
+    }
+
+    protected function assertShownOnDetail(Action $action)
+    {
+        $this->assertTrue($action->shownOnDetail());
+    }
+
+    protected function assertHiddenFromTableRow(Action $action)
+    {
+        $this->assertFalse($action->shownOnTableRow());
+    }
+
+    protected function assertShownOnTableRow(Action $action)
+    {
+        return $this->assertTrue($action->shownOnTableRow());
+    }
+
+    protected function assertHiddenFromDetail(Action $action)
+    {
+        $this->assertFalse($action->shownOnDetail());
+    }
+
+    protected function assertHiddenFromIndex(Action $action)
+    {
+        $this->assertFalse($action->shownOnIndex());
     }
 }

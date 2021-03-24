@@ -1,11 +1,11 @@
 <template>
   <input
-    ref="datePicker"
-    :class="{ '!cursor-not-allowed': disabled }"
     :disabled="disabled"
-    :placeholder="placeholder"
+    :class="{ '!cursor-not-allowed': disabled }"
     :value="value"
+    ref="datePicker"
     type="text"
+    :placeholder="placeholder"
   />
 </template>
 

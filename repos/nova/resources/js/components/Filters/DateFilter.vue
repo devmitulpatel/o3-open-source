@@ -6,19 +6,19 @@
 
     <div class="p-2">
       <date-time-picker
-        :enable-seconds="false"
-        :enable-time="false"
-        :first-day-of-week="firstDayOfWeek"
-        :placeholder="placeholder"
-        :value="value"
-        alt-format="Y-m-d"
-        autocomplete="off"
         class="w-full form-control form-input form-input-bordered"
-        date-format="Y-m-d"
         dusk="date-filter"
         name="date-filter"
-        @change="handleChange"
+        autocomplete="off"
+        :value="value"
+        alt-format="Y-m-d"
+        date-format="Y-m-d"
+        :placeholder="placeholder"
+        :enable-time="false"
+        :enable-seconds="false"
+        :first-day-of-week="firstDayOfWeek"
         @input.prevent=""
+        @change="handleChange"
       />
     </div>
   </div>

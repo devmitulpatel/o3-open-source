@@ -1,47 +1,47 @@
 <template>
   <loading-view :loading="initialLoading">
     <custom-detail-header
+      class="mb-3"
       :resource="resource"
       :resource-id="resourceId"
       :resource-name="resourceName"
-      class="mb-3"
     />
 
     <div v-if="shouldShowCards">
       <cards
         v-if="smallCards.length > 0"
         :cards="smallCards"
-        :only-on-detail="true"
+        class="mb-3"
         :resource="resource"
         :resource-id="resourceId"
         :resource-name="resourceName"
-        class="mb-3"
+        :only-on-detail="true"
       />
 
       <cards
         v-if="largeCards.length > 0"
         :cards="largeCards"
-        :only-on-detail="true"
+        size="large"
         :resource="resource"
         :resource-id="resourceId"
         :resource-name="resourceName"
-        size="large"
+        :only-on-detail="true"
       />
     </div>
 
     <!-- Resource Detail -->
     <div
       v-for="panel in availablePanels"
-      :key="panel.id"
       :dusk="resourceName + '-detail-component'"
       class="mb-8"
+      :key="panel.id"
     >
       <component
         :is="panel.component"
-        :panel="panel"
-        :resource="resource"
-        :resource-id="resourceId"
         :resource-name="resourceName"
+        :resource-id="resourceId"
+        :resource="resource"
+        :panel="panel"
       >
         <div v-if="panel.showToolbar" class="flex items-center mb-3">
           <heading :level="1" class="flex-auto truncate">{{
@@ -51,15 +51,17 @@
           <div class="ml-3 flex items-center">
             <custom-detail-toolbar
               :resource="resource"
-              :resource-id="resourceId"
               :resource-name="resourceName"
+              :resource-id="resourceId"
             />
 
             <!-- Actions -->
             <action-selector
               v-if="resource"
+              :resource-name="resourceName"
               :actions="actions"
               :pivot-actions="{ actions: [] }"
+              :selected-resources="selectedResources"
               :query-string="{
                 currentSearch,
                 encodedFilters,
@@ -68,82 +70,80 @@
                 viaResourceId,
                 viaRelationship,
               }"
-              :resource-name="resourceName"
-              :selected-resources="selectedResources"
-              class="ml-3"
               @actionExecuted="actionExecuted"
+              class="ml-3"
             />
 
             <button
               v-if="resource.authorizedToDelete && !resource.softDeleted"
-              :title="__('Delete')"
-              class="btn btn-default btn-icon btn-white mr-3"
               data-testid="open-delete-modal"
               dusk="open-delete-modal-button"
               @click="openDeleteModal"
+              class="btn btn-default btn-icon btn-white mr-3"
+              :title="__('Delete')"
             >
-              <icon class="text-80" type="delete" />
+              <icon type="delete" class="text-80" />
             </button>
 
             <button
               v-if="resource.authorizedToRestore && resource.softDeleted"
-              :title="__('Restore')"
-              class="btn btn-default btn-icon btn-white mr-3"
               data-testid="open-restore-modal"
               dusk="open-restore-modal-button"
               @click="openRestoreModal"
+              class="btn btn-default btn-icon btn-white mr-3"
+              :title="__('Restore')"
             >
-              <icon class="text-80" type="restore" />
+              <icon type="restore" class="text-80" />
             </button>
 
             <button
               v-if="resource.authorizedToForceDelete"
-              :title="__('Force Delete')"
-              class="btn btn-default btn-icon btn-white mr-3"
               data-testid="open-force-delete-modal"
               dusk="open-force-delete-modal-button"
               @click="openForceDeleteModal"
+              class="btn btn-default btn-icon btn-white mr-3"
+              :title="__('Force Delete')"
             >
-              <icon class="text-80" type="force-delete" />
+              <icon type="force-delete" class="text-80" />
             </button>
 
             <portal
-              v-if="deleteModalOpen || restoreModalOpen || forceDeleteModalOpen"
               to="modals"
+              v-if="deleteModalOpen || restoreModalOpen || forceDeleteModalOpen"
             >
               <delete-resource-modal
                 v-if="deleteModalOpen"
-                mode="delete"
-                @close="closeDeleteModal"
                 @confirm="confirmDelete"
+                @close="closeDeleteModal"
+                mode="delete"
               />
 
               <restore-resource-modal
                 v-if="restoreModalOpen"
-                @close="closeRestoreModal"
                 @confirm="confirmRestore"
+                @close="closeRestoreModal"
               />
 
               <delete-resource-modal
                 v-if="forceDeleteModalOpen"
-                mode="force delete"
-                @close="closeForceDeleteModal"
                 @confirm="confirmForceDelete"
+                @close="closeForceDeleteModal"
+                mode="force delete"
               />
             </portal>
 
             <router-link
               v-if="resource.authorizedToUpdate"
-              :title="__('Edit')"
-              :to="{ name: 'edit', params: { id: resource.id } }"
-              class="btn btn-default btn-icon bg-primary"
               data-testid="edit-resource"
               dusk="edit-resource-button"
+              :to="{ name: 'edit', params: { id: resource.id } }"
+              class="btn btn-default btn-icon bg-primary"
+              :title="__('Edit')"
             >
               <icon
+                type="edit"
                 class="text-white"
                 style="margin-top: -2px; margin-left: 3px"
-                type="edit"
               />
             </router-link>
           </div>

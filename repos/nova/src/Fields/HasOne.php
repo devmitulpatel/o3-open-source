@@ -141,17 +141,6 @@ class HasOne extends Field implements ListableField, RelatableField
     }
 
     /**
-     * Determine if the HasOne field has alreaady been filled.
-     *
-     * @param NovaRequest $request
-     * @return bool
-     */
-    public function alreadyFilled(NovaRequest $request)
-    {
-        return call_user_func($this->filledCallback, $request) ?? false;
-    }
-
-    /**
      * Set the Closure used to determine if the HasOne field has already been filled.
      *
      * @param  Closure  $callback
@@ -162,5 +151,16 @@ class HasOne extends Field implements ListableField, RelatableField
         $this->filledCallback = $callback;
 
         return $this;
+    }
+
+    /**
+     * Determine if the HasOne field has alreaady been filled.
+     *
+     * @param NovaRequest $request
+     * @return bool
+     */
+    public function alreadyFilled(NovaRequest $request)
+    {
+        return call_user_func($this->filledCallback, $request) ?? false;
     }
 }

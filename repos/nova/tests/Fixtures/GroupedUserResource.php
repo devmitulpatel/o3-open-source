@@ -24,6 +24,17 @@ class GroupedUserResource extends Resource
     public static $globallySearchable = false;
 
     /**
+     * Get the fields displayed by the resource.
+     *
+     * @param Request $request
+     * @return array
+     */
+    public function fields(Request $request)
+    {
+        return [];
+    }
+
+    /**
      * Build an "index" query for the given resource.
      *
      * @param NovaRequest $request
@@ -46,16 +57,5 @@ class GroupedUserResource extends Resource
     public static function uriKey()
     {
         return 'grouped-users';
-    }
-
-    /**
-     * Get the fields displayed by the resource.
-     *
-     * @param Request $request
-     * @return array
-     */
-    public function fields(Request $request)
-    {
-        return [];
     }
 }

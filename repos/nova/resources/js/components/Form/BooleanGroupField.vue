@@ -1,14 +1,14 @@
 <template>
-  <default-field :errors="errors" :field="field" :show-help-text="showHelpText">
+  <default-field :field="field" :errors="errors" :show-help-text="showHelpText">
     <template slot="field">
       <checkbox-with-label
+        class="mt-2"
         v-for="option in value"
         :key="option.name"
-        :checked="option.checked"
-        :disabled="isReadonly"
         :name="option.name"
-        class="mt-2"
+        :checked="option.checked"
         @input="toggle($event, option)"
+        :disabled="isReadonly"
       >
         {{ option.label }}
       </checkbox-with-label>

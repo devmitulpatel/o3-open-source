@@ -1,19 +1,19 @@
 <template>
   <icon
     v-if="value"
-    :height="height"
     :viewBox="viewBox"
     :width="width"
-    class="text-success"
+    :height="height"
     type="check-circle"
+    class="text-success"
   />
   <icon
     v-else
-    :height="height"
     :viewBox="viewBox"
     :width="width"
-    class="text-danger"
+    :height="height"
     type="x-circle"
+    class="text-danger"
   />
 </template>
 

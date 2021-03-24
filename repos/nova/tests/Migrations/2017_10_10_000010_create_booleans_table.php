@@ -13,14 +13,11 @@ class CreateBooleansTable extends Migration
      */
     public function up()
     {
-        Schema::create(
-            'booleans',
-            function (Blueprint $table) {
-                $table->increments('id');
-                $table->string('active')->default('No');
-                $table->timestamps();
-            }
-        );
+        Schema::create('booleans', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('active')->default('No');
+            $table->timestamps();
+        });
     }
 
     /**

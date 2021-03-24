@@ -27,16 +27,6 @@ class AddressResource extends Resource
     ];
 
     /**
-     * Get the URI key for the resource.
-     *
-     * @return string
-     */
-    public static function uriKey()
-    {
-        return 'addresses';
-    }
-
-    /**
      * Get the fields displayed by the resource.
      *
      * @param Request $request
@@ -55,5 +45,15 @@ class AddressResource extends Resource
 
             Text::make('Name', 'name')->onlyOnIndex(),
         ];
+    }
+
+    /**
+     * Get the URI key for the resource.
+     *
+     * @return string
+     */
+    public static function uriKey()
+    {
+        return 'addresses';
     }
 }

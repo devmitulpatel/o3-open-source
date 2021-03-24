@@ -62,9 +62,9 @@ class Currency extends Number
     /**
      * Create a new field.
      *
-     * @param string $name
-     * @param string|null $attribute
-     * @param mixed|null $resolveCallback
+     * @param  string  $name
+     * @param  string|null  $attribute
+     * @param  mixed|null  $resolveCallback
      * @return void
      */
     public function __construct($name, $attribute = null, $resolveCallback = null)
@@ -76,60 +76,25 @@ class Currency extends Number
 
         $this->step($this->getStepValue());
 
-        $this->fillUsing(
-            function ($request, $model, $attribute) {
-                $value = $request->$attribute;
+        $this->fillUsing(function ($request, $model, $attribute) {
+            $value = $request->$attribute;
 
-                if ($this->minorUnits && !$this->isNullValue($value)) {
-                    $model->$attribute = $this->toMoneyInstance($value)->getMinorAmount()->toInt();
-                } else {
-                    $model->$attribute = $value;
-                }
+            if ($this->minorUnits && ! $this->isNullValue($value)) {
+                $model->$attribute = $this->toMoneyInstance($value)->getMinorAmount()->toInt();
+            } else {
+                $model->$attribute = $value;
             }
-        )
-            ->displayUsing(
-                function ($value) {
-                    return !$this->isNullValue($value) ? $this->formatMoney($value) : null;
+        })
+            ->displayUsing(function ($value) {
+                return ! $this->isNullValue($value) ? $this->formatMoney($value) : null;
+            })
+            ->resolveUsing(function ($value) {
+                if ($this->isNullValue($value) || ! $this->minorUnits) {
+                    return $value;
                 }
-            )
-            ->resolveUsing(
-                function ($value) {
-                    if ($this->isNullValue($value) || !$this->minorUnits) {
-                        return $value;
-                    }
 
-                    return $this->toMoneyInstance($value)->getMinorAmount()->toInt();
-                }
-            );
-    }
-
-    /**
-     * Determine the step value for the field.
-     *
-     * @return string
-     */
-    protected function getStepValue()
-    {
-        if ($this->minorUnits) {
-            return '1.0';
-        }
-
-        return (string)0.1 ** Currencies::getFractionDigits($this->currency);
-    }
-
-    /**
-     * Check value for null value.
-     *
-     * @param mixed $value
-     * @return bool
-     */
-    protected function isNullValue($value)
-    {
-        if (is_null($value)) {
-            return true;
-        }
-
-        return parent::isNullValue($value);
+                return $this->toMoneyInstance($value)->getMinorAmount()->toInt();
+            });
     }
 
     /**
@@ -153,9 +118,9 @@ class Currency extends Number
     /**
      * Format the field's value into Money format.
      *
-     * @param mixed $value
-     * @param null|string $currency
-     * @param null|string $locale
+     * @param  mixed  $value
+     * @param  null|string  $currency
+     * @param  null|string  $locale
      *
      * @return string
      */
@@ -167,23 +132,20 @@ class Currency extends Number
             return $money->formatTo($locale ?? $this->locale);
         }
 
-        return tap(
-            new NumberFormatter($locale ?? $this->locale, NumberFormatter::CURRENCY),
-            function ($formatter) use ($money) {
-                $scale = $money->getAmount()->getScale();
+        return tap(new NumberFormatter($locale ?? $this->locale, NumberFormatter::CURRENCY), function ($formatter) use ($money) {
+            $scale = $money->getAmount()->getScale();
 
-                $formatter->setSymbol(NumberFormatter::CURRENCY_SYMBOL, $this->currencySymbol);
-                $formatter->setSymbol(NumberFormatter::INTL_CURRENCY_SYMBOL, $this->currencySymbol);
-                $formatter->setAttribute(NumberFormatter::MIN_FRACTION_DIGITS, $scale);
-                $formatter->setAttribute(NumberFormatter::MAX_FRACTION_DIGITS, $scale);
-            }
-        )->format($money->getAmount()->toFloat());
+            $formatter->setSymbol(NumberFormatter::CURRENCY_SYMBOL, $this->currencySymbol);
+            $formatter->setSymbol(NumberFormatter::INTL_CURRENCY_SYMBOL, $this->currencySymbol);
+            $formatter->setAttribute(NumberFormatter::MIN_FRACTION_DIGITS, $scale);
+            $formatter->setAttribute(NumberFormatter::MAX_FRACTION_DIGITS, $scale);
+        })->format($money->getAmount()->toFloat());
     }
 
     /**
      * Set the currency code for the field.
      *
-     * @param string $currency
+     * @param  string  $currency
      * @return $this
      */
     public function currency($currency)
@@ -198,7 +160,7 @@ class Currency extends Number
     /**
      * Set the field locale.
      *
-     * @param string $locale
+     * @param  string  $locale
      * @return $this
      */
     public function locale($locale)
@@ -211,7 +173,7 @@ class Currency extends Number
     /**
      * Set the symbol used by the field.
      *
-     * @param string $symbol
+     * @param  string  $symbol
      * @return $this
      */
     public function symbol($symbol)
@@ -248,6 +210,20 @@ class Currency extends Number
     }
 
     /**
+     * Resolve the symbol used by the currency.
+     *
+     * @return string
+     */
+    public function resolveCurrencySymbol()
+    {
+        if ($this->currencySymbol) {
+            return $this->currencySymbol;
+        }
+
+        return Currencies::getSymbol($this->currency);
+    }
+
+    /**
      * Set the context used to create the Money instance.
      *
      * @param Context $context
@@ -261,32 +237,44 @@ class Currency extends Number
     }
 
     /**
+     * Check value for null value.
+     *
+     * @param  mixed $value
+     * @return bool
+     */
+    protected function isNullValue($value)
+    {
+        if (is_null($value)) {
+            return true;
+        }
+
+        return parent::isNullValue($value);
+    }
+
+    /**
+     * Determine the step value for the field.
+     *
+     * @return string
+     */
+    protected function getStepValue()
+    {
+        if ($this->minorUnits) {
+            return '1.0';
+        }
+
+        return (string) 0.1 ** Currencies::getFractionDigits($this->currency);
+    }
+
+    /**
      * Prepare the field for JSON serialization.
      *
      * @return array
      */
     public function jsonSerialize()
     {
-        return array_merge(
-            parent::jsonSerialize(),
-            [
-                'currency' => $this->resolveCurrencySymbol(),
-                'currency_name' => Currencies::getName($this->currency),
-            ]
-        );
-    }
-
-    /**
-     * Resolve the symbol used by the currency.
-     *
-     * @return string
-     */
-    public function resolveCurrencySymbol()
-    {
-        if ($this->currencySymbol) {
-            return $this->currencySymbol;
-        }
-
-        return Currencies::getSymbol($this->currency);
+        return array_merge(parent::jsonSerialize(), [
+            'currency' => $this->resolveCurrencySymbol(),
+            'currency_name' => Currencies::getName($this->currency),
+        ]);
     }
 }

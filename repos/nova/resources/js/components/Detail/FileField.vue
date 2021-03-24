@@ -3,9 +3,9 @@
     <div slot="value">
       <template v-if="shouldShowLoader">
         <ImageLoader
+          :src="imageUrl"
           :maxWidth="maxWidth"
           :rounded="rounded"
-          :src="imageUrl"
           @missing="value => (missing = value)"
         />
       </template>
@@ -20,17 +20,17 @@
         <a
           v-if="field.downloadable"
           :dusk="field.attribute + '-download-link'"
-          class="cursor-pointer dim btn btn-link text-primary inline-flex items-center"
-          tabindex="0"
           @keydown.enter.prevent="download"
           @click.prevent="download"
+          tabindex="0"
+          class="cursor-pointer dim btn btn-link text-primary inline-flex items-center"
         >
           <icon
             class="mr-2"
-            height="16"
             type="download"
             view-box="0 0 24 24"
             width="16"
+            height="16"
           />
           <span class="class mt-1">{{ __('Download') }}</span>
         </a>

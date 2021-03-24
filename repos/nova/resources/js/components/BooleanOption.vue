@@ -1,8 +1,8 @@
 <template>
   <div>
     <checkbox-with-label
-      :checked="isChecked"
       class="m-2"
+      :checked="isChecked"
       @input="updateCheckedState(option.value, $event.target.checked)"
     >
       {{ option.name }}

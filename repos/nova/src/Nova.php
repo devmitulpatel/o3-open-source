@@ -185,6 +185,16 @@ class Nova
     }
 
     /**
+     * Get the URI path prefix utilized by Nova.
+     *
+     * @return string
+     */
+    public static function path()
+    {
+        return config('nova.path', '/nova');
+    }
+
+    /**
      * Register the Nova routes.
      *
      * @return PendingRouteRegistration
@@ -258,20 +268,6 @@ class Nova
     }
 
     /**
-     * Get the resources available for the given request.
-     *
-     * @param Request $request
-     * @return array
-     */
-    public static function globallySearchableResources(Request $request)
-    {
-        return static::authorizedResources($request)
-            ->searchable()
-            ->sortBy(static::sortResourcesWith())
-            ->all();
-    }
-
-    /**
      * Return Nova's authorized resources.
      *
      * @param Request $request
@@ -283,15 +279,30 @@ class Nova
     }
 
     /**
-     * Get the sorting strategy to use for Nova resources.
+     * Get the resources available for the given request.
      *
+     * @param Request $request
      * @return array
      */
-    public static function sortResourcesWith()
+    public static function availableResources(Request $request)
     {
-        return static::$sortCallback ?? function ($resource) {
-            return $resource::label();
-        };
+        return static::authorizedResources($request)
+            ->sortBy(static::sortResourcesWith())
+            ->all();
+    }
+
+    /**
+     * Get the resources available for the given request.
+     *
+     * @param Request $request
+     * @return array
+     */
+    public static function globallySearchableResources(Request $request)
+    {
+        return static::authorizedResources($request)
+            ->searchable()
+            ->sortBy(static::sortResourcesWith())
+            ->all();
     }
 
     /**
@@ -309,9 +320,24 @@ class Nova
     }
 
     /**
+     * Register the given resources.
+     *
+     * @param array $resources
+     * @return static
+     */
+    public static function resources(array $resources)
+    {
+        static::$resources = array_unique(
+            array_merge(static::$resources, $resources)
+        );
+
+        return new static;
+    }
+
+    /**
      * Replace the registered resources with the given resources.
      *
-     * @param  array  $resources
+     * @param array $resources
      * @return static
      */
     public static function replaceResources(array $resources)
@@ -333,19 +359,6 @@ class Nova
                     ->map(function ($item, $key) {
                         return $item::group();
                     })->unique()->values();
-    }
-
-    /**
-     * Get the resources available for the given request.
-     *
-     * @param Request $request
-     * @return array
-     */
-    public static function availableResources(Request $request)
-    {
-        return static::authorizedResources($request)
-            ->sortBy(static::sortResourcesWith())
-            ->all();
     }
 
     /**
@@ -406,18 +419,18 @@ class Nova
     }
 
     /**
-     * Register the given resources.
+     * Get the resource class name for a given key.
      *
-     * @param  array  $resources
-     * @return static
+     * @param string $key
+     * @return string
      */
-    public static function resources(array $resources)
+    public static function resourceForKey($key)
     {
-        static::$resources = array_unique(
-            array_merge(static::$resources, $resources)
+        return static::resourceCollection()->first(
+            function ($value) use ($key) {
+                return $value::uriKey() === $key;
+            }
         );
-
-        return new static;
     }
 
     /**
@@ -467,19 +480,6 @@ class Nova
         if ($resource = static::resourceForKey($key)) {
             return new $resource($resource::newModel());
         }
-    }
-
-    /**
-     * Get the resource class name for a given key.
-     *
-     * @param  string  $key
-     * @return string
-     */
-    public static function resourceForKey($key)
-    {
-        return static::resourceCollection()->first(function ($value) use ($key) {
-            return $value::uriKey() === $key;
-        });
     }
 
     /**
@@ -606,7 +606,7 @@ class Nova
      * @param  array  $tools
      * @return static
      */
-    public static function  tools(array $tools)
+    public static function tools(array $tools)
     {
         static::$tools = array_merge(
             static::$tools,
@@ -827,17 +827,6 @@ class Nova
     }
 
     /**
-     * Register the given remote script file with Nova.
-     *
-     * @param  string  $path
-     * @return static
-     */
-    public static function remoteScript($path)
-    {
-        return static::script(md5($path), $path);
-    }
-
-    /**
      * Register the given script file with Nova.
      *
      * @param  string  $name
@@ -852,21 +841,21 @@ class Nova
     }
 
     /**
-     * Register the given remote CSS file with Nova.
+     * Register the given remote script file with Nova.
      *
-     * @param  string  $path
+     * @param string $path
      * @return static
      */
-    public static function remoteStyle($path)
+    public static function remoteScript($path)
     {
-        return static::style(md5($path), $path);
+        return static::script(md5($path), $path);
     }
 
     /**
      * Register the given CSS file with Nova.
      *
      * @param  string  $name
-     * @param  string  $path
+     * @param string $path
      * @return static
      */
     public static function style($name, $path)
@@ -874,6 +863,17 @@ class Nova
         static::$styles[$name] = $path;
 
         return new static;
+    }
+
+    /**
+     * Register the given remote CSS file with Nova.
+     *
+     * @param string $path
+     * @return static
+     */
+    public static function remoteStyle($path)
+    {
+        return static::style(md5($path), $path);
     }
 
     /**
@@ -926,11 +926,34 @@ class Nova
      */
     public static function jsonVariables(Request $request)
     {
-        return collect(static::$jsonVariables)->map(function ($variable) use ($request) {
-            return is_object($variable) && is_callable($variable)
-                        ? $variable($request)
-                        : $variable;
-        })->all();
+        return collect(static::$jsonVariables)->map(
+            function ($variable) use ($request) {
+                return is_object($variable) && is_callable($variable)
+                    ? $variable($request)
+                    : $variable;
+            }
+        )->all();
+    }
+
+    /**
+     * Provide additional variables to the global Nova JavaScript object.
+     *
+     * @param array $variables
+     * @return static
+     */
+    public static function provideToScript(array $variables)
+    {
+        if (empty(static::$jsonVariables)) {
+            static::$jsonVariables = [
+                'debounce' => static::$debounce * 1000,
+                'base' => static::path(),
+                'userId' => Auth::id() ?? null,
+            ];
+        }
+
+        static::$jsonVariables = array_merge(static::$jsonVariables, $variables);
+
+        return new static;
     }
 
     /**
@@ -988,37 +1011,6 @@ class Nova
     }
 
     /**
-     * Provide additional variables to the global Nova JavaScript object.
-     *
-     * @param  array  $variables
-     * @return static
-     */
-    public static function provideToScript(array $variables)
-    {
-        if (empty(static::$jsonVariables)) {
-            static::$jsonVariables = [
-                'debounce' => static::$debounce * 1000,
-                'base' => static::path(),
-                'userId' => Auth::id() ?? null,
-            ];
-        }
-
-        static::$jsonVariables = array_merge(static::$jsonVariables, $variables);
-
-        return new static;
-    }
-
-    /**
-     * Get the URI path prefix utilized by Nova.
-     *
-     * @return string
-     */
-    public static function path()
-    {
-        return config('nova.path', '/nova');
-    }
-
-    /**
      * Dynamically proxy static method calls.
      *
      * @param  string  $method
@@ -1035,16 +1027,6 @@ class Nova
     }
 
     /**
-     * Return a new instance of the configured ActionEvent.
-     *
-     * @return ActionEvent
-     */
-    public static function actionEvent()
-    {
-        return static::actionResource()::newModel();
-    }
-
-    /**
      * Return the configured ActionResource class.
      *
      * @return ActionResource
@@ -1055,18 +1037,40 @@ class Nova
     }
 
     /**
-     * Register the callback used to sort Nova resources in the sidebar.
+     * Return a new instance of the configured ActionEvent.
      *
-     * @var Closure
+     * @return ActionEvent
+     */
+    public static function actionEvent()
+    {
+        return static::actionResource()::newModel();
+    }
+
+    /**
+     * Register the callback used to sort Nova resources in the sidebar.
      *
      * @param Closure $callback
      * @return static
+     * @var Closure
+     *
      */
     public static function sortResourcesBy($callback)
     {
         static::$sortCallback = $callback;
 
         return new static;
+    }
+
+    /**
+     * Get the sorting strategy to use for Nova resources.
+     *
+     * @return array
+     */
+    public static function sortResourcesWith()
+    {
+        return static::$sortCallback ?? function ($resource) {
+                return $resource::label();
+            };
     }
 
     /**

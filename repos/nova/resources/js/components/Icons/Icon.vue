@@ -1,12 +1,12 @@
 <template>
   <svg
-    :aria-labelledby="type"
+    xmlns="http://www.w3.org/2000/svg"
+    class="fill-current"
+    :width="width"
     :height="height"
     :viewBox="viewBox"
-    :width="width"
-    class="fill-current"
+    :aria-labelledby="type"
     role="presentation"
-    xmlns="http://www.w3.org/2000/svg"
   >
     <component :is="iconName" />
   </svg>

@@ -9,7 +9,7 @@ trait CountsResources
     /**
      * Build a new count query for the given query.
      *
-     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
      * @return Builder
      */
     public function buildCountQuery($query)

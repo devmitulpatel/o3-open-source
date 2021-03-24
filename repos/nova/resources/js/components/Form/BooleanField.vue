@@ -1,13 +1,13 @@
 <template>
-  <default-field :errors="errors" :field="field" :show-help-text="showHelpText">
+  <default-field :field="field" :errors="errors" :show-help-text="showHelpText">
     <template slot="field">
       <checkbox
-        :id="field.attribute"
-        :checked="checked"
-        :disabled="isReadonly"
-        :name="field.name"
         class="mt-2"
         @input="toggle"
+        :id="field.attribute"
+        :name="field.name"
+        :checked="checked"
+        :disabled="isReadonly"
       />
     </template>
   </default-field>

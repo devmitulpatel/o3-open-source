@@ -13,16 +13,13 @@ class CreateSoftDeletingFilesTable extends Migration
      */
     public function up()
     {
-        Schema::create(
-            'soft_deleting_files',
-            function (Blueprint $table) {
-                $table->increments('id');
-                $table->string('name')->nullable();
-                $table->string('avatar')->nullable();
-                $table->timestamps();
-                $table->softDeletes();
-            }
-        );
+        Schema::create('soft_deleting_files', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('name')->nullable();
+            $table->string('avatar')->nullable();
+            $table->timestamps();
+            $table->softDeletes();
+        });
     }
 
     /**

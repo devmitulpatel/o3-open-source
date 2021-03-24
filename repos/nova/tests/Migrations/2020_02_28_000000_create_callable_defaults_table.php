@@ -13,13 +13,10 @@ class CreateCallableDefaultsTable extends Migration
      */
     public function up()
     {
-        Schema::create(
-            'callable_defaults',
-            function (Blueprint $table) {
-                $table->increments('id');
-                $table->string('size');
-            }
-        );
+        Schema::create('callable_defaults', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('size');
+        });
     }
 
     /**

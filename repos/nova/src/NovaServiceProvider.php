@@ -148,13 +148,6 @@ class NovaServiceProvider extends ServiceProvider
         Carbon::mixin(new Macros\FirstDayOfPreviousQuarter);
     }
 
-    protected function registerCollectionMacros()
-    {
-        Collection::macro('isAssoc', function () {
-            return Arr::isAssoc($this->toBase()->all());
-        });
-    }
-
     /**
      * Register the Nova JSON variables.
      *
@@ -203,14 +196,25 @@ class NovaServiceProvider extends ServiceProvider
             Console\PartitionCommand::class,
             Console\PublishCommand::class,
             Console\ResourceCommand::class,
-            Console\ResourceToolCommand::class,
-            Console\StubPublishCommand::class,
-            Console\TranslateCommand::class,
-            Console\ThemeCommand::class,
-            Console\ToolCommand::class,
-            Console\TrendCommand::class,
-            Console\UserCommand::class,
-            Console\ValueCommand::class,
-        ]);
+                            Console\ResourceToolCommand::class,
+                            Console\StubPublishCommand::class,
+                            Console\TranslateCommand::class,
+                            Console\ThemeCommand::class,
+                            Console\ToolCommand::class,
+                            Console\TrendCommand::class,
+                            Console\UserCommand::class,
+                            Console\ValueCommand::class,
+                        ]
+        );
+    }
+
+    protected function registerCollectionMacros()
+    {
+        Collection::macro(
+            'isAssoc',
+            function () {
+                return Arr::isAssoc($this->toBase()->all());
+            }
+        );
     }
 }

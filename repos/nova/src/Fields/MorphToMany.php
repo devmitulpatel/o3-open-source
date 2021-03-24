@@ -154,6 +154,21 @@ class MorphToMany extends Field implements DeletableContract, ListableField, Piv
     }
 
     /**
+     * Get the creation rules for this field.
+     *
+     * @param NovaRequest $request
+     * @return array
+     */
+    public function getCreationRules(NovaRequest $request)
+    {
+        return array_merge_recursive(parent::getCreationRules($request), [
+            $this->attribute => [
+                new NotAttached($request, $request->findModelOrFail()),
+            ],
+        ]);
+    }
+
+    /**
      * Build an attachable query for the field.
      *
      * @param NovaRequest $request
@@ -206,21 +221,6 @@ class MorphToMany extends Field implements DeletableContract, ListableField, Piv
         if (method_exists($request->resource(), $method)) {
             return $method;
         }
-    }
-
-    /**
-     * Get the creation rules for this field.
-     *
-     * @param NovaRequest $request
-     * @return array
-     */
-    public function getCreationRules(NovaRequest $request)
-    {
-        return array_merge_recursive(parent::getCreationRules($request), [
-            $this->attribute => [
-                new NotAttached($request, $request->findModelOrFail()),
-            ],
-        ]);
     }
 
     /**

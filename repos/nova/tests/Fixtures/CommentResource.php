@@ -26,53 +26,8 @@ class CommentResource extends Resource
      * @var array
      */
     public static $search = [
-        'id',
-        'body',
+        'id', 'body',
     ];
-
-    /**
-     * Build an "index" query for the given resource.
-     *
-     * @param NovaRequest $request
-     * @param Builder $query
-     * @return Builder
-     */
-    public static function indexQuery(NovaRequest $request, $query)
-    {
-        if (isset($_SERVER['nova.comments.useEager'])) {
-            return $query->with('commentable', 'author');
-        }
-
-        return $query;
-    }
-
-    /**
-     * Build a "relatable" query for the posts.
-     *
-     * @param NovaRequest $request
-     * @param Builder $query
-     * @return Builder
-     */
-    public static function relatablePosts(NovaRequest $request, $query)
-    {
-        if (!isset($_SERVER['nova.comment.useCustomRelatablePosts'])) {
-            return PostResource::relatableQuery($request, $query);
-        }
-
-        $_SERVER['nova.comment.relatablePosts'] = $query;
-
-        return $query->where('id', '<', 3);
-    }
-
-    /**
-     * Get the URI key for the resource.
-     *
-     * @return string
-     */
-    public static function uriKey()
-    {
-        return 'comments';
-    }
 
     /**
      * Get the fields displayed by the resource.
@@ -84,21 +39,15 @@ class CommentResource extends Resource
     {
         return [
             ID::make('ID', 'id'),
-            MorphTo::make('Commentable', 'commentable')->display(
-                [
-                    PostResource::class => function ($resource) {
-                        return $resource->title;
-                    }
-                ]
-            )->types(
-                [
-                    PostResource::class => 'Post',
-                ]
-            )
-                ->viewable($_SERVER['nova.comment.viewable-field'] ?? true)
-                ->searchable()
-                ->default($_SERVER['nova.user.default-value'] ?? null)
-                ->defaultResource($_SERVER['nova.user.default-resource'] ?? null),
+            MorphTo::make('Commentable', 'commentable')->display([PostResource::class => function ($resource) {
+                return $resource->title;
+            }])->types([
+                PostResource::class => 'Post',
+            ])
+            ->viewable($_SERVER['nova.comment.viewable-field'] ?? true)
+            ->searchable()
+            ->default($_SERVER['nova.user.default-value'] ?? null)
+            ->defaultResource($_SERVER['nova.user.default-resource'] ?? null),
             BelongsTo::make('Author', 'author', UserResource::class),
             Text::make('Body', 'body')->rules('required', 'string', 'max:255'),
         ];
@@ -124,5 +73,49 @@ class CommentResource extends Resource
     public function actions(Request $request)
     {
         return [new NoopAction];
+    }
+
+    /**
+     * Build an "index" query for the given resource.
+     *
+     * @param NovaRequest $request
+     * @param  Builder $query
+     * @return Builder
+     */
+    public static function indexQuery(NovaRequest $request, $query)
+    {
+        if (isset($_SERVER['nova.comments.useEager'])) {
+            return $query->with('commentable', 'author');
+        }
+
+        return $query;
+    }
+
+    /**
+     * Build a "relatable" query for the posts.
+     *
+     * @param NovaRequest $request
+     * @param  Builder  $query
+     * @return Builder
+     */
+    public static function relatablePosts(NovaRequest $request, $query)
+    {
+        if (! isset($_SERVER['nova.comment.useCustomRelatablePosts'])) {
+            return PostResource::relatableQuery($request, $query);
+        }
+
+        $_SERVER['nova.comment.relatablePosts'] = $query;
+
+        return $query->where('id', '<', 3);
+    }
+
+    /**
+     * Get the URI key for the resource.
+     *
+     * @return string
+     */
+    public static function uriKey()
+    {
+        return 'comments';
     }
 }

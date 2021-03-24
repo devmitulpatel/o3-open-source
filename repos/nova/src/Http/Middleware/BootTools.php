@@ -12,8 +12,8 @@ class BootTools
     /**
      * Handle the incoming request.
      *
-     * @param Request $request
-     * @param Closure $next
+     * @param  Request  $request
+     * @param  Closure  $next
      * @return Response
      */
     public function handle($request, $next)

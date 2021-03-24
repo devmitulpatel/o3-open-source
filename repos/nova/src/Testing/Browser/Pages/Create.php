@@ -15,8 +15,8 @@ class Create extends Page
     /**
      * Create a new page instance.
      *
-     * @param string $resourceName
-     * @param array $queryParams
+     * @param  string  $resourceName
+     * @param  array  $queryParams
      * @return void
      */
     public function __construct($resourceName, $queryParams = [])
@@ -32,10 +32,10 @@ class Create extends Page
      */
     public function url()
     {
-        $url = Nova::path() . '/resources/' . $this->resourceName . '/new';
+        $url = Nova::path().'/resources/'.$this->resourceName.'/new';
 
         if ($this->queryParams) {
-            $url .= '?' . http_build_query($this->queryParams);
+            $url .= '?'.http_build_query($this->queryParams);
         }
 
         return $url;
@@ -47,19 +47,13 @@ class Create extends Page
     public function runInlineCreate(Browser $browser, $uriKey, callable $fieldCallback)
     {
         $browser->click("@{$uriKey}-inline-create")
-            ->elsewhere(
-                '',
-                function ($browser) use ($fieldCallback) {
-                    $browser->whenAvailable(
-                        '.modal',
-                        function ($browser) use ($fieldCallback) {
-                            $fieldCallback($browser);
+            ->elsewhere('', function ($browser) use ($fieldCallback) {
+                $browser->whenAvailable('.modal', function ($browser) use ($fieldCallback) {
+                    $fieldCallback($browser);
 
-                            $browser->create()->pause(250);
-                        }
-                    );
-                }
-            );
+                    $browser->create()->pause(250);
+                });
+            });
     }
 
     /**
@@ -81,7 +75,7 @@ class Create extends Page
     /**
      * Assert that the browser is on the page.
      *
-     * @param Browser $browser
+     * @param  Browser  $browser
      * @return void
      */
     public function assert(Browser $browser)
@@ -94,7 +88,7 @@ class Create extends Page
      */
     public function assertNoRelationSearchResults(Browser $browser, $resourceName)
     {
-        $browser->assertMissing('@' . $resourceName . '-search-input-result-0');
+        $browser->assertMissing('@'.$resourceName.'-search-input-result-0');
     }
 
     /**

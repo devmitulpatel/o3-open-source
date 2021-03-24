@@ -1,9 +1,9 @@
 <template>
   <loading-view :loading="loading">
     <custom-attach-header
-      :resource-id="resourceId"
-      :resource-name="resourceName"
       class="mb-3"
+      :resource-name="resourceName"
+      :resource-id="resourceId"
     />
 
     <heading class="mb-3">{{
@@ -12,32 +12,32 @@
 
     <form
       v-if="field"
-      autocomplete="off"
-      @change="onUpdateFormStatus"
       @submit.prevent="attachResource"
+      @change="onUpdateFormStatus"
+      autocomplete="off"
     >
       <card class="overflow-hidden mb-8">
         <!-- Related Resource -->
         <default-field
-          :errors="validationErrors"
           :field="field"
+          :errors="validationErrors"
           :show-help-text="field.helpText != null"
         >
           <template slot="field">
             <search-input
               v-if="field.searchable"
-              :data="availableResources"
               :data-testid="`${field.resourceName}-search-input`"
+              @input="performSearch"
+              @clear="clearSelection"
+              @selected="selectResource"
               :debounce="field.debounce"
               :value="selectedResource"
+              :data="availableResources"
               trackBy="value"
-              @clear="clearSelection"
-              @input="performSearch"
-              @selected="selectResource"
             >
               <div
-                v-if="selectedResource"
                 slot="default"
+                v-if="selectedResource"
                 class="flex items-center"
               >
                 <div v-if="selectedResource.avatar" class="mr-3">
@@ -64,16 +64,16 @@
 
                 <div>
                   <div
-                    :class="{ 'text-white': selected }"
                     class="text-sm font-semibold leading-5 text-90"
+                    :class="{ 'text-white': selected }"
                   >
                     {{ option.display }}
                   </div>
 
                   <div
                     v-if="field.withSubtitles"
-                    :class="{ 'text-white': selected }"
                     class="mt-1 text-xs font-semibold leading-5 text-80"
+                    :class="{ 'text-white': selected }"
                   >
                     <span v-if="option.subtitle">{{ option.subtitle }}</span>
                     <span v-else>{{ __('No additional information...') }}</span>
@@ -84,18 +84,18 @@
 
             <select-control
               v-else
+              dusk="attachable-select"
+              class="form-control form-select w-full"
               :class="{
                 'border-danger': validationErrors.has(field.attribute),
               }"
               :data-testid="`${field.resourceName}-select`"
-              :label="'display'"
-              :options="availableResources"
-              :selected="selectedResourceId"
-              class="form-control form-select w-full"
-              dusk="attachable-select"
               @change="selectResourceFromSelectControl"
+              :options="availableResources"
+              :label="'display'"
+              :selected="selectedResourceId"
             >
-              <option disabled selected value="">
+              <option value="" disabled selected>
                 {{
                   __('Choose :resource', {
                     resource: relatedResourceLabel,
@@ -107,8 +107,8 @@
             <!-- Trashed State -->
             <div v-if="softDeletes" class="mt-3">
               <checkbox-with-label
-                :checked="withTrashed"
                 :dusk="field.resourceName + '-with-trashed-checkbox'"
+                :checked="withTrashed"
                 @input="toggleWithTrashed"
               >
                 {{ __('With Trashed') }}
@@ -121,13 +121,13 @@
         <div v-for="field in fields">
           <component
             :is="'form-' + field.component"
-            :errors="validationErrors"
-            :field="field"
             :resource-name="resourceName"
-            :show-help-text="field.helpText != null"
-            :via-relationship="viaRelationship"
+            :field="field"
+            :errors="validationErrors"
             :via-resource="viaResource"
             :via-resource-id="viaResourceId"
+            :via-relationship="viaRelationship"
+            :show-help-text="field.helpText != null"
           />
         </div>
       </card>
@@ -137,20 +137,20 @@
         <cancel-button @click="$router.back()" />
 
         <progress-button
-          :disabled="isWorking"
-          :processing="submittedViaAttachAndAttachAnother"
           class="mr-3"
           dusk="attach-and-attach-another-button"
           @click.native="attachAndAttachAnother"
+          :disabled="isWorking"
+          :processing="submittedViaAttachAndAttachAnother"
         >
           {{ __('Attach & Attach Another') }}
         </progress-button>
 
         <progress-button
-          :disabled="isWorking"
-          :processing="submittedViaAttachResource"
           dusk="attach-button"
           type="submit"
+          :disabled="isWorking"
+          :processing="submittedViaAttachResource"
         >
           {{
             __('Attach :resource', {

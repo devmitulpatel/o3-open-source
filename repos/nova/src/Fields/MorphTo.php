@@ -153,18 +153,6 @@ class MorphTo extends Field implements RelatableField
     }
 
     /**
-     * Resolve the field's value for display.
-     *
-     * @param  mixed  $resource
-     * @param  string|null  $attribute
-     * @return void
-     */
-    public function resolveForDisplay($resource, $attribute = null)
-    {
-        $this->resolve($resource, $attribute);
-    }
-
-    /**
      * Resolve the field's value.
      *
      * @param  mixed  $resource
@@ -211,6 +199,18 @@ class MorphTo extends Field implements RelatableField
     }
 
     /**
+     * Resolve the field's value for display.
+     *
+     * @param  mixed  $resource
+     * @param  string|null  $attribute
+     * @return void
+     */
+    public function resolveForDisplay($resource, $attribute = null)
+    {
+        $this->resolve($resource, $attribute);
+    }
+
+    /**
      * Resolve the current resource key for the resource's morph type.
      *
      * @param  mixed  $resource
@@ -238,41 +238,6 @@ class MorphTo extends Field implements RelatableField
     protected function resolveResourceClass($model)
     {
         return $this->resourceClass = Nova::resourceForModel($model);
-    }
-
-    /**
-     * Format the associatable display value.
-     *
-     * @param  mixed  $resource
-     * @param  string  $relatedResource
-     * @return string
-     */
-    protected function formatDisplayValue($resource, $relatedResource)
-    {
-        if (! $resource instanceof Resource) {
-            $resource = Nova::newResourceFromModel($resource);
-        }
-
-        if ($display = $this->displayFor($relatedResource)) {
-            return call_user_func($display, $resource);
-        }
-
-        return $resource->title();
-    }
-
-    /**
-     * Get the column that should be displayed for a given type.
-     *
-     * @param  string  $type
-     * @return Closure|null
-     */
-    public function displayFor($type)
-    {
-        if (is_array($this->display) && $type) {
-            return $this->display[$type] ?? null;
-        }
-
-        return $this->display;
     }
 
     /**
@@ -304,6 +269,50 @@ class MorphTo extends Field implements RelatableField
                 $request, $relatedResource, $request->{$this->attribute.'_trashed'} === 'true'
             )->toBase());
         }
+    }
+
+    /**
+     * Hydrate the given attribute on the model based on the incoming request.
+     *
+     * @param NovaRequest $request
+     * @param  object  $model
+     * @return void
+     */
+    public function fill(NovaRequest $request, $model)
+    {
+        $instance = Nova::modelInstanceForKey($request->{$this->attribute.'_type'});
+
+        $morphType = $model->{$this->attribute}()->getMorphType();
+        if ($instance) {
+            $model->{$morphType} = $this->getMorphAliasForClass(
+                get_class($instance)
+            );
+        }
+
+        $foreignKey = $this->getRelationForeignKeyName($model->{$this->attribute}());
+
+        if ($model->isDirty([$morphType, $foreignKey])) {
+            $model->unsetRelation($this->attribute);
+        }
+
+        parent::fillInto($request, $model, $foreignKey);
+    }
+
+    /**
+     * Get the morph type alias for the given class.
+     *
+     * @param  string  $class
+     * @return string
+     */
+    protected function getMorphAliasForClass($class)
+    {
+        foreach (Relation::$morphMap as $alias => $model) {
+            if ($model == $class) {
+                return $alias;
+            }
+        }
+
+        return $class;
     }
 
     /**
@@ -365,50 +374,6 @@ class MorphTo extends Field implements RelatableField
     }
 
     /**
-     * Hydrate the given attribute on the model based on the incoming request.
-     *
-     * @param NovaRequest $request
-     * @param  object  $model
-     * @return void
-     */
-    public function fill(NovaRequest $request, $model)
-    {
-        $instance = Nova::modelInstanceForKey($request->{$this->attribute.'_type'});
-
-        $morphType = $model->{$this->attribute}()->getMorphType();
-        if ($instance) {
-            $model->{$morphType} = $this->getMorphAliasForClass(
-                get_class($instance)
-            );
-        }
-
-        $foreignKey = $this->getRelationForeignKeyName($model->{$this->attribute}());
-
-        if ($model->isDirty([$morphType, $foreignKey])) {
-            $model->unsetRelation($this->attribute);
-        }
-
-        parent::fillInto($request, $model, $foreignKey);
-    }
-
-    /**
-     * Get the morph type alias for the given class.
-     *
-     * @param  string  $class
-     * @return string
-     */
-    protected function getMorphAliasForClass($class)
-    {
-        foreach (Relation::$morphMap as $alias => $model) {
-            if ($model == $class) {
-                return $alias;
-            }
-        }
-
-        return $class;
-    }
-
-    /**
      * Format the given morphable resource.
      *
      * @param NovaRequest $request
@@ -424,6 +389,26 @@ class MorphTo extends Field implements RelatableField
             'subtitle' => $resource->subtitle(),
             'value' => $resource->getKey(),
         ]);
+    }
+
+    /**
+     * Format the associatable display value.
+     *
+     * @param  mixed  $resource
+     * @param  string  $relatedResource
+     * @return string
+     */
+    protected function formatDisplayValue($resource, $relatedResource)
+    {
+        if (! $resource instanceof Resource) {
+            $resource = Nova::newResourceFromModel($resource);
+        }
+
+        if ($display = $this->displayFor($relatedResource)) {
+            return call_user_func($display, $resource);
+        }
+
+        return $resource->title();
     }
 
     /**
@@ -481,6 +466,21 @@ class MorphTo extends Field implements RelatableField
     }
 
     /**
+     * Get the column that should be displayed for a given type.
+     *
+     * @param  string  $type
+     * @return Closure|null
+     */
+    public function displayFor($type)
+    {
+        if (is_array($this->display) && $type) {
+            return $this->display[$type] ?? null;
+        }
+
+        return $this->display;
+    }
+
+    /**
      * Specify if the related resource can be viewed.
      *
      * @param  bool  $value
@@ -532,6 +532,27 @@ class MorphTo extends Field implements RelatableField
     }
 
     /**
+     * Resolve the default resource class for the field.
+     *
+     * @param NovaRequest $request
+     * @return string|void
+     */
+    protected function resolveDefaultResource(NovaRequest $request)
+    {
+        if ($request->isCreateOrAttachRequest() || $request->isResourceIndexRequest() || $request->isActionRequest()) {
+            if (is_null($this->value) && $this->defaultResourceCallable instanceof Closure) {
+                $class = call_user_func($this->defaultResourceCallable, $request);
+            } else {
+                $class = $this->defaultResourceCallable;
+            }
+
+            if (class_exists($class)) {
+                return $class::uriKey();
+            }
+        }
+    }
+
+    /**
      * Prepare the field for JSON serialization.
      *
      * @return array
@@ -558,26 +579,5 @@ class MorphTo extends Field implements RelatableField
                 'defaultResource' => $this->resolveDefaultResource($request),
             ], parent::jsonSerialize());
         });
-    }
-
-    /**
-     * Resolve the default resource class for the field.
-     *
-     * @param NovaRequest $request
-     * @return string|void
-     */
-    protected function resolveDefaultResource(NovaRequest $request)
-    {
-        if ($request->isCreateOrAttachRequest() || $request->isResourceIndexRequest() || $request->isActionRequest()) {
-            if (is_null($this->value) && $this->defaultResourceCallable instanceof Closure) {
-                $class = call_user_func($this->defaultResourceCallable, $request);
-            } else {
-                $class = $this->defaultResourceCallable;
-            }
-
-            if (class_exists($class)) {
-                return $class::uriKey();
-            }
-        }
     }
 }

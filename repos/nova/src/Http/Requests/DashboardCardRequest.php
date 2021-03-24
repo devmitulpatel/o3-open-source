@@ -10,7 +10,7 @@ class DashboardCardRequest extends NovaRequest
     /**
      * Get all of the possible cards for the request.
      *
-     * @param string $dashboard
+     * @param  string  $dashboard
      *
      * @return Collection
      */

@@ -7,48 +7,6 @@ use Exception;
 class Badge extends Field
 {
     /**
-     * The text alignment for the field's text in tables.
-     *
-     * @var string
-     */
-    public $textAlign = 'center';
-    /**
-     * The field's component.
-     *
-     * @var string
-     */
-    public $component = 'badge-field';
-    /**
-     * The labels that should be applied to the field's possible values.
-     *
-     * @var array
-     */
-    public $labels;
-    /**
-     * The callback used to determine the field's label.
-     *
-     * @var callable
-     */
-    public $labelCallback;
-    /**
-     * The mapping used for matching custom values to in-built badge types.
-     *
-     * @var array
-     */
-    public $map;
-    /**
-     * The built-in badge types and their corresponding CSS classes.
-     *
-     * @var array
-     */
-    public $types = [
-        'success' => 'bg-success-light text-success-dark',
-        'info' => 'bg-info-light text-info-dark',
-        'danger' => 'bg-danger-light text-danger-dark',
-        'warning' => 'bg-warning-light text-warning-dark',
-    ];
-
-    /**
      * Create a new field.
      *
      * @param  string  $name
@@ -62,6 +20,53 @@ class Badge extends Field
 
         $this->exceptOnForms();
     }
+
+    /**
+     * The text alignment for the field's text in tables.
+     *
+     * @var string
+     */
+    public $textAlign = 'center';
+
+    /**
+     * The field's component.
+     *
+     * @var string
+     */
+    public $component = 'badge-field';
+
+    /**
+     * The labels that should be applied to the field's possible values.
+     *
+     * @var array
+     */
+    public $labels;
+
+    /**
+     * The callback used to determine the field's label.
+     *
+     * @var callable
+     */
+    public $labelCallback;
+
+    /**
+     * The mapping used for matching custom values to in-built badge types.
+     *
+     * @var array
+     */
+    public $map;
+
+    /**
+     * The built-in badge types and their corresponding CSS classes.
+     *
+     * @var array
+     */
+    public $types = [
+        'success' => 'bg-success-light text-success-dark',
+        'info' => 'bg-info-light text-info-dark',
+        'danger' => 'bg-danger-light text-danger-dark',
+        'warning' => 'bg-warning-light text-warning-dark',
+    ];
 
     /**
      * Add badge types and their corresponding CSS classes to the built-in ones.
@@ -129,16 +134,19 @@ class Badge extends Field
     }
 
     /**
-     * Prepare the element for JSON serialization.
+     * Resolve the Badge's CSS classes based on the field's value.
      *
-     * @return array
+     * @return string
      */
-    public function jsonSerialize()
+    public function resolveBadgeClasses()
     {
-        return array_merge(parent::jsonSerialize(), [
-            'label' => $this->resolveLabel(),
-            'typeClass' => $this->resolveBadgeClasses(),
-        ]);
+        try {
+            $mappedValue = $this->map[$this->value] ?? $this->value;
+
+            return $this->types[$mappedValue];
+        } catch (Exception $e) {
+            throw new Exception("Error trying to find type [{$mappedValue}] inside of the field's type mapping.");
+        }
     }
 
     /**
@@ -156,18 +164,15 @@ class Badge extends Field
     }
 
     /**
-     * Resolve the Badge's CSS classes based on the field's value.
+     * Prepare the element for JSON serialization.
      *
-     * @return string
+     * @return array
      */
-    public function resolveBadgeClasses()
+    public function jsonSerialize()
     {
-        try {
-            $mappedValue = $this->map[$this->value] ?? $this->value;
-
-            return $this->types[$mappedValue];
-        } catch (Exception $e) {
-            throw new Exception("Error trying to find type [{$mappedValue}] inside of the field's type mapping.");
-        }
+        return array_merge(parent::jsonSerialize(), [
+            'label' => $this->resolveLabel(),
+            'typeClass' => $this->resolveBadgeClasses(),
+        ]);
     }
 }

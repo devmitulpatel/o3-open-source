@@ -54,16 +54,6 @@ class NotAvailableForNavigationUserResource extends Resource
     }
 
     /**
-     * Get the URI key for the resource.
-     *
-     * @return string
-     */
-    public static function uriKey()
-    {
-        return 'not-searchable-users';
-    }
-
-    /**
      * Get the lenses available on the resource.
      *
      * @param Request $request
@@ -83,5 +73,15 @@ class NotAvailableForNavigationUserResource extends Resource
     public function fields(Request $request)
     {
         return [];
+    }
+
+    /**
+     * Get the URI key for the resource.
+     *
+     * @return string
+     */
+    public static function uriKey()
+    {
+        return 'not-searchable-users';
     }
 }

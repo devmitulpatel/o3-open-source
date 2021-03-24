@@ -1,15 +1,15 @@
 <template>
   <resource-index
-    :disable-pagination="true"
     :field="field"
-    :load-cards="false"
-    :relationship-type="'hasOneThrough'"
     :resource-name="field.resourceName"
-    :should-override-meta="false"
-    :via-relationship="field.hasOneThroughRelationship"
     :via-resource="resourceName"
     :via-resource-id="resourceId"
+    :via-relationship="field.hasOneThroughRelationship"
+    :relationship-type="'hasOneThrough'"
     @actionExecuted="actionExecuted"
+    :load-cards="false"
+    :disable-pagination="true"
+    :should-override-meta="false"
   />
 </template>
 

@@ -13,13 +13,10 @@ class CreateCustomKeysTable extends Migration
      */
     public function up()
     {
-        Schema::create(
-            'custom_keys',
-            function (Blueprint $table) {
-                $table->increments('pk');
-                $table->timestamps();
-            }
-        );
+        Schema::create('custom_keys', function (Blueprint $table) {
+            $table->increments('pk');
+            $table->timestamps();
+        });
     }
 
     /**

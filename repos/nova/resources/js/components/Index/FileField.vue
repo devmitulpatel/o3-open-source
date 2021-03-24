@@ -2,10 +2,10 @@
   <p>
     <img
       v-if="imageUrl"
-      :class="{ 'rounded-full': field.rounded, rounded: !field.rounded }"
       :src="imageUrl"
-      class="align-bottom w-8 h-8"
       style="object-fit: cover"
+      class="align-bottom w-8 h-8"
+      :class="{ 'rounded-full': field.rounded, rounded: !field.rounded }"
     />
     <span v-else>&mdash;</span>
   </p>

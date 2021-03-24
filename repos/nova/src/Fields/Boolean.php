@@ -35,44 +35,6 @@ class Boolean extends Field
     public $textAlign = 'center';
 
     /**
-     * Specify the values to store for the field.
-     *
-     * @param  mixed  $trueValue
-     * @param  mixed  $falseValue
-     * @return $this
-     */
-    public function values($trueValue, $falseValue)
-    {
-        return $this->trueValue($trueValue)->falseValue($falseValue);
-    }
-
-    /**
-     * Specify the value to store when the field is "false".
-     *
-     * @param  mixed  $value
-     * @return $this
-     */
-    public function falseValue($value)
-    {
-        $this->falseValue = $value;
-
-        return $this;
-    }
-
-    /**
-     * Specify the value to store when the field is "true".
-     *
-     * @param  mixed  $value
-     * @return $this
-     */
-    public function trueValue($value)
-    {
-        $this->trueValue = $value;
-
-        return $this;
-    }
-
-    /**
      * Resolve the given attribute from the given resource.
      *
      * @param  mixed  $resource
@@ -114,5 +76,43 @@ class Boolean extends Field
             $model->{$attribute} = $request[$requestAttribute] == 1
                     ? $this->trueValue : $this->falseValue;
         }
+    }
+
+    /**
+     * Specify the values to store for the field.
+     *
+     * @param  mixed  $trueValue
+     * @param  mixed  $falseValue
+     * @return $this
+     */
+    public function values($trueValue, $falseValue)
+    {
+        return $this->trueValue($trueValue)->falseValue($falseValue);
+    }
+
+    /**
+     * Specify the value to store when the field is "true".
+     *
+     * @param  mixed  $value
+     * @return $this
+     */
+    public function trueValue($value)
+    {
+        $this->trueValue = $value;
+
+        return $this;
+    }
+
+    /**
+     * Specify the value to store when the field is "false".
+     *
+     * @param  mixed  $value
+     * @return $this
+     */
+    public function falseValue($value)
+    {
+        $this->falseValue = $value;
+
+        return $this;
     }
 }

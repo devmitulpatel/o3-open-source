@@ -49,6 +49,16 @@ abstract class Element implements JsonSerializable
     }
 
     /**
+     * Get the component name for the element.
+     *
+     * @return string
+     */
+    public function component()
+    {
+        return $this->component;
+    }
+
+    /**
      * Specify that the element should only be shown on the detail view.
      *
      * @return $this
@@ -72,15 +82,5 @@ abstract class Element implements JsonSerializable
             'prefixComponent' => false,
             'onlyOnDetail' => $this->onlyOnDetail,
         ], $this->meta());
-    }
-
-    /**
-     * Get the component name for the element.
-     *
-     * @return string
-     */
-    public function component()
-    {
-        return $this->component;
     }
 }

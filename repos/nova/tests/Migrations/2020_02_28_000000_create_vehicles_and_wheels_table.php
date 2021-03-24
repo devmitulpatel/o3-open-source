@@ -13,21 +13,15 @@ class CreateVehiclesAndWheelsTable extends Migration
      */
     public function up()
     {
-        Schema::create(
-            'vehicles',
-            function (Blueprint $table) {
-                $table->increments('id');
-                $table->string('model');
-            }
-        );
+        Schema::create('vehicles', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('model');
+        });
 
-        Schema::create(
-            'wheels',
-            function (Blueprint $table) {
-                $table->increments('id');
-                $table->foreignId('vehicle_id')->index();
-            }
-        );
+        Schema::create('wheels', function (Blueprint $table) {
+            $table->increments('id');
+            $table->foreignId('vehicle_id')->index();
+        });
     }
 
     /**

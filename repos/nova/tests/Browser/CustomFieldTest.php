@@ -19,21 +19,19 @@ class CustomFieldTest extends DuskTestCase
      */
     public function resource_can_be_created()
     {
-        $this->browse(
-            function (Browser $browser) {
-                $browser->loginAs(User::find(1))
+        $this->browse(function (Browser $browser) {
+            $browser->loginAs(User::find(1))
                     ->visit(new Create('flights'))
                     ->type('@name', 'Test Flight')
                     ->create();
 
-                $flight = Flight::latest()->first();
-                $browser->assertPathIs('/nova/resources/flights/' . $flight->id);
+            $flight = Flight::latest()->first();
+            $browser->assertPathIs('/nova/resources/flights/'.$flight->id);
 
-                $this->assertEquals('Test Flight', $flight->name);
+            $this->assertEquals('Test Flight', $flight->name);
 
-                $browser->blank();
-            }
-        );
+            $browser->blank();
+        });
     }
 
     /**
@@ -41,17 +39,15 @@ class CustomFieldTest extends DuskTestCase
      */
     public function validation_errors_are_displayed()
     {
-        $this->browse(
-            function (Browser $browser) {
-                $browser->loginAs(User::find(1))
+        $this->browse(function (Browser $browser) {
+            $browser->loginAs(User::find(1))
                     ->visit(new Create('flights'))
                     ->create()
                     ->waitForText('There was a problem submitting the form.', 15)
                     ->assertSee('The Name field is required.');
 
-                $browser->blank();
-            }
-        );
+            $browser->blank();
+        });
     }
 
     /**
@@ -61,20 +57,15 @@ class CustomFieldTest extends DuskTestCase
     {
         $flight = FlightFactory::new()->create();
 
-        $this->browse(
-            function (Browser $browser) use ($flight) {
-                $browser->loginAs(User::find(1))
+        $this->browse(function (Browser $browser) use ($flight) {
+            $browser->loginAs(User::find(1))
                     ->visit(new Index('flights'))
-                    ->within(
-                        new IndexComponent('flights'),
-                        function ($browser) use ($flight) {
-                            $browser->assertSee($flight->name);
-                        }
-                    );
+                    ->within(new IndexComponent('flights'), function ($browser) use ($flight) {
+                        $browser->assertSee($flight->name);
+                    });
 
-                $browser->blank();
-            }
-        );
+            $browser->blank();
+        });
     }
 
     /**
@@ -84,15 +75,13 @@ class CustomFieldTest extends DuskTestCase
     {
         $flight = FlightFactory::new()->create();
 
-        $this->browse(
-            function (Browser $browser) use ($flight) {
-                $browser->loginAs(User::find(1))
+        $this->browse(function (Browser $browser) use ($flight) {
+            $browser->loginAs(User::find(1))
                     ->visit(new Detail('flights', $flight->id))
                     ->waitForTextIn('h1', 'Flight Details', 25)
                     ->assertSee($flight->name);
 
-                $browser->blank();
-            }
-        );
+            $browser->blank();
+        });
     }
 }

@@ -1,22 +1,22 @@
 <template>
-  <default-field :errors="errors" :field="field" :show-help-text="showHelpText">
+  <default-field :field="field" :errors="errors" :show-help-text="showHelpText">
     <template slot="field">
       <div class="flex items-center">
         <search-input
           v-if="isSearchable && !isLocked && !isReadonly"
-          :clearable="field.nullable"
-          :data="availableResources"
           :data-testid="`${field.resourceName}-search-input`"
-          :debounce="field.debounce"
-          :error="hasError"
-          :value="selectedResource"
-          class="w-full"
-          trackBy="value"
-          @clear="clearSelection"
           @input="performSearch"
+          @clear="clearSelection"
           @selected="selectResource"
+          :error="hasError"
+          :debounce="field.debounce"
+          :value="selectedResource"
+          :data="availableResources"
+          :clearable="field.nullable"
+          trackBy="value"
+          class="w-full"
         >
-          <div v-if="selectedResource" slot="default" class="flex items-center">
+          <div slot="default" v-if="selectedResource" class="flex items-center">
             <div v-if="selectedResource.avatar" class="mr-3">
               <img
                 :src="selectedResource.avatar"
@@ -38,16 +38,16 @@
 
             <div>
               <div
-                :class="{ 'text-white': selected }"
                 class="text-sm font-semibold leading-5 text-90"
+                :class="{ 'text-white': selected }"
               >
                 {{ option.display }}
               </div>
 
               <div
                 v-if="field.withSubtitles"
-                :class="{ 'text-white': selected }"
                 class="mt-1 text-xs font-semibold leading-5 text-80"
+                :class="{ 'text-white': selected }"
               >
                 <span v-if="option.subtitle">{{ option.subtitle }}</span>
                 <span v-else>{{ __('No additional information...') }}</span>
@@ -58,49 +58,49 @@
 
         <select-control
           v-if="!isSearchable || isLocked || isReadonly"
+          class="form-control form-select w-full"
           :class="{ 'border-danger': hasError }"
           :data-testid="`${field.resourceName}-select`"
-          :disabled="isLocked || isReadonly"
           :dusk="field.attribute"
-          :options="availableResources"
-          :selected="selectedResourceId"
-          :value="selectedResourceId"
-          class="form-control form-select w-full"
-          label="display"
           @change="selectResourceFromSelectControl"
+          :disabled="isLocked || isReadonly"
+          :options="availableResources"
+          :value="selectedResourceId"
+          :selected="selectedResourceId"
+          label="display"
         >
-          <option :disabled="!field.nullable" selected value="">
+          <option value="" selected :disabled="!field.nullable">
             {{ placeholder }}
           </option>
         </select-control>
 
         <create-relation-button
           v-if="canShowNewRelationModal"
-          :dusk="`${field.attribute}-inline-create`"
-          class="ml-1"
           @click="openRelationModal"
+          class="ml-1"
+          :dusk="`${field.attribute}-inline-create`"
         />
       </div>
 
       <portal to="modals" transition="fade-transition">
         <create-relation-modal
           v-if="relationModalOpen && canShowNewRelationModal"
-          :resource-id="resourceId"
+          @set-resource="handleSetResource"
+          @cancelled-create="closeRelationModal"
           :resource-name="field.resourceName"
+          :resource-id="resourceId"
           :via-relationship="viaRelationship"
           :via-resource="viaResource"
           :via-resource-id="viaResourceId"
           width="800"
-          @set-resource="handleSetResource"
-          @cancelled-create="closeRelationModal"
         />
       </portal>
 
       <!-- Trashed State -->
       <div v-if="shouldShowTrashed" class="mt-3">
         <checkbox-with-label
-          :checked="withTrashed"
           :dusk="`${field.resourceName}-with-trashed-checkbox`"
+          :checked="withTrashed"
           @input="toggleWithTrashed"
         >
           {{ __('With Trashed') }}

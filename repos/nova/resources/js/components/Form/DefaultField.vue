@@ -1,10 +1,10 @@
 <template>
   <field-wrapper :stacked="field.stacked">
-    <div :class="field.stacked ? 'pt-6' : 'py-6'" class="w-1/5 px-8">
+    <div class="w-1/5 px-8" :class="field.stacked ? 'pt-6' : 'py-6'">
       <slot>
         <form-label
-          :class="{ 'mb-2': showHelpText && field.helpText }"
           :label-for="field.attribute"
+          :class="{ 'mb-2': showHelpText && field.helpText }"
         >
           {{ fieldLabel }}&nbsp;<span
             v-if="field.required"
@@ -15,17 +15,17 @@
       </slot>
     </div>
 
-    <div :class="fieldClasses" class="py-6 px-8">
+    <div class="py-6 px-8" :class="fieldClasses">
       <slot name="field" />
 
       <help-text
-        v-if="showErrors && hasError"
         class="error-text mt-2 text-danger"
+        v-if="showErrors && hasError"
       >
         {{ firstError }}
       </help-text>
 
-      <help-text v-if="showHelpText" class="help-text mt-2">
+      <help-text class="help-text mt-2" v-if="showHelpText">
         {{ field.helpText }}
       </help-text>
     </div>

@@ -22,16 +22,6 @@ class DateTimeTest extends TestCase
         });
     }
 
-    /**
-     * Return a new DateTime field instance.
-     *
-     * @return DateTime
-     */
-    protected function dateTimeField()
-    {
-        return DateTime::make('Created At');
-    }
-
     public function test_field_can_be_resolved_for_display()
     {
         Carbon::setTestNow(Carbon::parse('Oct 14 1984'));
@@ -88,5 +78,15 @@ class DateTimeTest extends TestCase
                 $field->resolveForDisplay($resource);
             });
         });
+    }
+
+    /**
+     * Return a new DateTime field instance.
+     *
+     * @return DateTime
+     */
+    protected function dateTimeField()
+    {
+        return DateTime::make('Created At');
     }
 }

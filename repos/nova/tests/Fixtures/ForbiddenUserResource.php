@@ -43,16 +43,6 @@ class ForbiddenUserResource extends Resource
     }
 
     /**
-     * Get the URI key for the resource.
-     *
-     * @return string
-     */
-    public static function uriKey()
-    {
-        return 'forbidden-users';
-    }
-
-    /**
      * Get the lenses available on the resource.
      *
      * @param Request $request
@@ -72,5 +62,15 @@ class ForbiddenUserResource extends Resource
     public function fields(Request $request)
     {
         return [];
+    }
+
+    /**
+     * Get the URI key for the resource.
+     *
+     * @return string
+     */
+    public static function uriKey()
+    {
+        return 'forbidden-users';
     }
 }
