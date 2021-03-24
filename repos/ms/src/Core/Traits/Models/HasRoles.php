@@ -81,7 +81,7 @@ trait HasRoles
         }
     }
 
-    public function SeedForRoles($up = true)
+    public static function SeedForRoles($up = true)
     {
         if ($up) {
             $user = User::factory()->create(['email' => 'admin@admin.com', 'password' => bcrypt('password')]);

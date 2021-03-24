@@ -13,7 +13,6 @@ use MS\Core\Traits\Models\HasRoles;
 
 trait LedgerSystem
 {
-    use HasRoles;
     /**
      * Run the migrations.
      *
@@ -83,7 +82,7 @@ trait LedgerSystem
         TransactionType::create(['name' => 'debit']);
 //        Ledger::create(['name'=>'master','current_balance'=>0,'user_id'=>1,'type_id'=>1,'status'=>1]);
 //        Ledger::create(['name'=>'cash','curre   nt_balance'=>0,'user_id'=>1,'type_id'=>2,'status'=>1]);
-        $this->SeedForRoles();
+        HasRoles::SeedForRoles();
     }
 
     /**
