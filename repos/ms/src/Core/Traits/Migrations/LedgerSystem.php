@@ -61,9 +61,9 @@ trait LedgerSystem
     {
         $this->setAttribute('extra', collect([])->toJson());
         if ($this->getAttribute('ledger_type') == 1) {
-            $model = CompanyLedger::find($this->getAttribute('ledger_id'))->first();
+            $model = CompanyLedger::where(['id' => $this->getAttribute('ledger_id')])->first();
         } else {
-            $model = Ledger::find($this->getAttribute('ledger_id'))->first();
+            $model = Ledger::where(['id' => $this->getAttribute('ledger_id')])->first();
         }
         if ($this->getAttribute('type_id') == 1) {
             $total = $model->current_balance + $value;
