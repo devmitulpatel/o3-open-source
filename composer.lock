@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "998ea5be54c0ad2d9f38fb9db0fc8cb5",
+    "content-hash": "d9ea8eac4db245e79f0a3c59e6966887",
     "packages": [
         {
             "name": "armincms/many-to-many",
@@ -334,60 +334,6 @@
                 "source": "https://github.com/David-Griffiths/Nova-Dark-Theme"
             },
             "time": "2019-02-16T22:07:27+00:00"
-        },
-        {
-            "name": "digital-creative/conditional-container",
-            "version": "v1.3.3",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/dcasia/conditional-container.git",
-                "reference": "3ed43442e3adca5f98c2f1b06cd87fd6cbd13092"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/dcasia/conditional-container/zipball/3ed43442e3adca5f98c2f1b06cd87fd6cbd13092",
-                "reference": "3ed43442e3adca5f98c2f1b06cd87fd6cbd13092",
-                "shasum": ""
-            },
-            "require": {
-                "laravel/nova": "^3.12.0",
-                "php": ">=7.1.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "DigitalCreative\\ConditionalContainer\\ConditionalContainerServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "DigitalCreative\\ConditionalContainer\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Rafael Milewski"
-                }
-            ],
-            "description": "Provides an easy way to conditionally show and hide fields in your Nova resources.",
-            "keywords": [
-                "conditional",
-                "dependency",
-                "dynamic",
-                "laravel",
-                "nova"
-            ],
-            "support": {
-                "issues": "https://github.com/dcasia/conditional-container/issues",
-                "source": "https://github.com/dcasia/conditional-container/tree/v1.3.3"
-            },
-            "time": "2021-03-24T11:04:28+00:00"
         },
         {
             "name": "dnoegel/php-xdg-base-dir",
@@ -1034,6 +980,51 @@
                 }
             ],
             "time": "2020-12-29T14:50:06+00:00"
+        },
+        {
+            "name": "epartment/nova-dependency-container",
+            "version": "1.3.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/epartment/nova-dependency-container.git",
+                "reference": "089764fbf7ef03a0d14d5f6fcce92a630039d09f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/epartment/nova-dependency-container/zipball/089764fbf7ef03a0d14d5f6fcce92a630039d09f",
+                "reference": "089764fbf7ef03a0d14d5f6fcce92a630039d09f",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Epartment\\NovaDependencyContainer\\FieldServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Epartment\\NovaDependencyContainer\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "A Laravel Nova field container allowing to depend on other fields values",
+            "keywords": [
+                "laravel",
+                "nova"
+            ],
+            "support": {
+                "issues": "https://github.com/epartment/nova-dependency-container/issues",
+                "source": "https://github.com/epartment/nova-dependency-container/tree/1.3.2"
+            },
+            "time": "2021-03-04T18:55:02+00:00"
         },
         {
             "name": "fideloper/proxy",
@@ -2949,6 +2940,65 @@
                 }
             ],
             "time": "2021-03-10T13:58:31+00:00"
+        },
+        {
+            "name": "plank/laravel-metable",
+            "version": "5.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/plank/laravel-metable.git",
+                "reference": "68924b4fb2b65073db30fedfc8a1d6e302773d2b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/plank/laravel-metable/zipball/68924b4fb2b65073db30fedfc8a1d6e302773d2b",
+                "reference": "68924b4fb2b65073db30fedfc8a1d6e302773d2b",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "illuminate/database": "^6.20.12|^7.30.3|^8.22.1",
+                "illuminate/support": "^6.0|^7.0|^8.0",
+                "php": ">=7.3.0"
+            },
+            "require-dev": {
+                "guzzlehttp/guzzle": "^7.2",
+                "guzzlehttp/promises": "^1.4",
+                "laravel/legacy-factories": "^1.0.4",
+                "mockery/mockery": "^1.4.2",
+                "orchestra/testbench": "^5.9|^6.6",
+                "php-coveralls/php-coveralls": "^2.4.2",
+                "phpunit/phpunit": "^9.5"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Plank\\Metable\\MetableServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Plank\\Metable\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Sean Fraser",
+                    "email": "sean@plankdesign.com"
+                }
+            ],
+            "description": "A package for attaching arbitrary data to Eloquent models",
+            "support": {
+                "issues": "https://github.com/plank/laravel-metable/issues",
+                "source": "https://github.com/plank/laravel-metable/tree/5.0.0"
+            },
+            "time": "2021-02-11T18:10:30+00:00"
         },
         {
             "name": "psr/container",

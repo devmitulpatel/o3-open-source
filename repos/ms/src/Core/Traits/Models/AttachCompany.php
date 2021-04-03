@@ -10,8 +10,13 @@ trait AttachCompany
 {
 
 
-    public function company(){
+    public function companies()
+    {
         return $this->belongsToMany(Company::class);
     }
 
+    public function company()
+    {
+        return $this->belongsTo(Company::class);
+    }
 }

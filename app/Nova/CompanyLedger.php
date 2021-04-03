@@ -5,12 +5,14 @@ namespace App\Nova;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Currency;
+use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Text;
 
 class CompanyLedger extends Resource
 {
+    public static $group = 'Setting';
     /**
      * The model the resource corresponds to.
      *
@@ -23,7 +25,7 @@ class CompanyLedger extends Resource
      *
      * @var string
      */
-    public static $title = 'id';
+    public static $title = 'name';
 
     /**
      * The columns that should be searched.
@@ -33,6 +35,14 @@ class CompanyLedger extends Resource
     public static $search = [
         'id',
     ];
+
+    public function title()
+    {
+        //dd($this);
+        //  return 'hello';
+        return implode(' ', [$this->company->short_name, implode(' ', ['(', $this->ledger_type->name, ')'])]);
+        return $this->user->name;
+    }
 
     /**
      * Get the fields displayed by the resource.
@@ -46,9 +56,11 @@ class CompanyLedger extends Resource
             ID::make(__('ID'), 'id')->sortable(),
             Text::make('Name'),
             BelongsTo::make('Company'),
-            BelongsTo::make('LedgerType', 'type'),
+            BelongsTo::make('Ledger Type', 'ledger_type'),
             Currency::make('Current Balance', 'current_balance'),
-            HasMany::make('Transaction')
+            HasMany::make('Transaction'),
+            DateTime::make('Updated At', 'updated_at')->sortable()
+
         ];
     }
 

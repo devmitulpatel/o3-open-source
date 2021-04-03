@@ -32,6 +32,7 @@ trait CompanyBaseSystem
                 $table->unsignedBigInteger('company_id');
             }
         );
+
         Company::create(['official_name' => 'Million Solutions LLP', 'short_name' => 'MSLLP']);
         User::first()->company()->attach(1);
     }
