@@ -11,6 +11,7 @@ use Laravel\Nova\Fields\Text;
 
 class User extends Resource
 {
+    public static $group = 'HR';
     /**
      * The model the resource corresponds to.
      *

@@ -6,6 +6,7 @@ namespace App\Nova;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Currency;
+use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Text;
@@ -13,7 +14,7 @@ use Vyuldashev\NovaMoneyField\Money;
 
 class Ledger extends Resource
 {
-    public static $group = 'Accounts';
+    public static $group = 'Setting';
     /**
      * The model the resource corresponds to.
      *
@@ -57,9 +58,10 @@ class Ledger extends Resource
             ID::make(__('ID'), 'id')->sortable(),
             Text::make('Name'),
             BelongsTo::make('User'),
-            BelongsTo::make('LedgerType','type'),
-            Currency::make('Current Balance','current_balance'),
-            HasMany::make('Transaction')
+            BelongsTo::make('Ledger Type', 'type'),
+            Currency::make('Current Balance', 'current_balance'),
+            HasMany::make('Transaction'),
+            DateTime::make('Updated At', 'updated_at')->sortable()
         ];
     }
 

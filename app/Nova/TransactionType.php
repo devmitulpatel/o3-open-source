@@ -2,20 +2,18 @@
 
 namespace App\Nova;
 
-use Armincms\Fields\BelongsToMany;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Text;
 
-class Role extends Resource
+class TransactionType extends Resource
 {
-    public static $group = 'HR';
     /**
      * The model the resource corresponds to.
      *
      * @var string
      */
-    public static $model = \App\Models\Role::class;
+    public static $model = \App\Models\TransactionType::class;
 
     /**
      * The single value that should be used to represent the resource when being displayed.
@@ -43,10 +41,7 @@ class Role extends Resource
     {
         return [
             ID::make(__('ID'), 'id')->sortable(),
-            Text::make('Name'),
-            Text::make('Role ID'),
-            BelongsToMany::make('Permissions', 'permissions', Permission::class),
-            BelongsToMany::make('Groups', 'groups', Group::class)
+            Text::make(__('Name')),
         ];
     }
 

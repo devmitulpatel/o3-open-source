@@ -18,6 +18,6 @@ class Permission extends Model
 
     public function permission_type()
     {
-        return $this->hasOne(Permission::class);
+        return $this->belongsTo(PermissionType::class);
     }
 }

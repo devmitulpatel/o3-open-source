@@ -10,6 +10,7 @@ use Laravel\Nova\Fields\Text;
 
 class Permission extends Resource
 {
+    public static $group = 'HR';
     /**
      * The model the resource corresponds to.
      *

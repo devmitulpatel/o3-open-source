@@ -22,7 +22,7 @@ trait HasRoles
             'groups',
             'permission_types',
             'permissions',
-            'permission_roles',
+            'permission_role',
             'group_permission',
             'role_user',
 
@@ -53,23 +53,42 @@ trait HasRoles
                 $table->string('permission_id');
                 $table->string('permission_type_id');
                 $table->timestamps();
-            });
-            Schema::create($tables[4], function (Blueprint $table) {
-                // $table->id();
-                $table->unsignedBigInteger('role_id');
-                $table->unsignedBigInteger('permission_id');
-                //   $table->timestamps();
-            });
-            Schema::create($tables[5], function (Blueprint $table) {
-                //     $table->id();
-                $table->unsignedBigInteger('group_id');
-                $table->unsignedBigInteger('permission_id');
-                //   $table->timestamps();
-            });
+            }
+            );
+            Schema::create(
+                $tables[4],
+                function (Blueprint $table) {
+                    $table->id();
+                    $table->unsignedBigInteger('role_id');
+                    $table->unsignedBigInteger('permission_id');
+                    //   $table->timestamps();
+                }
+            );
 
-            Schema::create($tables[6], function (Blueprint $table) {
-                      $table->id();
-                $table->unsignedBigInteger('role_id');
+            Schema::create(
+                "group_role",
+                function (Blueprint $table) {
+                    $table->id();
+                    $table->unsignedBigInteger('role_id');
+                    $table->unsignedBigInteger('group_id');
+                    //   $table->timestamps();
+                }
+            );
+            Schema::create(
+                $tables[5],
+                function (Blueprint $table) {
+                    $table->id();
+                    $table->unsignedBigInteger('group_id');
+                    $table->unsignedBigInteger('permission_id');
+                    //   $table->timestamps();
+                }
+            );
+
+            Schema::create(
+                $tables[6],
+                function (Blueprint $table) {
+                    $table->id();
+                    $table->unsignedBigInteger('role_id');
                 $table->unsignedBigInteger('user_id');
                 //    $table->timestamps();
             });
@@ -99,13 +118,19 @@ trait HasRoles
                 Role::create(['name' => $makeName($a), 'role_id' => $a]);
             });
             $permission_types = ['view','list', 'detail', 'create', 'edit', 'delete'];
-            array_walk($permission_types, function ($a) use ($makeName) {
-                PermissionType::create(['name' => $makeName($a), 'permission_type_id' => $a]);
-            });
-            $group = ['user','permission','permission_type','group','roles'];
-            array_walk($group, function ($a) use ($makeName) {
-                Group::create(['name' => $makeName($a), 'group_id' => $a]);
-            });
+            array_walk(
+                $permission_types,
+                function ($a) use ($makeName) {
+                    PermissionType::create(['name' => $makeName($a), 'permission_type_id' => $a]);
+                }
+            );
+            $group = ['user', 'permission', 'permission_type', 'group', 'roles', 'ledger', 'company_ledger'];
+            array_walk(
+                $group,
+                function ($a) use ($makeName) {
+                    Group::create(['name' => $makeName($a), 'group_id' => $a]);
+                }
+            );
             $groups = Group::all()->toArray();
 
             array_walk($groups, function ($a, $k) use ($makeName, $permission_types) {
